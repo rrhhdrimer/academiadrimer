@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actualizar contraseña — Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EEF0EF;
+    --card: #FFFFFF;
+    --ink: #14203A;
+    --ink-soft: #4B5670;
+    --gold: #B8933F;
+    --gold-soft: #E4D6B0;
+    --rust: #9C4A38;
+    --rust-bg: #F6E7E3;
+    --green: #3E6957;
+    --green-bg: #E6EEE9;
+    --line: #DADDDA;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(184,147,63,0.10), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(20,32,58,0.06), transparent 40%);
+    font-family:'IBM Plex Sans', sans-serif;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 20px 48px;
+  }
+
+  .brand{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-bottom:24px;
+    max-width:420px;
+    width:100%;
+  }
+  .seal{
+    width:44px; height:44px;
+    border-radius:50%;
+    border:1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px;
+    background:var(--card);
+  }
+  .seal svg{ width:20px; height:20px; }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:-0.01em;
+    margin:0 0 4px;
+    text-align:center;
+  }
+  .subtitle{
+    font-size:13px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin:0;
+    max-width:300px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:30px 26px 26px;
+    width:100%;
+    max-width:400px;
+    box-shadow:0 1px 2px rgba(20,32,58,0.04), 0 12px 32px -16px rgba(20,32,58,0.18);
+  }
+  .field{ margin-bottom:16px; }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    letter-spacing:0.01em;
+  }
+  input{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:9px;
+    font-size:16px;
+    font-family:'IBM Plex Mono', monospace;
+    background:#FBFBFA;
+    color:var(--ink);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  input:focus{
+    outline:none;
+    border-color:var(--gold);
+    background:#fff;
+  }
+  .btn{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:9px;
+    background:var(--ink);
+    color:#fff;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    margin-top:6px;
+    transition:background .15s ease, transform .05s ease;
+  }
+  .btn:hover{ background:#1D2C4E; }
+  .btn:active{ transform:scale(0.99); }
+  .btn:disabled{ background:#9AA1B2; cursor:not-allowed; }
+
+  .helper{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:18px;
+    line-height:1.5;
+  }
+  .helper a{
+    color:var(--gold);
+    font-weight:600;
+    text-decoration:none;
+    border-bottom:1px solid var(--gold);
+  }
+
+  .error{
+    display:none;
+    background:var(--rust-bg);
+    color:var(--rust);
+    border:1px solid rgba(156,74,56,0.25);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:13px;
+    margin-bottom:16px;
+  }
+  .error.show{ display:block; }
+
+  .success{
+    display:none;
+    text-align:center;
+  }
+  .success.show{ display:block; }
+  .success-icon{
+    width:48px; height:48px;
+    border-radius:50%;
+    background:var(--green-bg);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 16px;
+  }
+  .success p{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    line-height:1.6;
+    margin-bottom:20px;
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+  <div class="brand">
+    <div class="seal" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#B8933F" stroke-width="1.6">
+        <path d="M12 3l7 3.5v5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5v-5L12 3z"/>
+        <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Nueva contraseña</h1>
+    <p class="subtitle">Confirma tu identidad con tu DNI y correo registrado para crear una contraseña nueva.</p>
+  </div>
+
+  <div class="card">
+    <div class="error" id="errorBox" role="alert"></div>
+
+    <form id="resetForm" novalidate>
+      <div class="field">
+        <label for="dni">DNI</label>
+        <input type="text" id="dni" inputmode="numeric" placeholder="12345678" required maxlength="15">
+      </div>
+
+      <div class="field">
+        <label for="correo">Correo registrado</label>
+        <input type="email" id="correo" placeholder="nombre@correo.com" required>
+      </div>
+
+      <div class="field">
+        <label for="password1">Nueva contraseña</label>
+        <input type="password" id="password1" placeholder="Mínimo 6 caracteres" required minlength="6">
+      </div>
+
+      <div class="field">
+        <label for="password2">Confirmar contraseña</label>
+        <input type="password" id="password2" placeholder="Repite la contraseña" required minlength="6">
+      </div>
+
+      <button type="submit" class="btn" id="btnSubmit">Guardar nueva contraseña</button>
+      <p class="helper"><a href="login.html">Volver al inicio de sesión</a></p>
+    </form>
+
+    <div class="success" id="successBox">
+      <div class="success-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E6957" stroke-width="2">
+          <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p>Tu contraseña se actualizó correctamente. Ya puedes iniciar sesión con tu DNI y tu nueva contraseña.</p>
+      <a href="login.html" class="btn" style="display:block; text-decoration:none; text-align:center; box-sizing:border-box;">Ir a iniciar sesión</a>
+    </div>
+  </div>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+
+  const form = document.getElementById('resetForm');
+  const errorBox = document.getElementById('errorBox');
+  const successBox = document.getElementById('successBox');
+  const btn = document.getElementById('btnSubmit');
+
+  function showError(msg){
+    errorBox.textContent = msg;
+    errorBox.classList.add('show');
+  }
+  function hideError(){
+    errorBox.classList.remove('show');
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    hideError();
+
+    const dni = document.getElementById('dni').value.trim();
+    const correo = document.getElementById('correo').value.trim().toLowerCase();
+    const p1 = document.getElementById('password1').value;
+    const p2 = document.getElementById('password2').value;
+
+    if(!dni || !correo || !p1 || !p2){
+      showError('Completa todos los campos.');
+      return;
+    }
+    if(p1 !== p2){
+      showError('Las contraseñas no coinciden.');
+      return;
+    }
+    if(p1.length < 6){
+      showError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+
+    try{
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'resetPassword', dni: dni, correo: correo, nuevaPassword: p1 })
+      });
+      const data = await res.json();
+
+      if(data.ok){
+        form.style.display = 'none';
+        successBox.classList.add('show');
+      } else {
+        showError(data.mensaje || 'No pudimos actualizar tu contraseña.');
+      }
+    } catch(err){
+      showError('No pudimos conectar con el servidor. Intenta nuevamente.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Guardar nueva contraseña';
+    }
+  });
+</script>
+
+</body>
+</html>
