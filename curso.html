@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EEF0EF;
+    --card: #FFFFFF;
+    --ink: #14203A;
+    --ink-soft: #4B5670;
+    --gold: #B8933F;
+    --gold-soft: #E4D6B0;
+    --green: #3E6957;
+    --green-bg: #E6EEE9;
+    --rust: #9C4A38;
+    --rust-bg: #F6E7E3;
+    --line: #DADDDA;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    color:var(--ink);
+  }
+
+  header{
+    background:var(--ink);
+    color:#fff;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .back{
+    color:#fff;
+    text-decoration:none;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+    opacity:0.85;
+  }
+  .back:hover{ opacity:1; }
+  header .titulo{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:15px;
+  }
+
+  main{
+    max-width:720px;
+    margin:0 auto;
+    padding:22px 16px 60px;
+  }
+
+  .code-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:21px;
+    margin:2px 0 16px;
+  }
+
+  /* ---------- Bloque del curso ---------- */
+  .section{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .section-title{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 12px;
+  }
+  .iframe-wrap{
+    width:100%;
+    aspect-ratio:16/10;
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#f4f4f4;
+  }
+  .iframe-wrap iframe{
+    width:100%; height:100%; border:0;
+  }
+  .fallback-link{
+    display:block;
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+  .fallback-link a{ color:var(--gold); font-weight:600; text-decoration:none; }
+
+  /* ---------- Bloque de examen ---------- */
+  .exam-status{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .badge{
+    font-size:10.5px;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:20px;
+  }
+  .badge.pendiente{ background:#EDEEF0; color:var(--ink-soft); }
+  .badge.aprobado{ background:var(--green-bg); color:var(--green); }
+  .badge.desaprobado{ background:var(--rust-bg); color:var(--rust); }
+  .badge.agotado{ background:var(--rust-bg); color:var(--rust); }
+
+  .exam-meta{
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+
+  .btn{
+    padding:12px 18px;
+    border:none;
+    border-radius:9px;
+    background:var(--ink);
+    color:#fff;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    width:100%;
+  }
+  .btn:hover{ background:#1D2C4E; }
+  .btn:disabled{ background:#B9BEC9; cursor:not-allowed; }
+
+  /* ---------- Preguntas ---------- */
+  .pregunta{
+    border-top:1px solid var(--line);
+    padding-top:16px;
+    margin-top:16px;
+  }
+  .pregunta:first-child{ border-top:none; padding-top:0; margin-top:0; }
+  .pregunta .texto{
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:10px;
+    line-height:1.4;
+  }
+  .opcion{
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+    padding:9px 10px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    margin-bottom:8px;
+    cursor:pointer;
+    font-size:13.5px;
+    line-height:1.4;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .opcion:hover{ border-color:var(--gold); }
+  .opcion.selected{ border-color:var(--gold); background:var(--gold-soft); }
+  .opcion input{ margin-top:2px; accent-color:var(--gold); flex-shrink:0; }
+
+  /* ---------- Resultado ---------- */
+  .resultado{
+    text-align:center;
+    padding:10px 0;
+  }
+  .resultado .nota-grande{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:40px;
+    margin:8px 0 4px;
+  }
+  .resultado.ok .nota-grande{ color:var(--green); }
+  .resultado.fail .nota-grande{ color:var(--rust); }
+  .resultado p{ color:var(--ink-soft); font-size:13.5px; margin:0 0 18px; }
+
+  .loading, .error-box{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    padding:30px 0;
+  }
+  .error-box{ color:var(--rust); }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="dashboard.html" class="back">← Mis cursos</a>
+  <span class="titulo">Academia Drimer</span>
+</header>
+
+<main>
+  <div id="cargando" class="loading">Cargando curso...</div>
+
+  <div id="contenido" class="hidden">
+    <div class="code-tag" id="cursoCodigo"></div>
+    <h1 id="cursoNombre"></h1>
+
+    <!-- Contenido del curso -->
+    <div class="section">
+      <p class="section-title">Contenido del curso</p>
+      <div class="iframe-wrap">
+        <iframe id="cursoIframe" title="Contenido del curso" allowfullscreen></iframe>
+      </div>
+      <p class="fallback-link">¿No puedes ver el curso aquí? <a id="linkExterno" href="#" target="_blank" rel="noopener">Ábrelo en una pestaña nueva</a></p>
+    </div>
+
+    <!-- Examen -->
+    <div class="section" id="seccionExamen">
+      <p class="section-title">Evaluación</p>
+
+      <div id="examenIntro">
+        <div class="exam-status">
+          <span class="badge" id="examBadge"></span>
+          <span class="exam-meta" id="examMeta"></span>
+        </div>
+        <button class="btn" id="btnEmpezar">Rendir examen</button>
+      </div>
+
+      <form id="examenForm" class="hidden"></form>
+      <div id="submitWrap" class="hidden">
+        <button class="btn" id="btnEnviar">Enviar examen</button>
+      </div>
+
+      <div id="examenResultado" class="resultado hidden"></div>
+    </div>
+  </div>
+
+  <div id="errorGlobal" class="error-box hidden"></div>
+</main>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+
+  const dni = sessionStorage.getItem('rdi_dni');
+  if(!dni){ window.location.href = 'login.html'; }
+
+  const params = new URLSearchParams(window.location.search);
+  const codigoCurso = params.get('codigo');
+
+  const ESTADO_INFO = {
+    'Aprobado':    { badge: 'aprobado',    texto: 'Aprobado' },
+    'Desaprobado': { badge: 'desaprobado', texto: 'Desaprobado' },
+    'Pendiente':   { badge: 'pendiente',   texto: 'Pendiente' }
+  };
+
+  let cursoActual = null;
+  let estadoActual = null;
+  let preguntasActuales = [];
+
+  async function init(){
+    if(!codigoCurso){
+      mostrarError('No se especificó un curso.');
+      return;
+    }
+    try{
+      const [resCursos, resEstado] = await Promise.all([
+        fetch(WEB_APP_URL + '?action=getCursos'),
+        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
+      ]);
+      const cursos = await resCursos.json();
+      const estados = await resEstado.json();
+
+      cursoActual = cursos.find(c => c.codigo === codigoCurso);
+      if(!cursoActual){
+        mostrarError('Curso no encontrado.');
+        return;
+      }
+      estadoActual = estados[codigoCurso] || { mejorNota: '', estado: 'Pendiente', intentosUsados: 0 };
+
+      renderCurso();
+      renderExamenIntro();
+
+      document.getElementById('cargando').classList.add('hidden');
+      document.getElementById('contenido').classList.remove('hidden');
+    } catch(err){
+      mostrarError('No pudimos cargar el curso. Recarga la página.');
+    }
+  }
+
+  function mostrarError(msg){
+    document.getElementById('cargando').classList.add('hidden');
+    const box = document.getElementById('errorGlobal');
+    box.textContent = msg;
+    box.classList.remove('hidden');
+  }
+
+  function renderCurso(){
+    document.getElementById('cursoCodigo').textContent = cursoActual.codigo;
+    document.getElementById('cursoNombre').textContent = cursoActual.nombre;
+    document.getElementById('cursoIframe').src = cursoActual.link || '';
+    document.getElementById('linkExterno').href = cursoActual.link || '#';
+  }
+
+  function renderExamenIntro(){
+    const cfg = ESTADO_INFO[estadoActual.estado] || ESTADO_INFO['Pendiente'];
+    const badge = document.getElementById('examBadge');
+    const meta = document.getElementById('examMeta');
+    const btn = document.getElementById('btnEmpezar');
+    const intentosUsados = estadoActual.intentosUsados || 0;
+    const INTENTOS_MAX = 2;
+
+    badge.className = 'badge ' + cfg.badge;
+    badge.textContent = cfg.texto;
+
+    if(estadoActual.estado === 'Aprobado'){
+      meta.textContent = 'Nota: ' + estadoActual.mejorNota + ' / 20';
+      btn.textContent = 'Ya aprobaste este curso';
+      btn.disabled = true;
+    } else if(intentosUsados >= INTENTOS_MAX){
+      badge.className = 'badge agotado';
+      badge.textContent = 'Sin intentos disponibles';
+      meta.textContent = 'Mejor nota: ' + (estadoActual.mejorNota || 0) + ' / 20 · Contacta a Talento Humano para solicitar una revisión.';
+      btn.disabled = true;
+      btn.textContent = 'Sin intentos disponibles';
+    } else {
+      meta.textContent = intentosUsados > 0
+        ? 'Intento ' + (intentosUsados + 1) + ' de ' + INTENTOS_MAX + ' · Mejor nota hasta ahora: ' + estadoActual.mejorNota
+        : 'Tienes ' + INTENTOS_MAX + ' intentos disponibles.';
+      btn.disabled = false;
+      btn.textContent = intentosUsados > 0 ? 'Rendir examen (2do intento)' : 'Rendir examen';
+    }
+  }
+
+  document.getElementById('btnEmpezar').addEventListener('click', cargarPreguntas);
+
+  async function cargarPreguntas(){
+    const btn = document.getElementById('btnEmpezar');
+    btn.disabled = true;
+    btn.textContent = 'Cargando preguntas...';
+
+    try{
+      const res = await fetch(WEB_APP_URL + '?action=getPreguntas&curso=' + encodeURIComponent(codigoCurso));
+      preguntasActuales = await res.json();
+
+      if(!preguntasActuales.length){
+        mostrarError('Este curso todavía no tiene preguntas cargadas.');
+        return;
+      }
+
+      renderFormExamen();
+      document.getElementById('examenIntro').classList.add('hidden');
+      document.getElementById('examenForm').classList.remove('hidden');
+      document.getElementById('submitWrap').classList.remove('hidden');
+    } catch(err){
+      mostrarError('No pudimos cargar las preguntas. Intenta nuevamente.');
+    }
+  }
+
+  function renderFormExamen(){
+    const form = document.getElementById('examenForm');
+    form.innerHTML = '';
+
+    preguntasActuales.forEach(function(p, idx){
+      const wrap = document.createElement('div');
+      wrap.className = 'pregunta';
+
+      let opcionesHtml = '';
+      ['A','B','C','D'].forEach(function(letra){
+        if(!p.opciones[letra]) return;
+        opcionesHtml +=
+          '<label class="opcion" data-pregunta="' + p.id + '" data-letra="' + letra + '">' +
+            '<input type="radio" name="' + p.id + '" value="' + letra + '">' +
+            '<span>' + p.opciones[letra] + '</span>' +
+          '</label>';
+      });
+
+      wrap.innerHTML =
+        '<div class="texto">' + (idx + 1) + '. ' + p.pregunta + '</div>' +
+        opcionesHtml;
+      form.appendChild(wrap);
+    });
+
+    // Resalta visualmente la opción seleccionada
+    form.querySelectorAll('.opcion').forEach(function(op){
+      op.addEventListener('click', function(){
+        const nombre = op.dataset.pregunta;
+        form.querySelectorAll('.opcion[data-pregunta="' + nombre + '"]').forEach(o => o.classList.remove('selected'));
+        op.classList.add('selected');
+      });
+    });
+  }
+
+  document.getElementById('btnEnviar').addEventListener('click', async function(){
+    const respuestas = {};
+    preguntasActuales.forEach(function(p){
+      const seleccionada = document.querySelector('input[name="' + p.id + '"]:checked');
+      if(seleccionada) respuestas[p.id] = seleccionada.value;
+    });
+
+    if(Object.keys(respuestas).length < preguntasActuales.length){
+      alert('Responde todas las preguntas antes de enviar.');
+      return;
+    }
+
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try{
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'submitExamen', dni: dni, curso: codigoCurso, respuestas: respuestas })
+      });
+      const data = await res.json();
+      mostrarResultado(data);
+    } catch(err){
+      alert('No pudimos enviar tu examen. Intenta nuevamente.');
+      btn.disabled = false;
+      btn.textContent = 'Enviar examen';
+    }
+  });
+
+  function mostrarResultado(data){
+    document.getElementById('examenForm').classList.add('hidden');
+    document.getElementById('submitWrap').classList.add('hidden');
+
+    const box = document.getElementById('examenResultado');
+    box.classList.remove('hidden');
+    box.className = 'resultado ' + (data.aprobado ? 'ok' : 'fail');
+
+    let mensajeExtra = '';
+    if(data.aprobado){
+      mensajeExtra = '¡Aprobaste el curso! Tu certificado estará disponible próximamente.';
+    } else if(data.intentosRestantes > 0){
+      mensajeExtra = 'No alcanzaste la nota mínima (13). Te queda ' + data.intentosRestantes + ' intento.';
+    } else {
+      mensajeExtra = 'No alcanzaste la nota mínima y ya usaste tus intentos disponibles. Contacta a Talento Humano.';
+    }
+
+    box.innerHTML =
+      '<div class="nota-grande">' + data.nota + '</div>' +
+      '<p>' + mensajeExtra + '</p>' +
+      '<a href="dashboard.html" class="btn" style="display:block; text-decoration:none; box-sizing:border-box;">Volver a mis cursos</a>';
+  }
+
+  init();
+</script>
+
+</body>
+</html>
