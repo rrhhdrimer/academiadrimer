@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EEF0EF;
+    --card: #FFFFFF;
+    --ink: #14203A;
+    --ink-soft: #4B5670;
+    --gold: #B8933F;
+    --gold-soft: #E4D6B0;
+    --green: #3E6957;
+    --green-bg: #E6EEE9;
+    --rust: #9C4A38;
+    --rust-bg: #F6E7E3;
+    --line: #DADDDA;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    color:var(--ink);
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--ink);
+    color:#fff;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .header-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .seal{
+    width:32px; height:32px;
+    border-radius:50%;
+    border:1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .seal svg{ width:15px; height:15px; }
+  .header-brand span{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:16px;
+  }
+  .logout{
+    background:none;
+    border:1px solid rgba(255,255,255,0.25);
+    color:#fff;
+    font-size:12px;
+    font-family:'IBM Plex Sans', sans-serif;
+    padding:6px 12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .logout:hover{ background:rgba(255,255,255,0.08); }
+
+  main{
+    max-width:720px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+  }
+
+  /* ---------- Saludo + progreso ---------- */
+  .greeting h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:22px;
+    margin:0 0 4px;
+  }
+  .greeting p{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    margin:0 0 20px;
+  }
+
+  .progress-wrap{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    margin-bottom:24px;
+  }
+  .progress-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .progress-top .label{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+  }
+  .progress-top .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--gold);
+  }
+  .bar-track{
+    width:100%;
+    height:6px;
+    background:var(--paper);
+    border-radius:20px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--gold);
+    border-radius:20px;
+    width:0%;
+    transition:width .4s ease;
+  }
+
+  /* ---------- Ruta ---------- */
+  .route-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    margin:0 0 12px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  @media (min-width:560px){
+    .grid{ grid-template-columns:1fr 1fr; }
+  }
+
+  .course-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px;
+    text-decoration:none;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:box-shadow .15s ease, transform .1s ease;
+    cursor:pointer;
+  }
+  .course-card:hover{
+    box-shadow:0 10px 24px -14px rgba(20,32,58,0.25);
+    transform:translateY(-1px);
+  }
+  .course-card .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .course-card .code{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+  }
+  .course-card h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:16px;
+    margin:2px 0 0;
+    line-height:1.25;
+  }
+
+  .badge{
+    font-size:10.5px;
+    font-weight:600;
+    padding:4px 9px;
+    border-radius:20px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .badge.pendiente{ background:#EDEEF0; color:var(--ink-soft); }
+  .badge.aprobado{ background:var(--green-bg); color:var(--green); }
+  .badge.desaprobado{ background:var(--rust-bg); color:var(--rust); }
+
+  .course-card .meta{
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .course-card .nota{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink);
+  }
+
+  .loading, .error-box{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    padding:40px 0;
+  }
+  .error-box{ color:var(--rust); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="seal" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#B8933F" stroke-width="1.6">
+        <path d="M12 3l7 3.5v5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5v-5L12 3z"/>
+        <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span>Academia Drimer</span>
+  </div>
+  <button class="logout" id="btnLogout">Cerrar sesión</button>
+</header>
+
+<main>
+  <div class="greeting">
+    <h2 id="saludoNombre">Hola</h2>
+    <p id="saludoSub">Cargando tu progreso...</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="label">Ruta Drimer Íntegro 2026</span>
+      <span class="count" id="progressCount">0 / 0</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="progressBar"></div></div>
+  </div>
+
+  <p class="route-title">Tus cursos</p>
+  <div class="grid" id="gridCursos">
+    <div class="loading">Cargando cursos...</div>
+  </div>
+</main>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+
+  const dni = sessionStorage.getItem('rdi_dni');
+  const nombre = sessionStorage.getItem('rdi_nombre');
+
+  // Si no hay sesión activa, de vuelta al login
+  if(!dni){
+    window.location.href = 'login.html';
+  }
+
+  document.getElementById('saludoNombre').textContent = 'Hola, ' + (nombre ? nombre.split(' ')[0] : '');
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
+
+  const ESTADO_INFO = {
+    'Aprobado':     { badge: 'aprobado',    texto: 'Aprobado' },
+    'Desaprobado':  { badge: 'desaprobado', texto: 'Desaprobado · queda 1 intento' },
+    'Pendiente':    { badge: 'pendiente',   texto: 'Pendiente' }
+  };
+
+  async function cargarDashboard(){
+    try{
+      const [resCursos, resEstado] = await Promise.all([
+        fetch(WEB_APP_URL + '?action=getCursos'),
+        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
+      ]);
+      const cursos = await resCursos.json();
+      const estado = await resEstado.json();
+
+      renderCursos(cursos, estado);
+    } catch(err){
+      document.getElementById('gridCursos').innerHTML =
+        '<div class="error-box">No pudimos cargar tus cursos. Recarga la página.</div>';
+    }
+  }
+
+  function renderCursos(cursos, estado){
+    const grid = document.getElementById('gridCursos');
+    grid.innerHTML = '';
+
+    let aprobados = 0;
+
+    cursos.forEach(function(curso){
+      const info = estado[curso.codigo];
+      const estadoTexto = info ? info.estado : 'Pendiente';
+      const cfg = ESTADO_INFO[estadoTexto] || ESTADO_INFO['Pendiente'];
+
+      if(estadoTexto === 'Aprobado') aprobados++;
+
+      const card = document.createElement('a');
+      card.href = 'curso.html?codigo=' + encodeURIComponent(curso.codigo);
+      card.className = 'course-card';
+
+      let notaHtml = '';
+      if(info && info.mejorNota){
+        notaHtml = '<span class="nota">Nota: ' + info.mejorNota + ' / 20</span>';
+      }
+
+      card.innerHTML =
+        '<div class="top">' +
+          '<div><div class="code">' + curso.codigo + '</div><h3>' + curso.nombre + '</h3></div>' +
+          '<span class="badge ' + cfg.badge + '">' + cfg.texto + '</span>' +
+        '</div>' +
+        '<div class="meta">' + curso.horas + ' hora(s) · ' + notaHtml + '</div>';
+
+      grid.appendChild(card);
+    });
+
+    document.getElementById('saludoSub').textContent =
+      aprobados === cursos.length
+        ? '¡Completaste toda la Ruta Drimer Íntegro 2026!'
+        : 'Te faltan ' + (cursos.length - aprobados) + ' de ' + cursos.length + ' cursos por aprobar.';
+
+    document.getElementById('progressCount').textContent = aprobados + ' / ' + cursos.length;
+    document.getElementById('progressBar').style.width =
+      (cursos.length ? (aprobados / cursos.length * 100) : 0) + '%';
+  }
+
+  cargarDashboard();
+</script>
+
+</body>
+</html>
