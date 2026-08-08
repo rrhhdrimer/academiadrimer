@@ -212,6 +212,52 @@
   .reply-box{ display:flex; gap:8px; margin-top:14px; }
   .reply-box textarea{ flex:1; min-height:44px; }
 
+  .bubble-reply-btn{
+    display:inline-block;
+    margin-top:6px;
+    font-size:10.5px;
+    font-weight:600;
+    opacity:0.6;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .bubble-reply-btn:hover{ opacity:1; }
+
+  .quote-preview{
+    display:flex; align-items:flex-start; gap:10px;
+    background:var(--gold-soft);
+    border-left:3px solid var(--gold);
+    border-radius:8px;
+    padding:9px 12px;
+    margin-top:14px;
+    font-size:12px;
+  }
+  .quote-preview-text{ flex:1; min-width:0; }
+  .quote-preview-tag{
+    display:block;
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:10px;
+    color:var(--ink);
+    margin-bottom:2px;
+  }
+  .quote-preview-close{
+    background:none; border:none; cursor:pointer; color:var(--ink-soft);
+    font-size:13px; line-height:1; padding:2px;
+  }
+
+  .quoted-block{
+    display:block;
+    border-left:2.5px solid rgba(255,255,255,0.4);
+    padding:5px 10px;
+    margin-bottom:8px;
+    font-size:12px;
+    opacity:0.8;
+    line-height:1.4;
+  }
+  .bubble.admin .quoted-block{ border-left-color:var(--gold); }
+  .quoted-block .qtag{ display:block; font-weight:700; font-size:9.5px; margin-bottom:1px; }
+
   .empty, .loading, .error-box{ text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 0; }
   .error-box{ color:var(--rust); }
   .hidden{ display:none !important; }
@@ -308,6 +354,13 @@
         <span class="back-link" id="btnVolverBandeja">← Volver a la bandeja</span>
         <div class="thread-header" id="hiloNombre">—</div>
         <div class="thread" id="threadAdmin"></div>
+        <div class="quote-preview hidden" id="quotePreview">
+          <div class="quote-preview-text">
+            <span class="quote-preview-tag" id="quotePreviewTag"></span>
+            <span id="quotePreviewText"></span>
+          </div>
+          <button class="quote-preview-close" id="btnCancelarCita">✕</button>
+        </div>
         <div class="reply-box">
           <textarea id="respuestaTexto" placeholder="Escribe tu respuesta..."></textarea>
           <button class="btn" id="btnResponder">Enviar</button>
@@ -355,8 +408,45 @@
            f.toLocaleTimeString('es-PE', { hour:'2-digit', minute:'2-digit' });
   }
 
+  let citando = null; // { curso, texto }
+
   function iniciales(nombreCompleto){
     return (nombreCompleto || '?').split(' ').filter(Boolean).slice(0,2).map(p => p[0]).join('').toUpperCase();
+  }
+
+  function activarCita(curso, texto){
+    citando = { curso: curso || 'General', texto: texto };
+    document.getElementById('quotePreviewTag').textContent = citando.curso;
+    document.getElementById('quotePreviewText').textContent =
+      texto.length > 80 ? texto.slice(0, 80) + '…' : texto;
+    document.getElementById('quotePreview').classList.remove('hidden');
+    document.getElementById('respuestaTexto').focus();
+  }
+
+  function cancelarCita(){
+    citando = null;
+    document.getElementById('quotePreview').classList.add('hidden');
+  }
+
+  document.getElementById('btnCancelarCita').addEventListener('click', cancelarCita);
+
+  // Codifica la cita dentro del texto del mensaje (sin cambiar nada en el backend)
+  function armarMensajeConCita(texto){
+    if(!citando) return { mensaje: texto, curso: '' };
+    const citaCodificada = '__QUOTE__' + JSON.stringify({ curso: citando.curso, texto: citando.texto }) + '__ENDQUOTE__';
+    return { mensaje: citaCodificada + texto, curso: citando.curso === 'General' ? '' : citando.curso };
+  }
+
+  // Extrae la cita (si existe) de un mensaje guardado, para mostrarla como bloque citado
+  function separarCita(mensaje){
+    const match = mensaje.match(/^__QUOTE__(.*?)__ENDQUOTE__([\s\S]*)$/);
+    if(!match) return { cita: null, texto: mensaje };
+    try{
+      const cita = JSON.parse(match[1]);
+      return { cita: cita, texto: match[2] };
+    } catch(e){
+      return { cita: null, texto: mensaje };
+    }
   }
 
   function mostrarToast(texto){
@@ -444,11 +534,13 @@
         if(!texto) return;
         const btn = this;
         btn.disabled = true;
+        const armado = armarMensajeConCita(texto);
         await fetch(WEB_APP_URL, {
           method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify({ action:'enviarMensaje', dni: dniUsuario, curso:'', remitente:'admin', mensaje: texto })
+          body: JSON.stringify({ action:'enviarMensaje', dni: dniUsuario, curso: armado.curso, remitente:'admin', mensaje: armado.mensaje })
         });
         document.getElementById('respuestaTexto').value = '';
+        cancelarCita();
         btn.disabled = false;
         const res2 = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dniUsuario));
         renderThread('threadAdmin', await res2.json());
@@ -529,16 +621,39 @@
       return;
     }
     cont.innerHTML = '';
+    const permiteCitar = (contenedorId === 'threadAdmin');
+
     mensajes.forEach(function(m){
+      const { cita, texto } = separarCita(m.mensaje);
       const bubble = document.createElement('div');
       bubble.className = 'bubble ' + m.remitente;
       const etiquetaCurso = m.curso ? m.curso : 'General';
+
+      let citaHtml = '';
+      if(cita){
+        citaHtml = '<span class="quoted-block"><span class="qtag">' + cita.curso + '</span>' +
+          (cita.texto.length > 90 ? cita.texto.slice(0,90) + '…' : cita.texto) + '</span>';
+      }
+
       bubble.innerHTML =
         '<span class="tag">' + (m.remitente === 'admin' ? 'Talento Humano' : etiquetaCurso) + '</span>' +
-        m.mensaje +
-        '<span class="fecha">' + formatearFecha(m.fecha) + '</span>';
+        citaHtml +
+        texto +
+        '<span class="fecha">' + formatearFecha(m.fecha) + '</span>' +
+        (permiteCitar ? '<span class="bubble-reply-btn" data-curso="' + etiquetaCurso + '">Responder</span>' : '');
+
       cont.appendChild(bubble);
     });
+
+    if(permiteCitar){
+      cont.querySelectorAll('.bubble-reply-btn').forEach(function(btn, idx){
+        btn.addEventListener('click', function(){
+          const { texto } = separarCita(mensajes[idx].mensaje);
+          activarCita(btn.dataset.curso, texto);
+        });
+      });
+    }
+
     cont.scrollTop = cont.scrollHeight;
   }
 </script>
