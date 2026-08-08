@@ -169,6 +169,47 @@
     margin:0 0 22px;
   }
 
+  /* ---------- Perfil del estudiante ---------- */
+  .profile-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:20px;
+  }
+  .profile-card .pname{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:17px;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+  .profile-card .pmeta{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+  .profile-card .pmeta span:not(:last-child)::after{
+    content:"·";
+    margin:0 7px;
+    color:var(--line);
+  }
+
+  /* ---------- Etiqueta de ruta/programa ---------- */
+  .route-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.02em;
+    color:var(--gold);
+    background:var(--gold-soft);
+    padding:2px 8px;
+    border-radius:10px;
+    margin-top:4px;
+  }
+
   /* ---------- Resumen general ---------- */
   .summary-row{
     display:grid;
@@ -318,7 +359,14 @@
     <main>
       <div class="greeting">
         <h2>Calificaciones</h2>
-        <p>Tus notas y estado en cada curso de la Ruta Drimer Íntegro 2026.</p>
+        <p>Historial completo de tus calificaciones en Academia Drimer.</p>
+      </div>
+
+      <div class="profile-card">
+        <div class="pname" id="perfilNombre">—</div>
+        <div class="pmeta">
+          <span id="perfilDni">DNI —</span><span id="perfilPuesto">—</span><span id="perfilArea">—</span><span id="perfilGerencia">—</span>
+        </div>
       </div>
 
       <div class="summary-row" id="summaryRow"></div>
@@ -344,6 +392,17 @@
 
   document.getElementById('sidebarNombre').textContent = nombre || '—';
   document.getElementById('sidebarRol').textContent = rol || 'estudiante';
+
+  const dniStorage = dni;
+  const puesto = sessionStorage.getItem('rdi_puesto');
+  const area = sessionStorage.getItem('rdi_area');
+  const gerencia = sessionStorage.getItem('rdi_gerencia');
+
+  document.getElementById('perfilNombre').textContent = nombre || '—';
+  document.getElementById('perfilDni').textContent = 'DNI ' + dniStorage;
+  document.getElementById('perfilPuesto').textContent = puesto || 'Sin puesto registrado';
+  document.getElementById('perfilArea').textContent = area || 'Sin área registrada';
+  document.getElementById('perfilGerencia').textContent = gerencia || 'Sin gerencia registrada';
 
   document.getElementById('btnLogout').addEventListener('click', function(){
     sessionStorage.clear();
@@ -433,6 +492,7 @@
         '<div class="info">' +
           '<div class="code">' + curso.codigo + '</div>' +
           '<div class="name">' + curso.nombre + '</div>' +
+          (curso.ruta ? '<div class="route-tag">' + curso.ruta + '</div>' : '') +
         '</div>' +
         '<div class="right">' +
           notaHtml +
