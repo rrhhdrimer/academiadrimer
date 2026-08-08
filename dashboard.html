@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Academia Drimer</title>
+<title>Cursos — Academia Drimer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -30,280 +30,168 @@
     color:var(--ink);
   }
   a{ text-decoration:none; color:inherit; }
+  button{ font-family:'Poppins', sans-serif; }
 
   /* ============================================================
-     SHELL: sidebar (PC) + topbar con hamburguesa (celular)
+     SHELL
      ============================================================ */
   .app-shell{ display:flex; min-height:100vh; }
-
   .sidebar{
-    width:var(--sidebar-w);
-    flex-shrink:0;
-    background:var(--ink);
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    position:fixed;
-    top:0; left:0; bottom:0;
-    transform:translateX(-100%);
-    transition:transform .25s ease;
-    z-index:40;
+    width:var(--sidebar-w); flex-shrink:0; background:var(--ink); color:#fff;
+    display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0;
+    transform:translateX(-100%); transition:transform .25s ease; z-index:40;
   }
   .sidebar.open{ transform:translateX(0); }
-  @media (min-width:860px){
-    .sidebar{ position:sticky; transform:none; }
-  }
-
-  .sidebar-brand{
-    display:flex; align-items:center; gap:10px;
-    padding:20px 20px 18px;
-    border-bottom:1px solid rgba(255,255,255,0.08);
-  }
-  .seal{
-    width:30px; height:30px;
-    border-radius:50%;
-    border:1.5px solid var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0;
-  }
+  @media (min-width:860px){ .sidebar{ position:sticky; transform:none; } }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:20px 20px 18px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .seal{ width:30px; height:30px; border-radius:50%; border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .seal svg{ width:14px; height:14px; }
-  .sidebar-brand span{
-    font-family:'Poppins', sans-serif;
-    font-weight:600;
-    font-size:15.5px;
-  }
-
-  .sidebar-user{
-    padding:16px 20px;
-    border-bottom:1px solid rgba(255,255,255,0.08);
-  }
+  .sidebar-brand span{ font-weight:600; font-size:15.5px; }
+  .sidebar-user{ padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
   .sidebar-user .name{ font-size:13.5px; font-weight:600; }
-  .sidebar-user .role{
-    font-family:'Poppins', sans-serif;
-    font-size:10px;
-    color:var(--gold);
-    text-transform:uppercase;
-    letter-spacing:0.04em;
-    margin-top:2px;
-  }
-
+  .sidebar-user .role{ font-size:10px; color:var(--gold); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
   .sidebar-nav{ flex:1; padding:14px 12px; display:flex; flex-direction:column; gap:2px; }
-  .nav-item{
-    display:flex; align-items:center; gap:10px;
-    padding:11px 12px;
-    border-radius:8px;
-    font-size:13.5px;
-    font-weight:500;
-    color:rgba(255,255,255,0.75);
-    cursor:pointer;
-  }
+  .nav-item{ display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:8px; font-size:13.5px; font-weight:500; color:rgba(255,255,255,0.75); cursor:pointer; }
   .nav-item svg{ width:17px; height:17px; flex-shrink:0; }
   .nav-item:hover{ background:rgba(255,255,255,0.06); color:#fff; }
   .nav-item.active{ background:rgba(184,147,63,0.18); color:#fff; }
   .nav-item.active svg{ stroke:var(--gold); }
-  .nav-item.disabled{ cursor:default; color:rgba(255,255,255,0.32); }
-  .nav-item.disabled:hover{ background:none; color:rgba(255,255,255,0.32); }
-  .nav-item .soon{
-    margin-left:auto;
-    font-family:'Poppins', sans-serif;
-    font-size:8.5px;
-    background:rgba(255,255,255,0.08);
-    padding:2px 6px;
-    border-radius:10px;
-    letter-spacing:0.03em;
-  }
-
-  .nav-item .nav-badge{
-    margin-left:auto;
-    background:var(--rust);
-    color:#fff;
-    font-size:10px;
-    font-weight:700;
-    min-width:17px;
-    height:17px;
-    border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
-    padding:0 5px;
-  }
-
+  .nav-item .nav-badge{ margin-left:auto; background:var(--rust); color:#fff; font-size:10px; font-weight:700; min-width:17px; height:17px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0 5px; }
   .sidebar-footer{ padding:14px 20px 18px; border-top:1px solid rgba(255,255,255,0.08); }
-  .logout{
-    width:100%;
-    background:none;
-    border:1px solid rgba(255,255,255,0.2);
-    color:#fff;
-    font-size:12px;
-    font-family:'Poppins', sans-serif;
-    padding:9px;
-    border-radius:7px;
-    cursor:pointer;
-  }
+  .logout{ width:100%; background:none; border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:12px; padding:9px; border-radius:7px; cursor:pointer; }
   .logout:hover{ background:rgba(255,255,255,0.08); }
-
-  .overlay{
-    display:none;
-    position:fixed; inset:0;
-    background:rgba(20,32,58,0.45);
-    z-index:30;
-  }
+  .overlay{ display:none; position:fixed; inset:0; background:rgba(20,32,58,0.45); z-index:30; }
   .overlay.show{ display:block; }
-
   .main-area{ flex:1; min-width:0; }
-
-  .topbar{
-    display:flex; align-items:center; gap:12px;
-    background:var(--ink);
-    color:#fff;
-    padding:16px 18px;
-  }
+  .topbar{ display:flex; align-items:center; gap:12px; background:var(--ink); color:#fff; padding:16px 18px; }
   @media (min-width:860px){ .topbar{ display:none; } }
-  .hamburger{
-    background:none; border:none; color:#fff;
-    font-size:20px; cursor:pointer; line-height:1;
-    padding:2px 4px;
-  }
-  .topbar-title{ font-family:'Poppins', sans-serif; font-weight:600; font-size:15px; }
+  .hamburger{ background:none; border:none; color:#fff; font-size:20px; cursor:pointer; line-height:1; padding:2px 4px; }
+  .topbar-title{ font-weight:600; font-size:15px; }
 
-  main{
-    max-width:760px;
-    margin:0 auto;
-    padding:28px 18px 60px;
-  }
+  main{ max-width:1080px; margin:0 auto; padding:26px 18px 60px; }
 
-  /* ---------- Saludo + progreso ---------- */
-  .greeting h2{
-    font-family:'Poppins', sans-serif;
-    font-weight:600;
-    font-size:22px;
-    margin:0 0 4px;
-  }
-  .greeting p{
-    color:var(--ink-soft);
-    font-size:13.5px;
-    margin:0 0 20px;
-  }
+  /* ---------- Encabezado ---------- */
+  .page-head{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:4px; }
+  .page-head h2{ font-weight:600; font-size:23px; margin:0; }
+  .progress-mini{ font-size:12.5px; color:var(--ink-soft); }
+  .progress-mini strong{ color:var(--gold); }
+  main > p.subtitle{ color:var(--ink-soft); font-size:13px; margin:2px 0 20px; }
 
-  .progress-wrap{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:16px 18px;
-    margin-bottom:24px;
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:10px 12px; margin-bottom:14px;
   }
-  .progress-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:10px;
+  .view-toggle{ display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; flex-shrink:0; }
+  .view-toggle button{
+    width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+    background:var(--card); border:none; cursor:pointer; color:var(--ink-soft);
   }
-  .progress-top .label{
-    font-size:12.5px;
-    font-weight:600;
-    color:var(--ink-soft);
-  }
-  .progress-top .count{
-    font-family:'Poppins', sans-serif;
-    font-size:13px;
-    color:var(--gold);
-  }
-  .bar-track{
-    width:100%;
-    height:6px;
-    background:var(--paper);
-    border-radius:20px;
-    overflow:hidden;
-  }
-  .bar-fill{
-    height:100%;
-    background:var(--gold);
-    border-radius:20px;
-    width:0%;
-    transition:width .4s ease;
-  }
+  .view-toggle button.active{ background:var(--ink); color:#fff; }
+  .view-toggle button svg{ width:16px; height:16px; }
+  .view-toggle button + button{ border-left:1px solid var(--line); }
 
-  /* ---------- Ruta ---------- */
-  .route-title{
-    font-family:'Poppins', sans-serif;
-    font-size:11px;
-    letter-spacing:0.05em;
-    color:var(--ink-soft);
-    text-transform:uppercase;
-    margin:0 0 12px;
+  .search-wrap{ flex:1; min-width:180px; position:relative; }
+  .search-wrap svg{ position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--ink-soft); }
+  .search-wrap input{
+    width:100%; padding:9px 12px 9px 33px; border:1px solid var(--line); border-radius:8px;
+    font-size:13px; font-family:'Poppins', sans-serif; background:#FBFBFA; color:var(--ink);
   }
+  .search-wrap input:focus{ outline:none; border-color:var(--gold); background:#fff; }
 
-  .grid{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:12px;
-    margin-bottom:8px;
+  select{
+    padding:9px 30px 9px 12px; border:1px solid var(--line); border-radius:8px;
+    font-size:12.5px; font-family:'Poppins', sans-serif; color:var(--ink); background:#FBFBFA;
+    cursor:pointer; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234B5670' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 11px center;
   }
-  @media (min-width:560px){
-    .grid{ grid-template-columns:1fr 1fr; }
+  select:focus{ outline:none; border-color:var(--gold); }
+
+  .results-count{ font-size:12px; color:var(--ink-soft); margin:2px 0 16px; }
+
+  /* ---------- Agrupación por periodo ---------- */
+  .period-title{
+    font-size:12px; font-weight:700; color:var(--ink-soft);
+    letter-spacing:0.03em; margin:22px 0 12px;
   }
+  .period-title:first-of-type{ margin-top:4px; }
+
+  /* ---------- Vista grid ---------- */
+  .cards-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width:640px){ .cards-grid{ grid-template-columns:1fr 1fr; } }
+  @media (min-width:960px){ .cards-grid{ grid-template-columns:1fr 1fr 1fr 1fr; } }
 
   .course-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:18px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+    background:var(--card); border:1px solid var(--line); border-radius:13px;
+    overflow:hidden; display:flex; flex-direction:column; cursor:pointer;
     transition:box-shadow .15s ease, transform .1s ease;
-    cursor:pointer;
   }
-  .course-card:hover{
-    box-shadow:0 10px 24px -14px rgba(20,32,58,0.25);
-    transform:translateY(-1px);
-  }
-  .course-card .top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:8px;
-  }
-  .course-card .code{
-    font-family:'Poppins', sans-serif;
-    font-size:10.5px;
-    color:var(--ink-soft);
-  }
-  .course-card h3{
-    font-family:'Poppins', sans-serif;
-    font-weight:600;
-    font-size:16px;
-    margin:2px 0 0;
-    line-height:1.25;
-  }
+  .course-card:hover{ box-shadow:0 12px 26px -14px rgba(20,32,58,0.28); transform:translateY(-1px); }
 
-  .badge{
-    font-size:10.5px;
-    font-weight:600;
-    padding:4px 9px;
-    border-radius:20px;
-    white-space:nowrap;
-    flex-shrink:0;
+  .card-image{ position:relative; aspect-ratio:16/10; background:var(--ink); overflow:hidden; }
+  .card-image img{ width:100%; height:100%; object-fit:cover; }
+  .card-image .placeholder{
+    width:100%; height:100%;
+    background:linear-gradient(135deg, #14203A 0%, #24365C 100%);
+    display:flex; align-items:center; justify-content:center;
   }
-  .badge.pendiente{ background:#EDEEF0; color:var(--ink-soft); }
-  .badge.aprobado{ background:var(--green-bg); color:var(--green); }
-  .badge.desaprobado{ background:var(--rust-bg); color:var(--rust); }
+  .card-image .placeholder svg{ width:34px; height:34px; opacity:0.35; }
 
-  .course-card .meta{
-    font-size:12px;
-    color:var(--ink-soft);
+  .tipo-badge{
+    position:absolute; left:9px; bottom:9px;
+    display:flex; align-items:center; gap:4px;
+    font-size:9.5px; font-weight:700; letter-spacing:0.02em; text-transform:uppercase;
+    padding:4px 9px; border-radius:20px; color:#fff;
+    background:rgba(20,32,58,0.72); backdrop-filter:blur(2px);
   }
-  .course-card .nota{
-    font-family:'Poppins', sans-serif;
-    font-size:12px;
-    color:var(--ink);
-  }
+  .tipo-badge.libre{ background:rgba(62,105,87,0.82); }
+  .tipo-badge svg{ width:10px; height:10px; }
 
-  .loading, .error-box{
-    text-align:center;
-    color:var(--ink-soft);
-    font-size:13px;
-    padding:40px 0;
+  .card-body{ padding:13px 14px 12px; display:flex; flex-direction:column; gap:5px; flex:1; }
+  .card-programa{ font-size:9.5px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.03em; min-height:11px; }
+  .card-nombre{ font-weight:600; font-size:14px; line-height:1.32; color:var(--ink); }
+
+  .status-badge{ align-self:flex-start; font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; margin-top:2px; }
+  .status-badge.pendiente{ background:#EDEEF0; color:var(--ink-soft); }
+  .status-badge.aprobado{ background:var(--green-bg); color:var(--green); }
+  .status-badge.desaprobado{ background:var(--rust-bg); color:var(--rust); }
+
+  .card-footer{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:8px; }
+  .card-profesor{ font-size:11px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* ---------- Vista lista ---------- */
+  .cards-list{ display:flex; flex-direction:column; gap:8px; }
+  .course-row{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:10px 14px; display:flex; align-items:center; gap:14px; cursor:pointer;
   }
+  .course-row:hover{ border-color:var(--gold); }
+  .row-thumb{
+    width:52px; height:52px; border-radius:9px; flex-shrink:0; overflow:hidden;
+    background:linear-gradient(135deg, #14203A 0%, #24365C 100%);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .row-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .row-thumb svg{ width:18px; height:18px; opacity:0.4; color:#fff; }
+  .row-info{ flex:1; min-width:0; }
+  .row-programa{ font-size:9px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.03em; }
+  .row-nombre{ font-weight:600; font-size:13.5px; }
+  .row-meta{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+  .row-right{ display:flex; align-items:center; gap:12px; flex-shrink:0; }
+
+  .empty, .loading, .error-box{ text-align:center; color:var(--ink-soft); font-size:13px; padding:50px 0; }
   .error-box{ color:var(--rust); }
+
+  /* ---------- Paginación ---------- */
+  .pagination{ display:flex; align-items:center; justify-content:center; gap:6px; margin-top:26px; }
+  .page-btn{
+    min-width:30px; height:30px; padding:0 8px; border:1px solid var(--line); background:var(--card);
+    border-radius:7px; font-size:12.5px; cursor:pointer; color:var(--ink);
+  }
+  .page-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .page-btn:disabled{ opacity:0.4; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -360,23 +248,51 @@
     </header>
 
     <main>
-      <div class="greeting">
-        <h2 id="saludoNombre">Hola</h2>
-        <p id="saludoSub">Cargando tu progreso...</p>
+      <div class="page-head">
+        <h2>Cursos</h2>
+        <span class="progress-mini" id="progressMini"></span>
       </div>
+      <p class="subtitle">Todos tus cursos y programas en Academia Drimer.</p>
 
-      <div class="progress-wrap">
-        <div class="progress-top">
-          <span class="label">Ruta Drimer Íntegro 2026</span>
-          <span class="count" id="progressCount">0 / 0</span>
+      <div class="toolbar">
+        <div class="view-toggle">
+          <button id="btnViewGrid" class="active" aria-label="Vista de cuadrícula">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </button>
+          <button id="btnViewList" aria-label="Vista de lista">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </button>
         </div>
-        <div class="bar-track"><div class="bar-fill" id="progressBar"></div></div>
+
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="inputBuscar" placeholder="Busque sus cursos">
+        </div>
+
+        <select id="selectPeriodo">
+          <option value="">Todos los periodos</option>
+        </select>
+
+        <select id="selectFiltro">
+          <option value="">Todos los cursos</option>
+          <option value="programa">Programa</option>
+          <option value="suelto">Curso suelto</option>
+        </select>
+
+        <select id="selectPorPagina">
+          <option value="12">12 por página</option>
+          <option value="25">25 por página</option>
+          <option value="50">50 por página</option>
+        </select>
       </div>
 
-      <p class="route-title">Tus cursos</p>
-      <div class="grid" id="gridCursos">
+      <p class="results-count" id="resultsCount"></p>
+
+      <div id="contenedorCursos">
         <div class="loading">Cargando cursos...</div>
       </div>
+
+      <div class="pagination" id="pagination"></div>
     </main>
   </div>
 
@@ -389,11 +305,8 @@
   const nombre = sessionStorage.getItem('rdi_nombre');
   const rol = sessionStorage.getItem('rdi_rol');
 
-  if(!dni){
-    window.location.href = 'login.html';
-  }
+  if(!dni){ window.location.href = 'login.html'; }
 
-  document.getElementById('saludoNombre').textContent = 'Hola, ' + (nombre ? nombre.split(' ')[0] : '');
   document.getElementById('sidebarNombre').textContent = nombre || '—';
   document.getElementById('sidebarRol').textContent = rol || 'estudiante';
 
@@ -402,16 +315,13 @@
     window.location.href = 'login.html';
   });
 
-  // ---------- Menú hamburguesa (celular) ----------
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
   document.getElementById('btnHamburger').addEventListener('click', function(){
-    sidebar.classList.add('open');
-    overlay.classList.add('show');
+    sidebar.classList.add('open'); overlay.classList.add('show');
   });
   overlay.addEventListener('click', function(){
-    sidebar.classList.remove('open');
-    overlay.classList.remove('show');
+    sidebar.classList.remove('open'); overlay.classList.remove('show');
   });
 
   async function actualizarBadgeMensajes(){
@@ -431,73 +341,265 @@
   }
   actualizarBadgeMensajes();
 
+  // ============================================================
+  // ESTADO
+  // ============================================================
+  let todosLosCursos = [];
+  let estadoUsuario = {};
+  let vistaActual = 'grid';
+  let paginaActual = 1;
 
-  // ---------- Cursos ----------
   const ESTADO_INFO = {
-    'Aprobado':     { badge: 'aprobado',    texto: 'Aprobado' },
-    'Desaprobado':  { badge: 'desaprobado', texto: 'Desaprobado · queda 1 intento' },
-    'Pendiente':    { badge: 'pendiente',   texto: 'Pendiente' }
+    'Aprobado':     { badge:'aprobado',    texto:'Aprobado' },
+    'Desaprobado':  { badge:'desaprobado', texto:'Desaprobado' },
+    'Pendiente':    { badge:'pendiente',   texto:'Pendiente' }
   };
 
-  async function cargarDashboard(){
+  const ICONO_LIBRO = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+  const ICONO_CANDADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+  const ICONO_ESTRELLA_LIBRE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.7 5.9 6.3.6-4.8 4.3 1.4 6.2L12 16.9 6.4 20l1.4-6.2-4.8-4.3 6.3-.6z"/></svg>';
+
+  async function init(){
     try{
       const [resCursos, resEstado] = await Promise.all([
         fetch(WEB_APP_URL + '?action=getCursos'),
         fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
       ]);
-      const cursos = await resCursos.json();
-      const estado = await resEstado.json();
+      todosLosCursos = await resCursos.json();
+      estadoUsuario = await resEstado.json();
 
-      renderCursos(cursos, estado);
+      poblarPeriodos();
+      renderProgresoMini();
+      aplicarFiltrosYRenderizar();
     } catch(err){
-      document.getElementById('gridCursos').innerHTML =
-        '<div class="error-box">No pudimos cargar tus cursos. Recarga la página.</div>';
+      document.getElementById('contenedorCursos').innerHTML = '<div class="error-box">No pudimos cargar tus cursos. Recarga la página.</div>';
     }
   }
 
-  function renderCursos(cursos, estado){
-    const grid = document.getElementById('gridCursos');
-    grid.innerHTML = '';
-
+  function renderProgresoMini(){
     let aprobados = 0;
-
-    cursos.forEach(function(curso){
-      const info = estado[curso.codigo];
-      const estadoTexto = info ? info.estado : 'Pendiente';
-      const cfg = ESTADO_INFO[estadoTexto] || ESTADO_INFO['Pendiente'];
-
-      if(estadoTexto === 'Aprobado') aprobados++;
-
-      const card = document.createElement('a');
-      card.href = 'curso.html?codigo=' + encodeURIComponent(curso.codigo);
-      card.className = 'course-card';
-
-      let notaHtml = '';
-      if(info && info.mejorNota){
-        notaHtml = '<span class="nota">Nota: ' + info.mejorNota + ' / 20</span>';
-      }
-
-      card.innerHTML =
-        '<div class="top">' +
-          '<div><div class="code">' + curso.codigo + '</div><h3>' + curso.nombre + '</h3></div>' +
-          '<span class="badge ' + cfg.badge + '">' + cfg.texto + '</span>' +
-        '</div>' +
-        '<div class="meta">' + curso.horas + ' hora(s) · ' + notaHtml + '</div>';
-
-      grid.appendChild(card);
+    todosLosCursos.forEach(function(c){
+      if(estadoUsuario[c.codigo] && estadoUsuario[c.codigo].estado === 'Aprobado') aprobados++;
     });
-
-    document.getElementById('saludoSub').textContent =
-      aprobados === cursos.length
-        ? '¡Completaste toda la Ruta Drimer Íntegro 2026!'
-        : 'Te faltan ' + (cursos.length - aprobados) + ' de ' + cursos.length + ' cursos por aprobar.';
-
-    document.getElementById('progressCount').textContent = aprobados + ' / ' + cursos.length;
-    document.getElementById('progressBar').style.width =
-      (cursos.length ? (aprobados / cursos.length * 100) : 0) + '%';
+    document.getElementById('progressMini').innerHTML =
+      '<strong>' + aprobados + '</strong> / ' + todosLosCursos.length + ' completados';
   }
 
-  cargarDashboard();
+  function poblarPeriodos(){
+    const anios = new Set();
+    todosLosCursos.forEach(function(c){
+      if(c.fechaInicio) anios.add(new Date(c.fechaInicio).getFullYear());
+    });
+    const select = document.getElementById('selectPeriodo');
+    Array.from(anios).sort().forEach(function(a){
+      const opt = document.createElement('option');
+      opt.value = a; opt.textContent = a;
+      select.appendChild(opt);
+    });
+  }
+
+  // ============================================================
+  // FILTROS
+  // ============================================================
+  function obtenerCursosFiltrados(){
+    const texto = document.getElementById('inputBuscar').value.trim().toLowerCase();
+    const periodo = document.getElementById('selectPeriodo').value;
+    const filtroTipo = document.getElementById('selectFiltro').value;
+
+    return todosLosCursos.filter(function(c){
+      if(texto && !c.nombre.toLowerCase().includes(texto)) return false;
+      if(periodo && (!c.fechaInicio || String(new Date(c.fechaInicio).getFullYear()) !== periodo)) return false;
+      if(filtroTipo === 'programa' && !c.ruta) return false;
+      if(filtroTipo === 'suelto' && c.ruta) return false;
+      return true;
+    });
+  }
+
+  function agruparPorPeriodo(cursos){
+    const grupos = {};
+    cursos.forEach(function(c){
+      const key = c.fechaInicio ? String(new Date(c.fechaInicio).getFullYear()) : 'Sin fecha';
+      if(!grupos[key]) grupos[key] = [];
+      grupos[key].push(c);
+    });
+    return grupos;
+  }
+
+  function aplicarFiltrosYRenderizar(){
+    paginaActual = 1;
+    renderizarPagina();
+  }
+
+  function renderizarPagina(){
+    const filtrados = obtenerCursosFiltrados();
+    const porPagina = parseInt(document.getElementById('selectPorPagina').value, 10);
+    const totalPaginas = Math.max(1, Math.ceil(filtrados.length / porPagina));
+    if(paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    const inicio = (paginaActual - 1) * porPagina;
+    const paginaCursos = filtrados.slice(inicio, inicio + porPagina);
+
+    document.getElementById('resultsCount').textContent =
+      filtrados.length + (filtrados.length === 1 ? ' resultado' : ' resultados');
+
+    renderCursos(paginaCursos);
+    renderPaginacion(totalPaginas, filtrados.length);
+  }
+
+  function renderPaginacion(totalPaginas, totalItems){
+    const cont = document.getElementById('pagination');
+    cont.innerHTML = '';
+    if(totalPaginas <= 1) return;
+
+    const btnPrev = document.createElement('button');
+    btnPrev.className = 'page-btn'; btnPrev.textContent = '‹';
+    btnPrev.disabled = paginaActual === 1;
+    btnPrev.addEventListener('click', function(){ paginaActual--; renderizarPagina(); });
+    cont.appendChild(btnPrev);
+
+    for(let p = 1; p <= totalPaginas; p++){
+      const btn = document.createElement('button');
+      btn.className = 'page-btn' + (p === paginaActual ? ' active' : '');
+      btn.textContent = p;
+      btn.addEventListener('click', function(){ paginaActual = p; renderizarPagina(); });
+      cont.appendChild(btn);
+    }
+
+    const btnNext = document.createElement('button');
+    btnNext.className = 'page-btn'; btnNext.textContent = '›';
+    btnNext.disabled = paginaActual === totalPaginas;
+    btnNext.addEventListener('click', function(){ paginaActual++; renderizarPagina(); });
+    cont.appendChild(btnNext);
+  }
+
+  // ============================================================
+  // RENDER DE TARJETAS
+  // ============================================================
+  function renderCursos(cursos){
+    const cont = document.getElementById('contenedorCursos');
+    if(!cursos.length){
+      cont.innerHTML = '<div class="empty">No se encontraron cursos con esos filtros.</div>';
+      return;
+    }
+
+    const grupos = agruparPorPeriodo(cursos);
+    const claves = Object.keys(grupos).sort();
+
+    cont.innerHTML = '';
+    cont.className = '';
+
+    claves.forEach(function(periodo){
+      const titulo = document.createElement('p');
+      titulo.className = 'period-title';
+      titulo.textContent = periodo === 'Sin fecha' ? 'SIN FECHA PROGRAMADA' : periodo;
+      cont.appendChild(titulo);
+
+      const wrap = document.createElement('div');
+      wrap.className = vistaActual === 'grid' ? 'cards-grid' : 'cards-list';
+
+      grupos[periodo].forEach(function(curso){
+        wrap.appendChild(vistaActual === 'grid' ? crearCardGrid(curso) : crearFilaLista(curso));
+      });
+
+      cont.appendChild(wrap);
+    });
+  }
+
+  function datosEstado(curso){
+    const info = estadoUsuario[curso.codigo];
+    const estadoTexto = info ? info.estado : 'Pendiente';
+    return ESTADO_INFO[estadoTexto] || ESTADO_INFO['Pendiente'];
+  }
+
+  function crearCardGrid(curso){
+    const cfg = datosEstado(curso);
+
+    const card = document.createElement('div');
+    card.className = 'course-card';
+
+    const imagenHtml = curso.imagen
+      ? '<img src="' + curso.imagen + '" alt="' + curso.nombre + '">'
+      : '<div class="placeholder">' + ICONO_LIBRO + '</div>';
+
+    const tipoEsLibre = curso.tipo === 'Libre';
+
+    card.innerHTML =
+      '<div class="card-image">' +
+        imagenHtml +
+        '<span class="tipo-badge' + (tipoEsLibre ? ' libre' : '') + '">' +
+          (tipoEsLibre ? ICONO_ESTRELLA_LIBRE : ICONO_CANDADO) + ' ' + curso.tipo +
+        '</span>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-programa">' + (curso.ruta || '') + '</div>' +
+        '<div class="card-nombre">' + curso.nombre + '</div>' +
+        '<span class="status-badge ' + cfg.badge + '">' + cfg.texto + '</span>' +
+        '<div class="card-footer">' +
+          '<span class="card-profesor">' + (curso.profesor || 'Sin profesor asignado') + '</span>' +
+        '</div>' +
+      '</div>';
+
+    card.addEventListener('click', function(){
+      window.location.href = 'curso.html?codigo=' + encodeURIComponent(curso.codigo);
+    });
+
+    return card;
+  }
+
+  function crearFilaLista(curso){
+    const cfg = datosEstado(curso);
+
+    const row = document.createElement('div');
+    row.className = 'course-row';
+
+    const thumbHtml = curso.imagen
+      ? '<img src="' + curso.imagen + '" alt="">'
+      : ICONO_LIBRO;
+
+    row.innerHTML =
+      '<div class="row-thumb">' + thumbHtml + '</div>' +
+      '<div class="row-info">' +
+        '<div class="row-programa">' + (curso.ruta || '') + '</div>' +
+        '<div class="row-nombre">' + curso.nombre + '</div>' +
+        '<div class="row-meta">' + (curso.profesor || 'Sin profesor asignado') + ' · ' + curso.horas + ' hora(s)</div>' +
+      '</div>' +
+      '<div class="row-right">' +
+        '<span class="status-badge ' + cfg.badge + '">' + cfg.texto + '</span>' +
+      '</div>';
+
+    row.addEventListener('click', function(){
+      window.location.href = 'curso.html?codigo=' + encodeURIComponent(curso.codigo);
+    });
+
+    return row;
+  }
+
+  // ============================================================
+  // EVENTOS DE TOOLBAR
+  // ============================================================
+  document.getElementById('btnViewGrid').addEventListener('click', function(){
+    vistaActual = 'grid';
+    this.classList.add('active');
+    document.getElementById('btnViewList').classList.remove('active');
+    renderizarPagina();
+  });
+  document.getElementById('btnViewList').addEventListener('click', function(){
+    vistaActual = 'list';
+    this.classList.add('active');
+    document.getElementById('btnViewGrid').classList.remove('active');
+    renderizarPagina();
+  });
+
+  let debounceTimer;
+  document.getElementById('inputBuscar').addEventListener('input', function(){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(aplicarFiltrosYRenderizar, 200);
+  });
+  document.getElementById('selectPeriodo').addEventListener('change', aplicarFiltrosYRenderizar);
+  document.getElementById('selectFiltro').addEventListener('change', aplicarFiltrosYRenderizar);
+  document.getElementById('selectPorPagina').addEventListener('change', aplicarFiltrosYRenderizar);
+
+  init();
 </script>
 
 </body>
