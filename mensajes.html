@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensajes — Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EEF0EF;
+    --card: #FFFFFF;
+    --ink: #14203A;
+    --ink-soft: #4B5670;
+    --gold: #B8933F;
+    --gold-soft: #E4D6B0;
+    --green: #3E6957;
+    --green-bg: #E6EEE9;
+    --rust: #9C4A38;
+    --rust-bg: #F6E7E3;
+    --line: #DADDDA;
+    --sidebar-w: 232px;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    font-family:'Poppins', sans-serif;
+    color:var(--ink);
+  }
+  a{ text-decoration:none; color:inherit; }
+
+  /* ============================================================
+     SHELL: sidebar (PC) + topbar con hamburguesa (celular)
+     ============================================================ */
+  .app-shell{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--ink);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    position:fixed;
+    top:0; left:0; bottom:0;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    z-index:40;
+  }
+  .sidebar.open{ transform:translateX(0); }
+  @media (min-width:860px){ .sidebar{ position:sticky; transform:none; } }
+
+  .sidebar-brand{
+    display:flex; align-items:center; gap:10px;
+    padding:20px 20px 18px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .seal{
+    width:30px; height:30px; border-radius:50%;
+    border:1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .seal svg{ width:14px; height:14px; }
+  .sidebar-brand span{ font-family:'Poppins', sans-serif; font-weight:600; font-size:15.5px; }
+
+  .sidebar-user{ padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .sidebar-user .name{ font-size:13.5px; font-weight:600; }
+  .sidebar-user .role{
+    font-family:'Poppins', sans-serif; font-size:10px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;
+  }
+
+  .sidebar-nav{ flex:1; padding:14px 12px; display:flex; flex-direction:column; gap:2px; }
+  .nav-item{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 12px; border-radius:8px;
+    font-size:13.5px; font-weight:500; color:rgba(255,255,255,0.75);
+    cursor:pointer;
+  }
+  .nav-item svg{ width:17px; height:17px; flex-shrink:0; }
+  .nav-item:hover{ background:rgba(255,255,255,0.06); color:#fff; }
+  .nav-item.active{ background:rgba(184,147,63,0.18); color:#fff; }
+  .nav-item.active svg{ stroke:var(--gold); }
+  .nav-item.disabled{ cursor:default; color:rgba(255,255,255,0.32); }
+  .nav-item.disabled:hover{ background:none; color:rgba(255,255,255,0.32); }
+  .nav-item .soon{
+    margin-left:auto; font-family:'Poppins', sans-serif; font-size:8.5px;
+    background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:10px; letter-spacing:0.03em;
+  }
+
+  .sidebar-footer{ padding:14px 20px 18px; border-top:1px solid rgba(255,255,255,0.08); }
+  .logout{
+    width:100%; background:none; border:1px solid rgba(255,255,255,0.2); color:#fff;
+    font-size:12px; font-family:'Poppins', sans-serif; padding:9px; border-radius:7px; cursor:pointer;
+  }
+  .logout:hover{ background:rgba(255,255,255,0.08); }
+
+  .overlay{ display:none; position:fixed; inset:0; background:rgba(20,32,58,0.45); z-index:30; }
+  .overlay.show{ display:block; }
+
+  .main-area{ flex:1; min-width:0; }
+
+  .topbar{
+    display:flex; align-items:center; gap:12px;
+    background:var(--ink); color:#fff; padding:16px 18px;
+  }
+  @media (min-width:860px){ .topbar{ display:none; } }
+  .hamburger{ background:none; border:none; color:#fff; font-size:20px; cursor:pointer; line-height:1; padding:2px 4px; }
+  .topbar-title{ font-family:'Poppins', sans-serif; font-weight:600; font-size:15px; }
+
+  main{ max-width:760px; margin:0 auto; padding:28px 18px 60px; }
+
+  .greeting h2{ font-family:'Poppins', sans-serif; font-weight:600; font-size:22px; margin:0 0 4px; }
+  .greeting p{ color:var(--ink-soft); font-size:13.5px; margin:0 0 20px; }
+
+  /* ============================================================
+     VISTA ESTUDIANTE: formulario + hilo
+     ============================================================ */
+  .compose-card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:18px; margin-bottom:20px;
+  }
+  .field{ margin-bottom:12px; }
+  label{ display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  select, textarea{
+    width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:9px;
+    font-size:14px; font-family:'Poppins', sans-serif; background:#FBFBFA; color:var(--ink);
+  }
+  select:focus, textarea:focus{ outline:none; border-color:var(--gold); background:#fff; }
+  textarea{ resize:vertical; min-height:80px; }
+  .btn{
+    padding:11px 20px; border:none; border-radius:9px; background:var(--ink); color:#fff;
+    font-family:'Poppins', sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;
+  }
+  .btn:hover{ background:#1D2C4E; }
+  .btn:disabled{ background:#9AA1B2; cursor:not-allowed; }
+
+  .thread{ display:flex; flex-direction:column; gap:10px; }
+  .bubble{ max-width:80%; padding:10px 14px; border-radius:12px; font-size:13.5px; line-height:1.5; }
+  .bubble .tag{
+    display:block; font-family:'Poppins', sans-serif; font-size:9.5px;
+    opacity:0.7; margin-bottom:3px;
+  }
+  .bubble .fecha{ display:block; font-size:9.5px; opacity:0.55; margin-top:4px; }
+  .bubble.usuario{ align-self:flex-end; background:var(--ink); color:#fff; border-bottom-right-radius:3px; }
+  .bubble.admin{ align-self:flex-start; background:var(--card); border:1px solid var(--line); border-bottom-left-radius:3px; }
+
+  /* ============================================================
+     VISTA ADMIN: bandeja + hilo
+     ============================================================ */
+  .inbox-list{ display:flex; flex-direction:column; gap:2px; }
+  .inbox-row{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:13px 14px; cursor:pointer;
+  }
+  .inbox-row:hover{ border-color:var(--gold); }
+  .inbox-row + .inbox-row{ margin-top:8px; }
+  .inbox-row .avatar{
+    width:36px; height:36px; border-radius:50%; background:var(--gold-soft); color:var(--gold);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;
+  }
+  .inbox-row .info{ flex:1; min-width:0; }
+  .inbox-row .name{ font-weight:600; font-size:13.5px; }
+  .inbox-row .preview{ font-size:12px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .inbox-row .unread{
+    background:var(--rust); color:#fff; font-size:10px; font-weight:700;
+    width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+
+  .back-link{ font-size:12.5px; color:var(--ink-soft); margin-bottom:14px; display:inline-block; cursor:pointer; }
+  .thread-header{ font-weight:600; font-size:15px; margin-bottom:14px; }
+
+  .reply-box{ display:flex; gap:8px; margin-top:14px; }
+  .reply-box textarea{ flex:1; min-height:44px; }
+
+  .empty, .loading, .error-box{ text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 0; }
+  .error-box{ color:var(--rust); }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#B8933F" stroke-width="1.6">
+          <path d="M12 3l7 3.5v5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5v-5L12 3z"/>
+          <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span>Academia Drimer</span>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="name" id="sidebarNombre">—</div>
+      <div class="role" id="sidebarRol">—</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Cursos
+      </a>
+      <span class="nav-item disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Calendario <span class="soon">Próx.</span>
+      </span>
+      <a class="nav-item active" href="mensajes.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Mensajes
+      </a>
+      <a class="nav-item" href="calificaciones.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Calificaciones
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout" id="btnLogout">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main-area">
+    <header class="topbar">
+      <button class="hamburger" id="btnHamburger" aria-label="Abrir menú">☰</button>
+      <span class="topbar-title">Academia Drimer</span>
+    </header>
+
+    <main>
+      <div class="greeting">
+        <h2>Mensajes</h2>
+        <p id="subtitulo">Cargando...</p>
+      </div>
+
+      <!-- ========== VISTA ESTUDIANTE ========== -->
+      <div id="vistaEstudiante" class="hidden">
+        <div class="compose-card">
+          <div class="field">
+            <label for="cursoSelect">Sobre qué curso</label>
+            <select id="cursoSelect"></select>
+          </div>
+          <div class="field">
+            <label for="mensajeTexto">Tu mensaje</label>
+            <textarea id="mensajeTexto" placeholder="Escribe tu pregunta o comentario..."></textarea>
+          </div>
+          <button class="btn" id="btnEnviarEstudiante">Enviar</button>
+        </div>
+
+        <p class="greeting" style="margin-bottom:10px;"><strong style="font-size:13px;">Tu historial</strong></p>
+        <div class="thread" id="threadEstudiante">
+          <div class="loading">Cargando conversación...</div>
+        </div>
+      </div>
+
+      <!-- ========== VISTA ADMIN: bandeja ========== -->
+      <div id="vistaAdminBandeja" class="hidden">
+        <div class="inbox-list" id="inboxList">
+          <div class="loading">Cargando bandeja...</div>
+        </div>
+      </div>
+
+      <!-- ========== VISTA ADMIN: hilo abierto ========== -->
+      <div id="vistaAdminHilo" class="hidden">
+        <span class="back-link" id="btnVolverBandeja">← Volver a la bandeja</span>
+        <div class="thread-header" id="hiloNombre">—</div>
+        <div class="thread" id="threadAdmin"></div>
+        <div class="reply-box">
+          <textarea id="respuestaTexto" placeholder="Escribe tu respuesta..."></textarea>
+          <button class="btn" id="btnResponder">Enviar</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+
+  const dni = sessionStorage.getItem('rdi_dni');
+  const nombre = sessionStorage.getItem('rdi_nombre');
+  const rol = sessionStorage.getItem('rdi_rol');
+
+  if(!dni){ window.location.href = 'login.html'; }
+
+  document.getElementById('sidebarNombre').textContent = nombre || '—';
+  document.getElementById('sidebarRol').textContent = rol || 'estudiante';
+
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
+
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  document.getElementById('btnHamburger').addEventListener('click', function(){
+    sidebar.classList.add('open'); overlay.classList.add('show');
+  });
+  overlay.addEventListener('click', function(){
+    sidebar.classList.remove('open'); overlay.classList.remove('show');
+  });
+
+  function formatearFecha(valor){
+    if(!valor) return '';
+    const f = new Date(valor);
+    if(isNaN(f)) return '';
+    return f.toLocaleDateString('es-PE', { day:'2-digit', month:'short' }) + ' · ' +
+           f.toLocaleTimeString('es-PE', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function iniciales(nombreCompleto){
+    return (nombreCompleto || '?').split(' ').filter(Boolean).slice(0,2).map(p => p[0]).join('').toUpperCase();
+  }
+
+  // ============================================================
+  // ROL ADMIN → bandeja de conversaciones
+  // ============================================================
+  if(rol === 'admin' || rol === 'profesor'){
+    document.getElementById('subtitulo').textContent = 'Conversaciones de tus colaboradores.';
+    document.getElementById('vistaAdminBandeja').classList.remove('hidden');
+
+    async function cargarBandeja(){
+      try{
+        const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
+        const bandeja = await res.json();
+        renderBandeja(bandeja);
+      } catch(err){
+        document.getElementById('inboxList').innerHTML = '<div class="error-box">No pudimos cargar la bandeja.</div>';
+      }
+    }
+
+    function renderBandeja(bandeja){
+      const list = document.getElementById('inboxList');
+      if(!bandeja.length){
+        list.innerHTML = '<div class="empty">Todavía no hay mensajes de colaboradores.</div>';
+        return;
+      }
+      list.innerHTML = '';
+      bandeja.forEach(function(conv){
+        const row = document.createElement('div');
+        row.className = 'inbox-row';
+        row.innerHTML =
+          '<div class="avatar">' + iniciales(conv.nombre) + '</div>' +
+          '<div class="info">' +
+            '<div class="name">' + conv.nombre + '</div>' +
+            '<div class="preview">' + conv.ultimoMensaje + '</div>' +
+          '</div>' +
+          (conv.noLeidos > 0 ? '<div class="unread">' + conv.noLeidos + '</div>' : '');
+        row.addEventListener('click', function(){ abrirHilo(conv.dni, conv.nombre); });
+        list.appendChild(row);
+      });
+    }
+
+    async function abrirHilo(dniUsuario, nombreUsuario){
+      document.getElementById('vistaAdminBandeja').classList.add('hidden');
+      document.getElementById('vistaAdminHilo').classList.remove('hidden');
+      document.getElementById('hiloNombre').textContent = nombreUsuario;
+      document.getElementById('threadAdmin').innerHTML = '<div class="loading">Cargando...</div>';
+
+      // Marca como leído y trae el historial en paralelo
+      await fetch(WEB_APP_URL, {
+        method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ action:'marcarLeido', dni: dniUsuario })
+      });
+      const res = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dniUsuario));
+      const mensajes = await res.json();
+      renderThread('threadAdmin', mensajes);
+
+      document.getElementById('btnResponder').onclick = async function(){
+        const texto = document.getElementById('respuestaTexto').value.trim();
+        if(!texto) return;
+        const btn = this;
+        btn.disabled = true;
+        await fetch(WEB_APP_URL, {
+          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'enviarMensaje', dni: dniUsuario, curso:'', remitente:'admin', mensaje: texto })
+        });
+        document.getElementById('respuestaTexto').value = '';
+        btn.disabled = false;
+        const res2 = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dniUsuario));
+        renderThread('threadAdmin', await res2.json());
+      };
+    }
+
+    document.getElementById('btnVolverBandeja').addEventListener('click', function(){
+      document.getElementById('vistaAdminHilo').classList.add('hidden');
+      document.getElementById('vistaAdminBandeja').classList.remove('hidden');
+      cargarBandeja(); // refresca por si hay mensajes nuevos
+    });
+
+    cargarBandeja();
+  }
+
+  // ============================================================
+  // ROL ESTUDIANTE → escribir + ver su propio historial
+  // ============================================================
+  else {
+    document.getElementById('subtitulo').textContent = 'Escríbenos tus preguntas sobre cualquier curso.';
+    document.getElementById('vistaEstudiante').classList.remove('hidden');
+
+    async function initEstudiante(){
+      try{
+        const resCursos = await fetch(WEB_APP_URL + '?action=getCursos');
+        const cursos = await resCursos.json();
+        const select = document.getElementById('cursoSelect');
+        select.innerHTML = '<option value="">General (ningún curso en particular)</option>' +
+          cursos.map(c => '<option value="' + c.codigo + '">' + c.nombre + '</option>').join('');
+      } catch(err){ /* silencioso, el select queda solo con la opción general */ }
+
+      cargarHistorial();
+    }
+
+    async function cargarHistorial(){
+      try{
+        const res = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dni));
+        const mensajes = await res.json();
+        renderThread('threadEstudiante', mensajes, true);
+      } catch(err){
+        document.getElementById('threadEstudiante').innerHTML = '<div class="error-box">No pudimos cargar tu historial.</div>';
+      }
+    }
+
+    document.getElementById('btnEnviarEstudiante').addEventListener('click', async function(){
+      const curso = document.getElementById('cursoSelect').value;
+      const texto = document.getElementById('mensajeTexto').value.trim();
+      if(!texto){ return; }
+
+      const btn = this;
+      btn.disabled = true; btn.textContent = 'Enviando...';
+
+      try{
+        await fetch(WEB_APP_URL, {
+          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'enviarMensaje', dni: dni, curso: curso, remitente:'usuario', mensaje: texto })
+        });
+        document.getElementById('mensajeTexto').value = '';
+        await cargarHistorial();
+      } catch(err){
+        alert('No pudimos enviar tu mensaje. Intenta nuevamente.');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Enviar';
+      }
+    });
+
+    initEstudiante();
+  }
+
+  // ============================================================
+  // Render compartido del hilo de conversación
+  // ============================================================
+  function renderThread(contenedorId, mensajes, esVistaEstudiante){
+    const cont = document.getElementById(contenedorId);
+    if(!mensajes.length){
+      cont.innerHTML = '<div class="empty">' + (esVistaEstudiante ? 'Todavía no has escrito ningún mensaje.' : 'Sin mensajes.') + '</div>';
+      return;
+    }
+    cont.innerHTML = '';
+    mensajes.forEach(function(m){
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + m.remitente;
+      const etiquetaCurso = m.curso ? m.curso : 'General';
+      bubble.innerHTML =
+        '<span class="tag">' + (m.remitente === 'admin' ? 'Talento Humano' : etiquetaCurso) + '</span>' +
+        m.mensaje +
+        '<span class="fecha">' + formatearFecha(m.fecha) + '</span>';
+      cont.appendChild(bubble);
+    });
+    cont.scrollTop = cont.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
