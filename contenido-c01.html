@@ -33,7 +33,6 @@
 
   /* ---------- Navegación por unidades ---------- */
   .unit-nav{
-    position:sticky; top:0; z-index:10;
     display:flex;
     overflow-x:auto;
     background:var(--navy-deep);
@@ -58,8 +57,62 @@
     border-bottom-color:var(--gold);
   }
 
-  .unit{ display:none; }
-  .unit.active{ display:block; }
+  .unit{ display:block; }
+
+  /* ---------- Sistema de diapositivas: una pantalla a la vez ---------- */
+  .slide{ display:none; }
+  .slide.active-slide{ display:block; animation:fadeSlide .25s ease; }
+  @keyframes fadeSlide{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+
+  body{ padding-bottom:78px; } /* espacio para la barra fija de navegación */
+
+  .progreso-wrap{
+    background:var(--white);
+    padding:8px 20px 10px;
+    border-bottom:1px solid #EEF1F3;
+  }
+  .progreso-texto{
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--navy-mid);
+    margin-bottom:5px;
+  }
+  .progreso-track{
+    width:100%; height:4px;
+    background:var(--card-bg);
+    border-radius:20px;
+    overflow:hidden;
+  }
+  .progreso-fill{
+    height:100%; background:var(--gold);
+    border-radius:20px;
+    width:0%;
+    transition:width .3s ease;
+  }
+
+  .nav-inferior{
+    position:fixed; bottom:0; left:0; right:0;
+    background:var(--white);
+    border-top:1px solid var(--border-soft);
+    padding:11px 16px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    z-index:20;
+  }
+  .nav-btn{
+    font-family:'Poppins', sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    padding:11px 18px;
+    border-radius:9px;
+    border:none;
+    cursor:pointer;
+  }
+  .nav-btn.siguiente{ background:var(--navy-deep); color:#fff; margin-left:auto; }
+  .nav-btn.siguiente:hover{ background:#0C1420; }
+  .nav-btn.anterior{ background:none; color:var(--navy-mid); border:1.5px solid var(--border-soft); }
+  .nav-btn.anterior:hover{ border-color:var(--navy-deep); }
+  .nav-btn.anterior:disabled{ opacity:0.35; cursor:not-allowed; }
+  .nav-btn svg{ width:15px; height:15px; vertical-align:-3px; }
 
   /* ---------- Pantallas / bloques generales ---------- */
   .screen{ padding:28px 20px; }
@@ -320,6 +373,7 @@
 </head>
 <body>
 
+<div style="position:sticky; top:0; z-index:10;">
 <nav class="unit-nav" id="unitNav">
   <button class="unit-tab active" data-unit="1">1. Introducción</button>
   <button class="unit-tab" data-unit="2">2. Responsabilidades</button>
@@ -328,16 +382,22 @@
   <button class="unit-tab" data-unit="5">5. Reporte y cierre</button>
 </nav>
 
+<div class="progreso-wrap">
+  <div class="progreso-texto" id="progresoTexto">Pantalla 1 de 14</div>
+  <div class="progreso-track"><div class="progreso-fill" id="progresoFill"></div></div>
+</div>
+</div>
+
 <!-- ============================================================ -->
 <!-- UNIDAD 1 — INTRODUCCIÓN -->
 <!-- ============================================================ -->
-<section class="unit active" data-unit="1">
-  <div class="banner">
-    <img src="img/portada.jpg" alt="Código de Conducta Drimer">
-    <h1>CÓDIGO DE CONDUCTA DRIMER</h1>
-    <p>La forma en que actuamos también representa a Drimer.</p>
-  </div>
-  <div class="screen">
+<section class="unit" data-unit="1">
+  <div class="screen slide">
+    <div class="banner" style="margin:-28px -20px 20px; border-radius:0;">
+      <img src="img/portada.jpg" alt="Código de Conducta Drimer">
+      <h1>CÓDIGO DE CONDUCTA DRIMER</h1>
+      <p>La forma en que actuamos también representa a Drimer.</p>
+    </div>
     <p class="eyebrow">Bienvenida</p>
     <p>En Drimer, obtener resultados es importante. Pero también importa cómo se consiguen. El Código de Conducta establece las reglas que deben orientar el comportamiento de todos los trabajadores, sin importar el cargo, el área o el lugar donde trabajen.</p>
     <p>En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuando una conducta no cumple con estas reglas.</p>
@@ -349,7 +409,7 @@
 <!-- ============================================================ -->
 <section class="unit" data-unit="2">
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">2.1 Responsabilidad compartida</p>
     <h2 class="screen-title">EL CÓDIGO ES RESPONSABILIDAD DE TODOS</h2>
     <img src="img/responsabilidad-compartida.jpg" alt="Es mi responsabilidad comunicar" style="border-radius:10px; margin-bottom:14px;">
@@ -358,7 +418,7 @@
     <img src="img/cumplir-velar.jpg" alt="Cumplir el Código y velar por su cumplimiento" style="border-radius:10px; margin-top:6px;">
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">2.2 Respeto e igualdad de oportunidades</p>
     <h2 class="screen-title">Respeto e igualdad de oportunidades</h2>
     <div class="tabs" data-tabs="respeto">
@@ -388,7 +448,7 @@
     </div>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">2.3 Acoso, hostigamiento y violencia</p>
     <img src="img/acoso-hostigamiento.jpg" alt="Acoso, hostigamiento y violencia - Cero tolerancia" style="border-radius:10px; margin-bottom:16px;">
 
@@ -425,7 +485,7 @@
 <!-- ============================================================ -->
 <section class="unit" data-unit="3">
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">3.1 Trabajo infantil y responsabilidad social</p>
     <h2 class="screen-title">Trabajo infantil y responsabilidad social</h2>
     <p>Drimer considera inaceptable participar directa o indirectamente en prácticas de explotación laboral infantil y reconoce la importancia de proteger el desarrollo físico y psicológico de niñas, niños y adolescentes.</p>
@@ -452,7 +512,7 @@
     <div class="quote">Todo trabajador que identifique información o señales vinculadas con una posible situación de explotación laboral infantil relacionada con Drimer debe comunicarla.</div>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">3.2 Sobornos, regalos y favores indebidos</p>
     <h2 class="screen-title">LAS DECISIONES NO SE COMPRAN</h2>
     <div class="flip-grid" data-flipgrid="sobornos">
@@ -497,7 +557,7 @@
     </div>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">3.3 Salud y seguridad en el trabajo</p>
     <h2 class="screen-title">NINGÚN RESULTADO JUSTIFICA TRABAJAR DE FORMA INSEGURA</h2>
     <img src="img/sst-hotspots.jpg" alt="4 puntos clave de seguridad" style="border-radius:10px; margin-bottom:14px;">
@@ -541,7 +601,7 @@
 <!-- ============================================================ -->
 <section class="unit" data-unit="4">
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">4.1 Privacidad y protección de información</p>
     <img src="img/privacidad.jpg" alt="Privacidad y protección de información en el trabajo" style="border-radius:10px; margin-bottom:16px;">
 
@@ -579,7 +639,7 @@
     </div>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">4.2 Conflictos de interés</p>
     <h2 class="screen-title">Conflictos de interés</h2>
     <div class="tabs" data-tabs="conflicto">
@@ -619,7 +679,7 @@
     </div>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">4.3 Compensación y cumplimiento laboral</p>
     <h2 class="screen-title">Compensación y cumplimiento laboral</h2>
     <p>Drimer se compromete a cumplir las disposiciones aplicables relacionadas con remuneraciones, jornada de trabajo, horas extras, límites de horas de trabajo y beneficios laborales.</p>
@@ -662,7 +722,7 @@
 <!-- ============================================================ -->
 <section class="unit" data-unit="5">
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">5.1 Los tres canales de reporte</p>
     <img src="img/canales-reporte.jpg" alt="Tres canales de reporte: jefe inmediato, RRHH, Te Escuchamos" style="border-radius:10px; margin-bottom:16px;">
     <h2 class="screen-title">¿CÓMO COMUNICAR UNA IRREGULARIDAD?</h2>
@@ -683,7 +743,7 @@
     </div>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">5.2 Qué ocurre después de un reporte</p>
     <h2 class="screen-title">REPORTAR NO SIGNIFICA DECLARAR CULPABLE A ALGUIEN</h2>
     <div class="cards-grid">
@@ -697,7 +757,7 @@
     <p style="font-size:12.5px; color:var(--navy-mid); font-style:italic;">Cuando una situación cuente con un procedimiento especial aplicable, deberá atenderse conforme a dicho procedimiento.</p>
   </div>
 
-  <div class="screen">
+  <div class="screen slide">
     <p class="eyebrow">5.3 Confidencialidad y no represalias</p>
     <div class="quote">"Reportar de buena fe no debe generar represalias."</div>
     <div class="cards-grid">
@@ -708,7 +768,7 @@
     </div>
   </div>
 
-  <div class="cierre-final">
+  <div class="cierre-final slide">
     <div class="check">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#051C2C" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
@@ -721,18 +781,71 @@
 
 </section>
 
+<div class="nav-inferior">
+  <button class="nav-btn anterior" id="btnAnterior">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    Anterior
+  </button>
+  <button class="nav-btn siguiente" id="btnSiguiente">
+    Siguiente
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
 <script>
-  // ---------- Navegación por unidades ----------
+  // ---------- Sistema de diapositivas ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  slides.forEach(function(s){
+    s.dataset.unitIndex = s.closest('.unit').dataset.unit;
+  });
+
+  let currentSlide = 0;
+
+  function mostrarSlide(index){
+    slides.forEach(function(s, i){
+      s.classList.toggle('active-slide', i === index);
+    });
+    currentSlide = index;
+
+    document.getElementById('progresoTexto').textContent = 'Pantalla ' + (currentSlide + 1) + ' de ' + slides.length;
+    document.getElementById('progresoFill').style.width = ((currentSlide + 1) / slides.length * 100) + '%';
+
+    document.getElementById('btnAnterior').disabled = (currentSlide === 0);
+    const btnSiguiente = document.getElementById('btnSiguiente');
+    if(currentSlide === slides.length - 1){
+      btnSiguiente.style.visibility = 'hidden';
+    } else {
+      btnSiguiente.style.visibility = 'visible';
+      btnSiguiente.innerHTML = (currentSlide === slides.length - 2)
+        ? 'Finalizar curso <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>'
+        : 'Siguiente <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+    }
+
+    const unitActual = slides[currentSlide].dataset.unitIndex;
+    document.querySelectorAll('.unit-tab').forEach(function(t){
+      t.classList.toggle('active', t.dataset.unit === unitActual);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  document.getElementById('btnAnterior').addEventListener('click', function(){
+    if(currentSlide > 0) mostrarSlide(currentSlide - 1);
+  });
+  document.getElementById('btnSiguiente').addEventListener('click', function(){
+    if(currentSlide < slides.length - 1) mostrarSlide(currentSlide + 1);
+  });
+
+  // ---------- Navegación por unidades: salta a la primera pantalla de esa unidad ----------
   document.querySelectorAll('.unit-tab').forEach(function(tab){
     tab.addEventListener('click', function(){
       const n = tab.dataset.unit;
-      document.querySelectorAll('.unit-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.unit').forEach(u => u.classList.remove('active'));
-      tab.classList.add('active');
-      document.querySelector('.unit[data-unit="' + n + '"]').classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const idx = slides.findIndex(function(s){ return s.dataset.unitIndex === n; });
+      if(idx !== -1) mostrarSlide(idx);
     });
   });
+
+  mostrarSlide(0);
 
   // ---------- Acordeones ----------
   document.querySelectorAll('.accordion-header').forEach(function(btn){
