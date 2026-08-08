@@ -113,6 +113,19 @@
     letter-spacing:0.03em;
   }
 
+  .nav-item .nav-badge{
+    margin-left:auto;
+    background:var(--rust);
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    min-width:17px;
+    height:17px;
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 5px;
+  }
+
   .sidebar-footer{ padding:14px 20px 18px; border-top:1px solid rgba(255,255,255,0.08); }
   .logout{
     width:100%;
@@ -325,6 +338,7 @@
       <a class="nav-item" href="mensajes.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Mensajes
+        <span class="nav-badge hidden" id="navBadgeMensajes">0</span>
       </a>
       <a class="nav-item" href="calificaciones.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -399,6 +413,24 @@
     sidebar.classList.remove('open');
     overlay.classList.remove('show');
   });
+
+  async function actualizarBadgeMensajes(){
+    if(rol !== 'admin' && rol !== 'profesor') return;
+    try{
+      const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
+      const bandeja = await res.json();
+      const totalNoLeidos = bandeja.reduce(function(sum, c){ return sum + (c.noLeidos || 0); }, 0);
+      const badge = document.getElementById('navBadgeMensajes');
+      if(totalNoLeidos > 0){
+        badge.textContent = totalNoLeidos > 9 ? '9+' : totalNoLeidos;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    } catch(err){ /* silencioso */ }
+  }
+  actualizarBadgeMensajes();
+
 
   // ---------- Cursos ----------
   const ESTADO_INFO = {

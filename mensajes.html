@@ -91,6 +91,41 @@
     background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:10px; letter-spacing:0.03em;
   }
 
+  .nav-item .nav-badge{
+    margin-left:auto;
+    background:var(--rust);
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    min-width:17px;
+    height:17px;
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 5px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:24px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--green);
+    color:#fff;
+    padding:11px 20px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+    display:flex; align-items:center; gap:8px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:50;
+    box-shadow:0 10px 30px -8px rgba(20,32,58,0.4);
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
   .sidebar-footer{ padding:14px 20px 18px; border-top:1px solid rgba(255,255,255,0.08); }
   .logout{
     width:100%; background:none; border:1px solid rgba(255,255,255,0.2); color:#fff;
@@ -214,6 +249,7 @@
       <a class="nav-item active" href="mensajes.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Mensajes
+        <span class="nav-badge hidden" id="navBadgeMensajes">0</span>
       </a>
       <a class="nav-item" href="calificaciones.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -283,6 +319,8 @@
 
 </div>
 
+<div class="toast" id="toast">✓ <span id="toastText">Mensaje enviado</span></div>
+
 <script>
   const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
 
@@ -320,6 +358,31 @@
   function iniciales(nombreCompleto){
     return (nombreCompleto || '?').split(' ').filter(Boolean).slice(0,2).map(p => p[0]).join('').toUpperCase();
   }
+
+  function mostrarToast(texto){
+    const toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = texto;
+    toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); }, 2500);
+  }
+
+  // Actualiza el número rojo junto a "Mensajes" en el menú (solo admin/profesor)
+  async function actualizarBadgeMensajes(){
+    if(rol !== 'admin' && rol !== 'profesor') return;
+    try{
+      const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
+      const bandeja = await res.json();
+      const totalNoLeidos = bandeja.reduce(function(sum, c){ return sum + (c.noLeidos || 0); }, 0);
+      const badge = document.getElementById('navBadgeMensajes');
+      if(totalNoLeidos > 0){
+        badge.textContent = totalNoLeidos > 9 ? '9+' : totalNoLeidos;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    } catch(err){ /* silencioso */ }
+  }
+  actualizarBadgeMensajes();
 
   // ============================================================
   // ROL ADMIN → bandeja de conversaciones
@@ -374,6 +437,7 @@
       const res = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dniUsuario));
       const mensajes = await res.json();
       renderThread('threadAdmin', mensajes);
+      actualizarBadgeMensajes();
 
       document.getElementById('btnResponder').onclick = async function(){
         const texto = document.getElementById('respuestaTexto').value.trim();
@@ -443,6 +507,7 @@
           body: JSON.stringify({ action:'enviarMensaje', dni: dni, curso: curso, remitente:'usuario', mensaje: texto })
         });
         document.getElementById('mensajeTexto').value = '';
+        mostrarToast('Mensaje enviado');
         await cargarHistorial();
       } catch(err){
         alert('No pudimos enviar tu mensaje. Intenta nuevamente.');
