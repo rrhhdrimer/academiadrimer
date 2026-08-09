@@ -22,16 +22,22 @@
     --white:#FFFFFF;
   }
   *{ box-sizing:border-box; }
+  html, body{ height:100%; }
   body{
     margin:0;
     font-family:'Poppins', sans-serif;
     background:var(--white);
     color:var(--navy-mid);
     -webkit-font-smoothing:antialiased;
+    padding-bottom:76px;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
   }
   img{ max-width:100%; display:block; }
 
-  /* ---------- Navegación por unidades ---------- */
+  .header-sticky{ position:sticky; top:0; z-index:10; }
+
   .unit-nav{
     display:flex;
     overflow-x:auto;
@@ -47,669 +53,592 @@
     font-family:'Poppins', sans-serif;
     font-weight:600;
     font-size:12px;
-    padding:14px 12px;
+    padding:13px 12px;
     cursor:pointer;
     border-bottom:3px solid transparent;
     white-space:nowrap;
   }
-  .unit-tab.active{
-    color:#fff;
-    border-bottom-color:var(--gold);
-  }
-
-  .unit{ display:block; }
-
-  /* ---------- Sistema de diapositivas: una pantalla a la vez ---------- */
-  .slide{ display:none; }
-  .slide.active-slide{ display:block; animation:fadeSlide .25s ease; }
-  @keyframes fadeSlide{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
-
-  body{ padding-bottom:78px; } /* espacio para la barra fija de navegación */
+  .unit-tab.active{ color:#fff; border-bottom-color:var(--gold); }
 
   .progreso-wrap{
     background:var(--white);
-    padding:8px 20px 10px;
+    padding:7px 20px 9px;
     border-bottom:1px solid #EEF1F3;
   }
-  .progreso-texto{
-    font-size:10.5px;
-    font-weight:600;
-    color:var(--navy-mid);
-    margin-bottom:5px;
-  }
-  .progreso-track{
-    width:100%; height:4px;
-    background:var(--card-bg);
-    border-radius:20px;
-    overflow:hidden;
-  }
-  .progreso-fill{
-    height:100%; background:var(--gold);
-    border-radius:20px;
-    width:0%;
-    transition:width .3s ease;
-  }
+  .progreso-texto{ font-size:10.5px; font-weight:600; color:var(--navy-mid); margin-bottom:5px; }
+  .progreso-track{ width:100%; height:4px; background:var(--card-bg); border-radius:20px; overflow:hidden; }
+  .progreso-fill{ height:100%; background:var(--gold); border-radius:20px; width:0%; transition:width .3s ease; }
 
-  .nav-inferior{
-    position:fixed; bottom:0; left:0; right:0;
-    background:var(--white);
-    border-top:1px solid var(--border-soft);
-    padding:11px 16px;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    z-index:20;
+  .slide-area{ flex:1; display:flex; }
+  .slide{ display:none; width:100%; }
+  .slide.active-slide{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    width:100%;
+    animation:fadeSlide .22s ease;
   }
-  .nav-btn{
-    font-family:'Poppins', sans-serif;
-    font-weight:600;
-    font-size:13.5px;
-    padding:11px 18px;
-    border-radius:9px;
-    border:none;
-    cursor:pointer;
-  }
-  .nav-btn.siguiente{ background:var(--navy-deep); color:#fff; margin-left:auto; }
-  .nav-btn.siguiente:hover{ background:#0C1420; }
-  .nav-btn.anterior{ background:none; color:var(--navy-mid); border:1.5px solid var(--border-soft); }
-  .nav-btn.anterior:hover{ border-color:var(--navy-deep); }
-  .nav-btn.anterior:disabled{ opacity:0.35; cursor:not-allowed; }
-  .nav-btn svg{ width:15px; height:15px; vertical-align:-3px; }
+  @keyframes fadeSlide{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
 
-  /* ---------- Pantallas / bloques generales ---------- */
-  .screen{ padding:28px 20px; }
-  .screen + .screen{ border-top:1px solid #EEF1F3; }
+  .screen{ padding:22px 20px; width:100%; }
 
-  .eyebrow{
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--blue-light);
-    margin:0 0 6px;
-  }
-  h2.screen-title{
-    font-family:'Poppins', sans-serif;
-    font-weight:700;
-    font-size:19px;
-    color:var(--navy-deep);
-    margin:0 0 14px;
-    line-height:1.3;
-  }
-  p{ font-size:14.5px; line-height:1.65; margin:0 0 14px; }
+  .eyebrow{ font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--blue-light); margin:0 0 6px; }
+  h2.screen-title{ font-family:'Poppins', sans-serif; font-weight:700; font-size:18px; color:var(--navy-deep); margin:0 0 12px; line-height:1.3; }
+  p{ font-size:14px; line-height:1.6; margin:0 0 12px; }
 
-  /* ---------- Banner (fondo oscuro) ---------- */
-  .banner{
-    background:var(--navy-deep);
-    color:#fff;
-    padding:34px 24px;
-    text-align:center;
-  }
-  .banner h1, .banner h2{
-    font-family:'Poppins', sans-serif;
-    font-weight:700;
-    color:#fff;
-    margin:0 0 8px;
-  }
-  .banner h1{ font-size:24px; }
-  .banner p{ color:rgba(255,255,255,0.75); font-size:14px; }
-  .banner img{ border-radius:10px; margin-bottom:18px; }
+  .banner{ background:var(--navy-deep); color:#fff; padding:30px 24px; text-align:center; }
+  .banner h1{ font-family:'Poppins', sans-serif; font-weight:700; color:#fff; margin:0 0 8px; font-size:22px; }
+  .banner p{ color:rgba(255,255,255,0.75); font-size:13px; margin:0; }
+  .banner img{ border-radius:10px; margin-bottom:16px; max-height:34vh; object-fit:cover; width:100%; }
 
-  /* ---------- Cita ---------- */
-  .quote{
+  .imagen-full{ padding:20px 20px 8px; text-align:center; }
+  .imagen-full img{ border-radius:10px; max-height:46vh; width:100%; object-fit:cover; margin-bottom:12px; }
+  .imagen-full .caption{ font-weight:600; font-size:14px; color:var(--navy-deep); }
+
+  .quote-screen{ padding:20px 26px; text-align:center; }
+  .quote-big{
     border-left:4px solid var(--gold);
     background:var(--card-bg);
-    padding:16px 18px;
-    border-radius:0 10px 10px 0;
+    padding:20px 20px;
+    border-radius:0 12px 12px 0;
     font-weight:600;
-    font-size:15px;
+    font-size:16px;
     color:var(--navy-deep);
-    margin:16px 0;
+    text-align:left;
   }
 
-  /* ---------- Tarjetas grid/lista ---------- */
-  .cards-grid{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:10px;
-    margin:14px 0;
+  .instruccion{
+    display:flex; align-items:center; gap:8px;
+    font-size:12.5px; font-style:italic; color:var(--navy-mid);
+    background:var(--card-bg); padding:9px 13px; border-radius:9px;
+    margin-bottom:14px;
   }
+  .instruccion svg{ width:15px; height:15px; flex-shrink:0; stroke:var(--blue); }
+
+  .cards-grid{ display:grid; grid-template-columns:1fr; gap:9px; margin:0; }
   @media(min-width:480px){ .cards-grid.cols-2{ grid-template-columns:1fr 1fr; } }
-  .card{
-    background:var(--card-bg);
-    border-radius:10px;
-    padding:14px 16px;
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-  }
-  .card .icon{
-    width:34px; height:34px;
-    flex-shrink:0;
-    border-radius:50%;
-    background:var(--white);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .card .icon svg{ width:18px; height:18px; stroke:var(--blue); }
-  .card .text{ font-size:13.5px; line-height:1.5; color:var(--navy-mid); }
-  .card .text strong{ display:block; color:var(--navy-deep); font-size:14px; margin-bottom:2px; }
-
+  .card{ background:var(--card-bg); border-radius:10px; padding:12px 14px; display:flex; gap:11px; align-items:flex-start; }
+  .card .icon{ width:32px; height:32px; flex-shrink:0; border-radius:50%; background:var(--white); display:flex; align-items:center; justify-content:center; }
+  .card .icon svg{ width:17px; height:17px; stroke:var(--blue); }
+  .card .text{ font-size:13px; line-height:1.45; color:var(--navy-mid); }
+  .card .text strong{ display:block; color:var(--navy-deep); font-size:13.5px; margin-bottom:2px; }
   .card.green{ background:var(--green-bg); }
   .card.green .icon svg{ stroke:var(--green); }
 
-  /* ---------- Acordeón ---------- */
-  .accordion-item{
-    border:1px solid var(--border-soft);
-    border-radius:10px;
-    margin-bottom:10px;
-    overflow:hidden;
-  }
+  .accordion-item{ border:1px solid var(--border-soft); border-radius:10px; margin-bottom:8px; overflow:hidden; }
   .accordion-header{
-    width:100%;
-    text-align:left;
-    background:var(--white);
-    border:none;
-    padding:14px 16px;
-    font-family:'Poppins', sans-serif;
-    font-weight:600;
-    font-size:14px;
-    color:var(--navy-deep);
-    cursor:pointer;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    width:100%; text-align:left; background:var(--white); border:none;
+    padding:12px 14px; font-family:'Poppins', sans-serif; font-weight:600; font-size:13.5px;
+    color:var(--navy-deep); cursor:pointer; display:flex; justify-content:space-between; align-items:center;
   }
-  .accordion-header .plus{
-    color:var(--blue);
-    font-size:18px;
-    transition:transform .2s ease;
-  }
+  .accordion-header .plus{ color:var(--blue); font-size:17px; transition:transform .2s ease; flex-shrink:0; }
   .accordion-item.open .accordion-header .plus{ transform:rotate(45deg); }
-  .accordion-body{
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .25s ease;
-    padding:0 16px;
-  }
-  .accordion-item.open .accordion-body{
-    max-height:400px;
-    padding:0 16px 16px;
-  }
-  .accordion-body p{ margin:0; font-size:13.5px; }
-  .accordion-body ul{ margin:0; padding-left:18px; font-size:13.5px; }
-  .accordion-body li{ margin-bottom:6px; }
+  .accordion-body{ max-height:0; overflow:hidden; transition:max-height .25s ease; padding:0 14px; }
+  .accordion-item.open .accordion-body{ max-height:320px; padding:0 14px 14px; }
+  .accordion-body p{ margin:0; font-size:13px; }
+  .accordion-body ul{ margin:0; padding-left:17px; font-size:13px; }
+  .accordion-body li{ margin-bottom:5px; }
 
-  /* ---------- Pestañas ---------- */
-  .tabs{ margin:14px 0; }
   .tabs-nav{ display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
   .tab-btn{
-    background:var(--card-bg);
-    border:none;
-    color:var(--navy-mid);
-    font-family:'Poppins', sans-serif;
-    font-weight:600;
-    font-size:12.5px;
-    padding:9px 14px;
-    border-radius:20px;
-    cursor:pointer;
+    background:var(--card-bg); border:none; color:var(--navy-mid);
+    font-family:'Poppins', sans-serif; font-weight:600; font-size:12px;
+    padding:8px 13px; border-radius:20px; cursor:pointer;
   }
   .tab-btn.active{ background:var(--blue); color:#fff; }
-  .tab-panel{ display:none; font-size:13.5px; line-height:1.6; }
+  .tab-panel{ display:none; font-size:13px; line-height:1.55; }
   .tab-panel.active{ display:block; }
-  .tab-panel ul{ padding-left:18px; margin:8px 0 0; }
-  .tab-panel li{ margin-bottom:6px; }
+  .tab-panel ul{ padding-left:17px; margin:8px 0 0; }
+  .tab-panel li{ margin-bottom:5px; }
 
-  /* ---------- Tarjetas de volteo ---------- */
-  .flip-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin:14px 0;
-  }
-  .flip-card{
-    perspective:1000px;
-    height:110px;
-    cursor:pointer;
-  }
-  .flip-inner{
-    position:relative;
-    width:100%; height:100%;
-    transition:transform .5s;
-    transform-style:preserve-3d;
-  }
+  .flip-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .flip-card{ perspective:1000px; height:100px; cursor:pointer; }
+  .flip-inner{ position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d; }
   .flip-card.flipped .flip-inner{ transform:rotateY(180deg); }
   .flip-face{
-    position:absolute; inset:0;
-    backface-visibility:hidden;
-    border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
-    text-align:center;
-    padding:10px;
-    font-size:12.5px;
-    font-weight:600;
+    position:absolute; inset:0; backface-visibility:hidden; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    padding:9px; font-size:12px; font-weight:600;
   }
   .flip-front{ background:var(--navy-deep); color:#fff; }
-  .flip-back{ background:var(--gold); color:var(--navy-deep); transform:rotateY(180deg); font-weight:500; font-size:11.5px; }
+  .flip-back{ background:var(--gold); color:var(--navy-deep); transform:rotateY(180deg); font-weight:500; font-size:11px; }
 
-  /* ---------- Escenario evaluativo ---------- */
-  .scenario{
-    background:var(--navy-deep);
-    color:#fff;
-    border-radius:14px;
-    padding:20px;
-    margin:18px 0;
-  }
-  .scenario .tag{
-    display:inline-block;
-    background:var(--gold);
-    color:var(--navy-deep);
-    font-size:10.5px;
-    font-weight:700;
-    padding:3px 10px;
-    border-radius:20px;
-    margin-bottom:12px;
-  }
-  .scenario p.situacion{ font-size:14px; color:rgba(255,255,255,0.9); }
-  .scenario p.pregunta{ font-weight:600; font-size:14.5px; color:#fff; }
-  .scenario-opciones{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .scenario{ background:var(--navy-deep); color:#fff; border-radius:14px; padding:18px; }
+  .scenario .tag{ display:inline-block; background:var(--gold); color:var(--navy-deep); font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:10px; }
+  .scenario p.situacion{ font-size:13.5px; color:rgba(255,255,255,0.9); }
+  .scenario p.pregunta{ font-weight:600; font-size:14px; color:#fff; }
+  .scenario-opciones{ display:flex; flex-direction:column; gap:7px; margin-top:10px; }
   .scenario-opt{
-    text-align:left;
-    background:rgba(255,255,255,0.08);
-    border:1.5px solid rgba(255,255,255,0.2);
-    color:#fff;
-    padding:11px 14px;
-    border-radius:9px;
-    font-family:'Poppins', sans-serif;
-    font-size:13px;
-    cursor:pointer;
+    text-align:left; background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.2);
+    color:#fff; padding:10px 13px; border-radius:9px; font-family:'Poppins', sans-serif;
+    font-size:12.5px; cursor:pointer;
   }
   .scenario-opt:hover{ border-color:var(--gold); }
   .scenario-opt.correct{ background:var(--green); border-color:var(--green); }
   .scenario-opt.incorrect{ background:var(--red); border-color:var(--red); }
   .scenario-opt:disabled{ cursor:default; }
-  .scenario-feedback{
-    display:none;
-    margin-top:14px;
-    padding:12px 14px;
-    background:rgba(255,255,255,0.1);
-    border-radius:9px;
-    font-size:13px;
-    line-height:1.55;
-  }
+  .scenario-feedback{ display:none; margin-top:12px; padding:11px 13px; background:rgba(255,255,255,0.1); border-radius:9px; font-size:12.5px; line-height:1.5; }
   .scenario-feedback.show{ display:block; }
 
-  /* ---------- Recordatorio de reporte (chip fijo al final de varias pantallas) ---------- */
-  .report-reminder{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-top:16px;
-    padding-top:14px;
-    border-top:1px dashed var(--border-soft);
-  }
-  .report-reminder span{
-    font-size:11px;
-    font-weight:600;
-    color:var(--navy-mid);
-    background:var(--card-bg);
-    padding:5px 10px;
-    border-radius:20px;
-  }
+  .report-reminder{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px dashed var(--border-soft); }
+  .report-reminder span{ font-size:10.5px; font-weight:600; color:var(--navy-mid); background:var(--card-bg); padding:5px 10px; border-radius:20px; }
 
-  /* ---------- Cierre final ---------- */
-  .cierre-final{
-    background:var(--navy-deep);
-    color:#fff;
-    text-align:center;
-    padding:40px 24px;
+  .cierre-final .screen{ background:var(--navy-deep); color:#fff; text-align:center; padding:34px 24px; }
+  .cierre-final .check{ width:52px; height:52px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .cierre-final h2{ color:#fff; font-size:18px; margin-bottom:8px; }
+
+  .nav-inferior{
+    position:fixed; bottom:0; left:0; right:0;
+    background:var(--white); border-top:1px solid var(--border-soft);
+    padding:11px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; z-index:20;
   }
-  .cierre-final .check{
-    width:56px; height:56px;
-    border-radius:50%;
-    background:var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    margin:0 auto 16px;
-  }
-  .cierre-final h2{ color:#fff; font-size:19px; margin-bottom:8px; }
+  .nav-btn{ font-family:'Poppins', sans-serif; font-weight:600; font-size:13.5px; padding:11px 18px; border-radius:9px; border:none; cursor:pointer; }
+  .nav-btn.siguiente{ background:var(--navy-deep); color:#fff; margin-left:auto; display:flex; align-items:center; gap:6px; }
+  .nav-btn.siguiente:hover{ background:#0C1420; }
+  .nav-btn.anterior{ background:none; color:var(--navy-mid); border:1.5px solid var(--border-soft); }
+  .nav-btn.anterior:hover{ border-color:var(--navy-deep); }
+  .nav-btn.anterior:disabled{ opacity:0.35; cursor:not-allowed; }
+  .nav-btn svg{ width:15px; height:15px; }
 </style>
 </head>
 <body>
 
-<div style="position:sticky; top:0; z-index:10;">
-<nav class="unit-nav" id="unitNav">
-  <button class="unit-tab active" data-unit="1">1. Introducción</button>
-  <button class="unit-tab" data-unit="2">2. Responsabilidades</button>
-  <button class="unit-tab" data-unit="3">3. Riesgos éticos</button>
-  <button class="unit-tab" data-unit="4">4. Información</button>
-  <button class="unit-tab" data-unit="5">5. Reporte y cierre</button>
-</nav>
-
-<div class="progreso-wrap">
-  <div class="progreso-texto" id="progresoTexto">Pantalla 1 de 14</div>
-  <div class="progreso-track"><div class="progreso-fill" id="progresoFill"></div></div>
+<div class="header-sticky">
+  <nav class="unit-nav" id="unitNav">
+    <button class="unit-tab active" data-unit="1">1. Introducción</button>
+    <button class="unit-tab" data-unit="2">2. Responsabilidades</button>
+    <button class="unit-tab" data-unit="3">3. Riesgos éticos</button>
+    <button class="unit-tab" data-unit="4">4. Información</button>
+    <button class="unit-tab" data-unit="5">5. Reporte y cierre</button>
+  </nav>
+  <div class="progreso-wrap">
+    <div class="progreso-texto" id="progresoTexto">Pantalla 1 de —</div>
+    <div class="progreso-track"><div class="progreso-fill" id="progresoFill"></div></div>
+  </div>
 </div>
-</div>
 
-<!-- ============================================================ -->
-<!-- UNIDAD 1 — INTRODUCCIÓN -->
-<!-- ============================================================ -->
+<div class="slide-area">
+
 <section class="unit" data-unit="1">
-  <div class="screen slide">
-    <div class="banner" style="margin:-28px -20px 20px; border-radius:0;">
+
+  <div class="slide">
+    <div class="banner">
       <img src="img/portada.jpg" alt="Código de Conducta Drimer">
       <h1>CÓDIGO DE CONDUCTA DRIMER</h1>
       <p>La forma en que actuamos también representa a Drimer.</p>
     </div>
-    <p class="eyebrow">Bienvenida</p>
-    <p>En Drimer, obtener resultados es importante. Pero también importa cómo se consiguen. El Código de Conducta establece las reglas que deben orientar el comportamiento de todos los trabajadores, sin importar el cargo, el área o el lugar donde trabajen.</p>
-    <p>En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuando una conducta no cumple con estas reglas.</p>
   </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">Bienvenida</p>
+      <p>En Drimer, obtener resultados es importante. Pero también importa cómo se consiguen. El Código de Conducta establece las reglas que deben orientar el comportamiento de todos los trabajadores, sin importar el cargo, el área o el lugar donde trabajen.</p>
+      <p>En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuando una conducta no cumple con estas reglas.</p>
+    </div>
+  </div>
+
 </section>
 
-<!-- ============================================================ -->
-<!-- UNIDAD 2 — RESPONSABILIDADES DEL CÓDIGO -->
-<!-- ============================================================ -->
 <section class="unit" data-unit="2">
 
-  <div class="screen slide">
-    <p class="eyebrow">2.1 Responsabilidad compartida</p>
-    <h2 class="screen-title">EL CÓDIGO ES RESPONSABILIDAD DE TODOS</h2>
-    <img src="img/responsabilidad-compartida.jpg" alt="Es mi responsabilidad comunicar" style="border-radius:10px; margin-bottom:14px;">
-    <p>Velar por el cumplimiento no significa investigar, confrontar, determinar culpabilidades ni sancionar a otra persona. Significa comunicar la situación para que pueda ser atendida.</p>
-    <div class="quote">"El Código de Conducta es responsabilidad de todos."</div>
-    <img src="img/cumplir-velar.jpg" alt="Cumplir el Código y velar por su cumplimiento" style="border-radius:10px; margin-top:6px;">
-  </div>
-
-  <div class="screen slide">
-    <p class="eyebrow">2.2 Respeto e igualdad de oportunidades</p>
-    <h2 class="screen-title">Respeto e igualdad de oportunidades</h2>
-    <div class="tabs" data-tabs="respeto">
-      <div class="tabs-nav">
-        <button class="tab-btn active" data-tab="respeto-1">Postura de Drimer</button>
-        <button class="tab-btn" data-tab="respeto-2">Responsabilidades</button>
-        <button class="tab-btn" data-tab="respeto-3">Ante un incumplimiento</button>
-      </div>
-      <div class="tab-panel active" data-panel="respeto-1">
-        <p>Drimer promueve un ambiente de trabajo basado en respeto mutuo, confianza, cooperación e igualdad de oportunidades. No acepta intimidación, abuso, discriminación, maltrato físico, emocional o psicológico, lenguaje o gestos irrespetuosos.</p>
-      </div>
-      <div class="tab-panel" data-panel="respeto-2">
-        <ul>
-          <li>Tratar respetuosamente a todas las personas.</li>
-          <li>Evitar insultos, burlas, amenazas, humillaciones o gestos ofensivos.</li>
-          <li>No discriminar ni excluir a una persona.</li>
-          <li>Aplicar criterios objetivos en decisiones bajo su responsabilidad.</li>
-          <li>No participar ni promover conductas irrespetuosas.</li>
-        </ul>
-      </div>
-      <div class="tab-panel" data-panel="respeto-3">
-        <p>Todo trabajador que observe o conozca una situación de discriminación, intimidación, abuso o maltrato debe comunicarla.</p>
-      </div>
+  <div class="slide">
+    <div class="imagen-full">
+      <img src="img/responsabilidad-compartida.jpg" alt="Es mi responsabilidad comunicar">
     </div>
-    <div class="report-reminder">
-      <span>Jefe inmediato</span><span>Recursos Humanos</span><span>Te Escuchamos (anónimo)</span>
+    <div class="screen" style="padding-top:0;">
+      <p class="eyebrow">2.1 Responsabilidad compartida</p>
+      <p>Velar por el cumplimiento no significa investigar, confrontar, determinar culpabilidades ni sancionar a otra persona. Significa comunicar la situación para que pueda ser atendida.</p>
     </div>
   </div>
 
-  <div class="screen slide">
-    <p class="eyebrow">2.3 Acoso, hostigamiento y violencia</p>
-    <img src="img/acoso-hostigamiento.jpg" alt="Acoso, hostigamiento y violencia - Cero tolerancia" style="border-radius:10px; margin-bottom:16px;">
+  <div class="slide">
+    <div class="quote-screen">
+      <p class="eyebrow">2.1 Responsabilidad compartida</p>
+      <div class="quote-big">"El Código de Conducta es responsabilidad de todos."</div>
+    </div>
+    <div class="imagen-full" style="padding-top:14px;">
+      <img src="img/cumplir-velar.jpg" alt="Cumplir el Código y velar por su cumplimiento">
+    </div>
+  </div>
 
-    <div class="accordion" data-accordion="acoso">
-      <div class="accordion-item open">
-        <button class="accordion-header"><span>Postura de Drimer</span><span class="plus">+</span></button>
-        <div class="accordion-body"><p>Drimer no tolera conductas verbales, no verbales o físicas que generen un ambiente intimidatorio, ofensivo, abusivo, humillante u hostil.</p></div>
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">2.2 Respeto e igualdad de oportunidades</p>
+      <h2 class="screen-title">Respeto e igualdad de oportunidades</h2>
+
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/></svg>
+        Toca cada pestaña para conocer el detalle.
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Responsabilidades</span><span class="plus">+</span></button>
-        <div class="accordion-body">
+
+      <div class="tabs" data-tabs="respeto">
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-tab="respeto-1">Postura de Drimer</button>
+          <button class="tab-btn" data-tab="respeto-2">Responsabilidades</button>
+          <button class="tab-btn" data-tab="respeto-3">Ante un incumplimiento</button>
+        </div>
+        <div class="tab-panel active" data-panel="respeto-1">
+          <p style="margin:0;">Drimer promueve un ambiente de trabajo basado en respeto mutuo, confianza, cooperación e igualdad de oportunidades. No acepta intimidación, abuso, discriminación, maltrato físico, emocional o psicológico, lenguaje o gestos irrespetuosos.</p>
+        </div>
+        <div class="tab-panel" data-panel="respeto-2">
           <ul>
-            <li>Mantener una conducta respetuosa.</li>
-            <li>Evitar comentarios, mensajes, gestos o comportamientos ofensivos.</li>
-            <li>Respetar la dignidad y los límites de las demás personas.</li>
-            <li>No justificar estas conductas como bromas o costumbres.</li>
-            <li>No participar ni colaborar en violencia, acoso u hostigamiento.</li>
+            <li>Tratar respetuosamente a todas las personas.</li>
+            <li>Evitar insultos, burlas, amenazas, humillaciones o gestos ofensivos.</li>
+            <li>No discriminar ni excluir a una persona.</li>
+            <li>Aplicar criterios objetivos en decisiones bajo su responsabilidad.</li>
+            <li>No participar ni promover conductas irrespetuosas.</li>
           </ul>
         </div>
+        <div class="tab-panel" data-panel="respeto-3">
+          <p style="margin:0;">Todo trabajador que observe o conozca una situación de discriminación, intimidación, abuso o maltrato debe comunicarla.</p>
+        </div>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Ante un posible incumplimiento</span><span class="plus">+</span></button>
-        <div class="accordion-body"><p>Todo trabajador que observe o conozca una posible situación de acoso, hostigamiento o violencia debe comunicarla.</p></div>
+      <div class="report-reminder">
+        <span>Jefe inmediato</span><span>Recursos Humanos</span><span>Te Escuchamos (anónimo)</span>
       </div>
     </div>
+  </div>
 
-    <div class="quote">"Una broma no justifica una conducta que afecte la dignidad de otra persona."</div>
+  <div class="slide">
+    <div class="imagen-full">
+      <img src="img/acoso-hostigamiento.jpg" alt="Acoso, hostigamiento y violencia - Cero tolerancia">
+      <div class="caption">2.3 Acoso, hostigamiento y violencia</div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">2.3 Acoso, hostigamiento y violencia</p>
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Toca cada sección para ver el detalle.
+      </div>
+      <div class="accordion" data-accordion="acoso">
+        <div class="accordion-item open">
+          <button class="accordion-header"><span>Postura de Drimer</span><span class="plus">+</span></button>
+          <div class="accordion-body"><p>Drimer no tolera conductas verbales, no verbales o físicas que generen un ambiente intimidatorio, ofensivo, abusivo, humillante u hostil.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Responsabilidades</span><span class="plus">+</span></button>
+          <div class="accordion-body">
+            <ul>
+              <li>Mantener una conducta respetuosa.</li>
+              <li>Evitar comentarios, mensajes, gestos o comportamientos ofensivos.</li>
+              <li>Respetar la dignidad y los límites de las demás personas.</li>
+              <li>No justificar estas conductas como bromas o costumbres.</li>
+              <li>No participar ni colaborar en violencia, acoso u hostigamiento.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Ante un posible incumplimiento</span><span class="plus">+</span></button>
+          <div class="accordion-body"><p>Todo trabajador que observe o conozca una posible situación de acoso, hostigamiento o violencia debe comunicarla.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="quote-screen">
+      <p class="eyebrow">2.3 Acoso, hostigamiento y violencia</p>
+      <div class="quote-big">"Una broma no justifica una conducta que afecte la dignidad de otra persona."</div>
+    </div>
   </div>
 
 </section>
 
-<!-- ============================================================ -->
-<!-- UNIDAD 3 — RIESGOS Y DECISIONES ÉTICAS -->
-<!-- ============================================================ -->
 <section class="unit" data-unit="3">
 
-  <div class="screen slide">
-    <p class="eyebrow">3.1 Trabajo infantil y responsabilidad social</p>
-    <h2 class="screen-title">Trabajo infantil y responsabilidad social</h2>
-    <p>Drimer considera inaceptable participar directa o indirectamente en prácticas de explotación laboral infantil y reconoce la importancia de proteger el desarrollo físico y psicológico de niñas, niños y adolescentes.</p>
-    <div class="cards-grid">
-      <div class="card">
-        <div class="icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21c-4-3-8-6-8-11a4 4 0 0 1 8-1.5A4 4 0 0 1 20 10c0 5-4 8-8 11z"/></svg>
-        </div>
-        <div class="text">No promover, facilitar ni participar en prácticas de explotación laboral infantil.</div>
-      </div>
-      <div class="card">
-        <div class="icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
-        </div>
-        <div class="text">Respetar las condiciones y restricciones que correspondan.</div>
-      </div>
-      <div class="card">
-        <div class="icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <div class="text">No participar conscientemente en actividades o relaciones que involucren estas prácticas.</div>
-      </div>
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">3.1 Trabajo infantil y responsabilidad social</p>
+      <h2 class="screen-title">Trabajo infantil y responsabilidad social</h2>
+      <p>Drimer considera inaceptable participar directa o indirectamente en prácticas de explotación laboral infantil y reconoce la importancia de proteger el desarrollo físico y psicológico de niñas, niños y adolescentes.</p>
     </div>
-    <div class="quote">Todo trabajador que identifique información o señales vinculadas con una posible situación de explotación laboral infantil relacionada con Drimer debe comunicarla.</div>
   </div>
 
-  <div class="screen slide">
-    <p class="eyebrow">3.2 Sobornos, regalos y favores indebidos</p>
-    <h2 class="screen-title">LAS DECISIONES NO SE COMPRAN</h2>
-    <div class="flip-grid" data-flipgrid="sobornos">
-      <div class="flip-card">
-        <div class="flip-inner">
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">3.1 Trabajo infantil y responsabilidad social</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21c-4-3-8-6-8-11a4 4 0 0 1 8-1.5A4 4 0 0 1 20 10c0 5-4 8-8 11z"/></svg></div>
+          <div class="text">No promover, facilitar ni participar en prácticas de explotación laboral infantil.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></div>
+          <div class="text">Respetar las condiciones y restricciones que correspondan.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="text">No participar conscientemente en actividades o relaciones que involucren estas prácticas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="quote-screen">
+      <p class="eyebrow">3.1 Trabajo infantil y responsabilidad social</p>
+      <div class="quote-big">Todo trabajador que identifique información o señales vinculadas con una posible situación de explotación laboral infantil relacionada con Drimer debe comunicarla.</div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">3.2 Sobornos, regalos y favores indebidos</p>
+      <h2 class="screen-title">LAS DECISIONES NO SE COMPRAN</h2>
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M12 7v5l3 3"/></svg>
+        Toca cada tarjeta para voltearla y ver el detalle.
+      </div>
+      <div class="flip-grid" data-flipgrid="sobornos">
+        <div class="flip-card"><div class="flip-inner">
           <div class="flip-face flip-front">Soborno</div>
           <div class="flip-face flip-back">Ofrecer, pagar, solicitar o aceptar un beneficio para influir indebidamente en una decisión.</div>
-        </div>
-      </div>
-      <div class="flip-card">
-        <div class="flip-inner">
+        </div></div>
+        <div class="flip-card"><div class="flip-inner">
           <div class="flip-face flip-front">Regalo indebido</div>
           <div class="flip-face flip-back">Un regalo puede ser indebido cuando busca influir en la objetividad de una decisión.</div>
-        </div>
-      </div>
-      <div class="flip-card">
-        <div class="flip-inner">
+        </div></div>
+        <div class="flip-card"><div class="flip-inner">
           <div class="flip-face flip-front">Favor indebido</div>
           <div class="flip-face flip-back">Un favor puede convertirse en una ventaja indebida si condiciona una decisión laboral o comercial.</div>
-        </div>
-      </div>
-      <div class="flip-card">
-        <div class="flip-inner">
+        </div></div>
+        <div class="flip-card"><div class="flip-inner">
           <div class="flip-face flip-front">Responsabilidad</div>
           <div class="flip-face flip-back">Todo trabajador debe rechazar estas situaciones y comunicar los posibles incumplimientos que identifique.</div>
-        </div>
+        </div></div>
       </div>
-    </div>
-    <p style="text-align:center; font-size:11.5px; color:var(--navy-mid); margin-top:-4px;">Toca cada tarjeta para ver el detalle</p>
-
-    <div class="scenario" data-scenario="1" data-correct="C">
-      <span class="tag">Escenario evaluativo</span>
-      <p class="situacion">Un proveedor te ofrece un beneficio personal para que favorezcas su propuesta. Luego observas que realiza un ofrecimiento similar a otro trabajador.</p>
-      <p class="pregunta">¿Qué harías?</p>
-      <div class="scenario-opciones">
-        <button class="scenario-opt" data-letra="A">A. Rechazaría el beneficio y no diría nada más porque yo actué correctamente.</button>
-        <button class="scenario-opt" data-letra="B">B. Esperaría para comprobar si mi compañero acepta.</button>
-        <button class="scenario-opt" data-letra="C">C. Rechazaría el beneficio y comunicaría ambos hechos por alguna de las vías oficiales.</button>
-        <button class="scenario-opt" data-letra="D">D. Lo aceptaría si no se trata de dinero.</button>
-      </div>
-      <div class="scenario-feedback">Cumplir el Código significa rechazar personalmente el beneficio. Velar por su cumplimiento significa comunicar también la irregularidad observada.</div>
     </div>
   </div>
 
-  <div class="screen slide">
-    <p class="eyebrow">3.3 Salud y seguridad en el trabajo</p>
-    <h2 class="screen-title">NINGÚN RESULTADO JUSTIFICA TRABAJAR DE FORMA INSEGURA</h2>
-    <img src="img/sst-hotspots.jpg" alt="4 puntos clave de seguridad" style="border-radius:10px; margin-bottom:14px;">
-    <div class="cards-grid">
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg></div>
-        <div class="text">Cumplir las normas y procedimientos de seguridad establecidos para cada proceso.</div>
+  <div class="slide">
+    <div class="screen">
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Lee la situación y elige la opción que consideres correcta.
       </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <div class="text">Utilizar correctamente los equipos de protección personal (EPP) cuando sean requeridos.</div>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
-        <div class="text">Abstenerse de ejecutar una función de manera insegura.</div>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-        <div class="text">Comunicar cualquier accidente o práctica insegura que observe, aunque parezca pequeño.</div>
+      <div class="scenario" data-scenario="1" data-correct="C">
+        <span class="tag">Escenario evaluativo</span>
+        <p class="situacion">Un proveedor te ofrece un beneficio personal para que favorezcas su propuesta. Luego observas que realiza un ofrecimiento similar a otro trabajador.</p>
+        <p class="pregunta">¿Qué harías?</p>
+        <div class="scenario-opciones">
+          <button class="scenario-opt" data-letra="A">A. Rechazaría el beneficio y no diría nada más porque yo actué correctamente.</button>
+          <button class="scenario-opt" data-letra="B">B. Esperaría para comprobar si mi compañero acepta.</button>
+          <button class="scenario-opt" data-letra="C">C. Rechazaría el beneficio y comunicaría ambos hechos por alguna de las vías oficiales.</button>
+          <button class="scenario-opt" data-letra="D">D. Lo aceptaría si no se trata de dinero.</button>
+        </div>
+        <div class="scenario-feedback">Cumplir el Código significa rechazar personalmente el beneficio. Velar por su cumplimiento significa comunicar también la irregularidad observada.</div>
       </div>
     </div>
+  </div>
 
-    <div class="scenario" data-scenario="2" data-correct="C">
-      <span class="tag">Escenario evaluativo</span>
-      <p class="situacion">Durante una tarea observas que un compañero está trabajando sin el EPP requerido.</p>
-      <p class="pregunta">¿Qué harías?</p>
-      <div class="scenario-opciones">
-        <button class="scenario-opt" data-letra="A">A. No haría nada porque cada persona es responsable de su propia seguridad.</button>
-        <button class="scenario-opt" data-letra="B">B. Esperaría a que termine la tarea.</button>
-        <button class="scenario-opt" data-letra="C">C. Comunicaría la práctica insegura para evitar que la situación continúe.</button>
-        <button class="scenario-opt" data-letra="D">D. Solo lo reportaría si ocurre un accidente.</button>
+  <div class="slide">
+    <div class="imagen-full">
+      <img src="img/sst-hotspots.jpg" alt="4 puntos clave de seguridad">
+    </div>
+    <div class="screen" style="padding-top:0;">
+      <p class="eyebrow">3.3 Salud y seguridad en el trabajo</p>
+      <h2 class="screen-title" style="font-size:15px;">NINGÚN RESULTADO JUSTIFICA TRABAJAR DE FORMA INSEGURA</h2>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">3.3 Salud y seguridad en el trabajo</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg></div>
+          <div class="text">Cumplir las normas y procedimientos de seguridad establecidos para cada proceso.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <div class="text">Utilizar correctamente los equipos de protección personal (EPP) cuando sean requeridos.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+          <div class="text">Abstenerse de ejecutar una función de manera insegura.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="text">Comunicar cualquier accidente o práctica insegura que observe, aunque parezca pequeño.</div>
+        </div>
       </div>
-      <div class="scenario-feedback">La seguridad no consiste únicamente en protegerse personalmente. Todo trabajador debe contribuir a evitar situaciones que puedan poner en riesgo a otras personas.</div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Lee la situación y elige la opción que consideres correcta.
+      </div>
+      <div class="scenario" data-scenario="2" data-correct="C">
+        <span class="tag">Escenario evaluativo</span>
+        <p class="situacion">Durante una tarea observas que un compañero está trabajando sin el EPP requerido.</p>
+        <p class="pregunta">¿Qué harías?</p>
+        <div class="scenario-opciones">
+          <button class="scenario-opt" data-letra="A">A. No haría nada porque cada persona es responsable de su propia seguridad.</button>
+          <button class="scenario-opt" data-letra="B">B. Esperaría a que termine la tarea.</button>
+          <button class="scenario-opt" data-letra="C">C. Comunicaría la práctica insegura para evitar que la situación continúe.</button>
+          <button class="scenario-opt" data-letra="D">D. Solo lo reportaría si ocurre un accidente.</button>
+        </div>
+        <div class="scenario-feedback">La seguridad no consiste únicamente en protegerse personalmente. Todo trabajador debe contribuir a evitar situaciones que puedan poner en riesgo a otras personas.</div>
+      </div>
     </div>
   </div>
 
 </section>
 
-<!-- ============================================================ -->
-<!-- UNIDAD 4 — INFORMACIÓN Y DECISIONES IMPARCIALES -->
-<!-- ============================================================ -->
 <section class="unit" data-unit="4">
 
-  <div class="screen slide">
-    <p class="eyebrow">4.1 Privacidad y protección de información</p>
-    <img src="img/privacidad.jpg" alt="Privacidad y protección de información en el trabajo" style="border-radius:10px; margin-bottom:16px;">
-
-    <h2 class="screen-title" style="font-size:14px;">Ejemplos de información que debes cuidar</h2>
-    <div class="flip-grid" data-flipgrid="privacidad">
-      <div class="flip-card"><div class="flip-inner">
-        <div class="flip-face flip-front">Contraseñas</div>
-        <div class="flip-face flip-back">Nunca las compartas ni las dejes a la vista.</div>
-      </div></div>
-      <div class="flip-card"><div class="flip-inner">
-        <div class="flip-face flip-front">Documentos de identidad</div>
-        <div class="flip-face flip-back">Guárdalos en lugares seguros, no a la vista.</div>
-      </div></div>
-      <div class="flip-card"><div class="flip-inner">
-        <div class="flip-face flip-front">Información bancaria</div>
-        <div class="flip-face flip-back">Accede solo si es indispensable para tu función.</div>
-      </div></div>
-      <div class="flip-card"><div class="flip-inner">
-        <div class="flip-face flip-front">Datos de salud</div>
-        <div class="flip-face flip-back">Es información especialmente sensible, cuídala.</div>
-      </div></div>
-    </div>
-
-    <div class="scenario" data-scenario="3" data-correct="C">
-      <span class="tag">Escenario evaluativo</span>
-      <p class="situacion">Recibes por error un archivo con información personal de otros trabajadores que no necesitas para realizar tus funciones.</p>
-      <p class="pregunta">¿Qué harías?</p>
-      <div class="scenario-opciones">
-        <button class="scenario-opt" data-letra="A">A. Lo revisaría rápidamente antes de eliminarlo.</button>
-        <button class="scenario-opt" data-letra="B">B. Lo reenviaría a otro compañero para preguntarle qué hacer.</button>
-        <button class="scenario-opt" data-letra="C">C. Evitaría utilizarlo o compartirlo y comunicaría la situación.</button>
-        <button class="scenario-opt" data-letra="D">D. Lo guardaría por si resulta útil más adelante.</button>
-      </div>
-      <div class="scenario-feedback">La información debe utilizarse únicamente para los fines laborales autorizados. Además de no utilizarla indebidamente, corresponde comunicar el incidente.</div>
+  <div class="slide">
+    <div class="imagen-full">
+      <img src="img/privacidad.jpg" alt="Privacidad y protección de información en el trabajo">
+      <div class="caption">4.1 Privacidad y protección de información</div>
     </div>
   </div>
 
-  <div class="screen slide">
-    <p class="eyebrow">4.2 Conflictos de interés</p>
-    <h2 class="screen-title">Conflictos de interés</h2>
-    <div class="tabs" data-tabs="conflicto">
-      <div class="tabs-nav">
-        <button class="tab-btn active" data-tab="conf-1">Qué es</button>
-        <button class="tab-btn" data-tab="conf-2">Responsabilidades</button>
-        <button class="tab-btn" data-tab="conf-3">Ante un incumplimiento</button>
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">4.1 Privacidad y protección de información</p>
+      <h2 class="screen-title" style="font-size:15px;">Ejemplos de información que debes cuidar</h2>
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M12 7v5l3 3"/></svg>
+        Toca cada tarjeta para voltearla y ver el detalle.
       </div>
-      <div class="tab-panel active" data-panel="conf-1">
-        <p>Existe un posible conflicto de interés cuando un interés personal, familiar o económico puede interferir o parecer interferir en la objetividad de una decisión.</p>
+      <div class="flip-grid" data-flipgrid="privacidad">
+        <div class="flip-card"><div class="flip-inner">
+          <div class="flip-face flip-front">Contraseñas</div>
+          <div class="flip-face flip-back">Nunca las compartas ni las dejes a la vista.</div>
+        </div></div>
+        <div class="flip-card"><div class="flip-inner">
+          <div class="flip-face flip-front">Documentos de identidad</div>
+          <div class="flip-face flip-back">Guárdalos en lugares seguros, no a la vista.</div>
+        </div></div>
+        <div class="flip-card"><div class="flip-inner">
+          <div class="flip-face flip-front">Información bancaria</div>
+          <div class="flip-face flip-back">Accede solo si es indispensable para tu función.</div>
+        </div></div>
+        <div class="flip-card"><div class="flip-inner">
+          <div class="flip-face flip-front">Datos de salud</div>
+          <div class="flip-face flip-back">Es información especialmente sensible, cuídala.</div>
+        </div></div>
       </div>
-      <div class="tab-panel" data-panel="conf-2">
-        <ul>
-          <li>Identificar posibles intereses personales, familiares o económicos.</li>
-          <li>Comunicar cualquier posible conflicto antes de intervenir en una decisión.</li>
-          <li>No favorecer indebidamente a familiares, amistades o empresas vinculadas.</li>
-          <li>No utilizar la posición para obtener beneficios personales.</li>
-          <li>Evitar intervenir cuando la objetividad pueda estar comprometida mientras la situación es evaluada.</li>
-        </ul>
-      </div>
-      <div class="tab-panel" data-panel="conf-3">
-        <p>Todo trabajador que identifique un posible conflicto de interés no declarado que pueda afectar una decisión de Drimer debe comunicarlo.</p>
-      </div>
-    </div>
-
-    <div class="scenario" data-scenario="4" data-correct="C">
-      <span class="tag">Escenario evaluativo</span>
-      <p class="situacion">Participas en la evaluación de un proveedor que pertenece a un familiar cercano. Además, sabes que otro evaluador mantiene una relación personal con otro proveedor y no la ha declarado.</p>
-      <p class="pregunta">¿Qué harías?</p>
-      <div class="scenario-opciones">
-        <button class="scenario-opt" data-letra="A">A. Comunicaría únicamente mi propia relación.</button>
-        <button class="scenario-opt" data-letra="B">B. No comunicaría ninguna porque ambos proveedores pueden competir normalmente.</button>
-        <button class="scenario-opt" data-letra="C">C. Comunicaría mi posible conflicto y también la situación que he identificado.</button>
-        <button class="scenario-opt" data-letra="D">D. Participaría igualmente y elegiría solamente por precio.</button>
-      </div>
-      <div class="scenario-feedback">Todo trabajador debe gestionar adecuadamente sus propios posibles conflictos de interés y comunicar también las irregularidades que identifique.</div>
     </div>
   </div>
 
-  <div class="screen slide">
-    <p class="eyebrow">4.3 Compensación y cumplimiento laboral</p>
-    <h2 class="screen-title">Compensación y cumplimiento laboral</h2>
-    <p>Drimer se compromete a cumplir las disposiciones aplicables relacionadas con remuneraciones, jornada de trabajo, horas extras, límites de horas de trabajo y beneficios laborales.</p>
+  <div class="slide">
+    <div class="screen">
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Lee la situación y elige la opción que consideres correcta.
+      </div>
+      <div class="scenario" data-scenario="3" data-correct="C">
+        <span class="tag">Escenario evaluativo</span>
+        <p class="situacion">Recibes por error un archivo con información personal de otros trabajadores que no necesitas para realizar tus funciones.</p>
+        <p class="pregunta">¿Qué harías?</p>
+        <div class="scenario-opciones">
+          <button class="scenario-opt" data-letra="A">A. Lo revisaría rápidamente antes de eliminarlo.</button>
+          <button class="scenario-opt" data-letra="B">B. Lo reenviaría a otro compañero para preguntarle qué hacer.</button>
+          <button class="scenario-opt" data-letra="C">C. Evitaría utilizarlo o compartirlo y comunicaría la situación.</button>
+          <button class="scenario-opt" data-letra="D">D. Lo guardaría por si resulta útil más adelante.</button>
+        </div>
+        <div class="scenario-feedback">La información debe utilizarse únicamente para los fines laborales autorizados. Además de no utilizarla indebidamente, corresponde comunicar el incidente.</div>
+      </div>
+    </div>
+  </div>
 
-    <div class="accordion" data-accordion="compensacion">
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Remuneraciones</span><span class="plus">+</span></button>
-        <div class="accordion-body"><p>Drimer cumple las disposiciones aplicables sobre remuneraciones.</p></div>
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">4.2 Conflictos de interés</p>
+      <h2 class="screen-title">Conflictos de interés</h2>
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/></svg>
+        Toca cada pestaña para conocer el detalle.
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Jornada</span><span class="plus">+</span></button>
-        <div class="accordion-body"><p>Se respetan los límites de jornada de trabajo establecidos.</p></div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Horas extras</span><span class="plus">+</span></button>
-        <div class="accordion-body"><p>Se cumplen las disposiciones aplicables sobre horas extras.</p></div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Beneficios laborales</span><span class="plus">+</span></button>
-        <div class="accordion-body"><p>Drimer cumple con los beneficios laborales que correspondan.</p></div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header"><span>Registros veraces</span><span class="plus">+</span></button>
-        <div class="accordion-body">
+      <div class="tabs" data-tabs="conflicto">
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-tab="conf-1">Qué es</button>
+          <button class="tab-btn" data-tab="conf-2">Responsabilidades</button>
+          <button class="tab-btn" data-tab="conf-3">Ante un incumplimiento</button>
+        </div>
+        <div class="tab-panel active" data-panel="conf-1">
+          <p style="margin:0;">Existe un posible conflicto de interés cuando un interés personal, familiar o económico puede interferir o parecer interferir en la objetividad de una decisión.</p>
+        </div>
+        <div class="tab-panel" data-panel="conf-2">
           <ul>
-            <li>Proporcionar información verdadera en los registros que le correspondan.</li>
-            <li>Registrar correctamente asistencia y horas trabajadas cuando corresponda.</li>
-            <li>No alterar, ocultar ni manipular registros laborales.</li>
-            <li>Cumplir los procedimientos internos relacionados con su jornada y funciones.</li>
+            <li>Identificar posibles intereses personales, familiares o económicos.</li>
+            <li>Comunicar cualquier posible conflicto antes de intervenir en una decisión.</li>
+            <li>No favorecer indebidamente a familiares, amistades o empresas vinculadas.</li>
+            <li>No utilizar la posición para obtener beneficios personales.</li>
+            <li>Evitar intervenir cuando la objetividad pueda estar comprometida mientras la situación es evaluada.</li>
           </ul>
+        </div>
+        <div class="tab-panel" data-panel="conf-3">
+          <p style="margin:0;">Todo trabajador que identifique un posible conflicto de interés no declarado que pueda afectar una decisión de Drimer debe comunicarlo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Lee la situación y elige la opción que consideres correcta.
+      </div>
+      <div class="scenario" data-scenario="4" data-correct="C">
+        <span class="tag">Escenario evaluativo</span>
+        <p class="situacion">Participas en la evaluación de un proveedor que pertenece a un familiar cercano. Además, sabes que otro evaluador mantiene una relación personal con otro proveedor y no la ha declarado.</p>
+        <p class="pregunta">¿Qué harías?</p>
+        <div class="scenario-opciones">
+          <button class="scenario-opt" data-letra="A">A. Comunicaría únicamente mi propia relación.</button>
+          <button class="scenario-opt" data-letra="B">B. No comunicaría ninguna porque ambos proveedores pueden competir normalmente.</button>
+          <button class="scenario-opt" data-letra="C">C. Comunicaría mi posible conflicto y también la situación que he identificado.</button>
+          <button class="scenario-opt" data-letra="D">D. Participaría igualmente y elegiría solamente por precio.</button>
+        </div>
+        <div class="scenario-feedback">Todo trabajador debe gestionar adecuadamente sus propios posibles conflictos de interés y comunicar también las irregularidades que identifique.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">4.3 Compensación y cumplimiento laboral</p>
+      <h2 class="screen-title" style="font-size:15px;">Compensación y cumplimiento laboral</h2>
+      <p style="font-size:12.5px;">Drimer se compromete a cumplir las disposiciones aplicables relacionadas con remuneraciones, jornada de trabajo, horas extras y beneficios laborales.</p>
+      <div class="instruccion">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Toca cada punto para ver el detalle.
+      </div>
+      <div class="accordion" data-accordion="compensacion">
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Remuneraciones</span><span class="plus">+</span></button>
+          <div class="accordion-body"><p>Drimer cumple las disposiciones aplicables sobre remuneraciones.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Jornada</span><span class="plus">+</span></button>
+          <div class="accordion-body"><p>Se respetan los límites de jornada de trabajo establecidos.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Horas extras</span><span class="plus">+</span></button>
+          <div class="accordion-body"><p>Se cumplen las disposiciones aplicables sobre horas extras.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Beneficios laborales</span><span class="plus">+</span></button>
+          <div class="accordion-body"><p>Drimer cumple con los beneficios laborales que correspondan.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header"><span>Registros veraces</span><span class="plus">+</span></button>
+          <div class="accordion-body">
+            <ul>
+              <li>Proporcionar información verdadera en los registros que le correspondan.</li>
+              <li>No alterar, ocultar ni manipular registros laborales.</li>
+              <li>Cumplir los procedimientos internos relacionados con su jornada y funciones.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -717,69 +646,97 @@
 
 </section>
 
-<!-- ============================================================ -->
-<!-- UNIDAD 5 — REPORTE Y CIERRE -->
-<!-- ============================================================ -->
 <section class="unit" data-unit="5">
 
-  <div class="screen slide">
-    <p class="eyebrow">5.1 Los tres canales de reporte</p>
-    <img src="img/canales-reporte.jpg" alt="Tres canales de reporte: jefe inmediato, RRHH, Te Escuchamos" style="border-radius:10px; margin-bottom:16px;">
-    <h2 class="screen-title">¿CÓMO COMUNICAR UNA IRREGULARIDAD?</h2>
-    <p>Ante cualquier posible incumplimiento del Código de Conducta, todo trabajador puede utilizar cualquiera de estas tres vías. No existe un orden obligatorio y no es necesario utilizar más de una.</p>
-    <div class="cards-grid">
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <div class="text"><strong>Jefe inmediato</strong>Comunicar directamente la situación identificada.</div>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="text"><strong>Recursos Humanos</strong>Acudir directamente al área y comunicar lo ocurrido.</div>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
-        <div class="text"><strong>Te Escuchamos</strong>Reporte anónimo: tescuchamos@drimer.com.pe</div>
+  <div class="slide">
+    <div class="imagen-full">
+      <img src="img/canales-reporte.jpg" alt="Tres canales de reporte: jefe inmediato, RRHH, Te Escuchamos">
+    </div>
+    <div class="screen" style="padding-top:0;">
+      <p class="eyebrow">5.1 Los tres canales de reporte</p>
+      <p style="font-size:12.5px;">Ante cualquier posible incumplimiento del Código de Conducta, todo trabajador puede utilizar cualquiera de estas tres vías. No existe un orden obligatorio.</p>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">5.1 Los tres canales de reporte</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="text"><strong>Jefe inmediato</strong>Comunicar directamente la situación identificada.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="text"><strong>Recursos Humanos</strong>Acudir directamente al área y comunicar lo ocurrido.</div>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="text"><strong>Te Escuchamos</strong>Reporte anónimo: tescuchamos@drimer.com.pe</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="screen slide">
-    <p class="eyebrow">5.2 Qué ocurre después de un reporte</p>
-    <h2 class="screen-title">REPORTAR NO SIGNIFICA DECLARAR CULPABLE A ALGUIEN</h2>
-    <div class="cards-grid">
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 4h16v16H4z" opacity="0"/><path d="M3 8l9 6 9-6M3 8v10h18V8M3 8l9-5 9 5"/></svg></div><div class="text"><strong>1. Recepción</strong>Se recibe y registra la comunicación.</div></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="text"><strong>2. Revisión</strong>Se analiza la situación y el tratamiento que corresponde.</div></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="text"><strong>3. Investigación</strong>Se revisan objetivamente los hechos y la información disponible.</div></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="text"><strong>4. Descargos</strong>Las personas involucradas pueden brindar su versión y aportar información.</div></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><circle cx="12" cy="12" r="10"/></svg></div><div class="text"><strong>5. Decisión</strong>Se determina si existió un incumplimiento y qué acciones corresponden.</div></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div><div class="text"><strong>6. Seguimiento</strong>Se implementan las medidas que correspondan.</div></div>
-    </div>
-    <p style="font-size:12.5px; color:var(--navy-mid); font-style:italic;">Cuando una situación cuente con un procedimiento especial aplicable, deberá atenderse conforme a dicho procedimiento.</p>
-  </div>
-
-  <div class="screen slide">
-    <p class="eyebrow">5.3 Confidencialidad y no represalias</p>
-    <div class="quote">"Reportar de buena fe no debe generar represalias."</div>
-    <div class="cards-grid">
-      <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="text">La información relacionada con un reporte debe manejarse de manera reservada.</div></div>
-      <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="text">Drimer no acepta represalias contra una persona por comunicar de buena fe una posible irregularidad.</div></div>
-      <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><div class="text">Una denuncia no significa automáticamente que la persona señalada sea responsable. Los hechos deben revisarse antes de adoptar una decisión.</div></div>
-      <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 4h16v16H4z" opacity="0"/><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="text">Una denuncia de buena fe que finalmente no pueda comprobarse no se convierte automáticamente en una denuncia falsa.</div></div>
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">5.2 Qué ocurre después de un reporte</p>
+      <h2 class="screen-title" style="font-size:15px;">REPORTAR NO SIGNIFICA DECLARAR CULPABLE A ALGUIEN</h2>
+      <div class="cards-grid">
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 8l9 6 9-6M3 8v10h18V8M3 8l9-5 9 5"/></svg></div><div class="text"><strong>1. Recepción</strong>Se recibe y registra la comunicación.</div></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="text"><strong>2. Revisión</strong>Se analiza la situación y el tratamiento que corresponde.</div></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="text"><strong>3. Investigación</strong>Se revisan objetivamente los hechos y la información disponible.</div></div>
+      </div>
     </div>
   </div>
 
-  <div class="cierre-final slide">
-    <div class="check">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#051C2C" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">5.2 Qué ocurre después de un reporte</p>
+      <div class="cards-grid">
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="text"><strong>4. Descargos</strong>Las personas involucradas pueden brindar su versión y aportar información.</div></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><circle cx="12" cy="12" r="10"/></svg></div><div class="text"><strong>5. Decisión</strong>Se determina si existió un incumplimiento y qué acciones corresponden.</div></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div><div class="text"><strong>6. Seguimiento</strong>Se implementan las medidas que correspondan.</div></div>
+      </div>
+      <p style="font-size:11.5px; color:var(--navy-mid); font-style:italic; margin-top:10px; margin-bottom:0;">Cuando una situación cuente con un procedimiento especial aplicable, deberá atenderse conforme a dicho procedimiento.</p>
     </div>
-    <h2>HAS COMPLETADO EL CURSO<br>CÓDIGO DE CONDUCTA DRIMER</h2>
-    <p style="color:rgba(255,255,255,0.75); font-size:13px; max-width:340px; margin:0 auto 20px;">"Actuar correctamente y contribuir al cumplimiento del Código es responsabilidad de todos."</p>
-    <div class="report-reminder" style="justify-content:center; border-top:none; padding-top:0;">
-      <span>Jefe inmediato</span><span>Recursos Humanos</span><span>Te Escuchamos (anónimo)</span>
+  </div>
+
+  <div class="slide">
+    <div class="quote-screen">
+      <p class="eyebrow">5.3 Confidencialidad y no represalias</p>
+      <div class="quote-big">"Reportar de buena fe no debe generar represalias."</div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="screen">
+      <p class="eyebrow">5.3 Confidencialidad y no represalias</p>
+      <div class="cards-grid">
+        <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="text">La información relacionada con un reporte debe manejarse de manera reservada.</div></div>
+        <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="text">Drimer no acepta represalias contra una persona por comunicar de buena fe una posible irregularidad.</div></div>
+        <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><div class="text">Una denuncia no significa automáticamente que la persona señalada sea responsable.</div></div>
+        <div class="card green"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="text">Una denuncia de buena fe que finalmente no pueda comprobarse no se convierte automáticamente en una denuncia falsa.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide cierre-final">
+    <div class="screen">
+      <div class="check">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#051C2C" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>HAS COMPLETADO EL CURSO<br>CÓDIGO DE CONDUCTA DRIMER</h2>
+      <p style="color:rgba(255,255,255,0.75); font-size:12.5px; max-width:320px; margin:0 auto 18px;">"Actuar correctamente y contribuir al cumplimiento del Código es responsabilidad de todos."</p>
+      <div class="report-reminder" style="justify-content:center; border-top:none; padding-top:0;">
+        <span>Jefe inmediato</span><span>Recursos Humanos</span><span>Te Escuchamos (anónimo)</span>
+      </div>
     </div>
   </div>
 
 </section>
+
+</div>
 
 <div class="nav-inferior">
   <button class="nav-btn anterior" id="btnAnterior">
@@ -793,7 +750,48 @@
 </div>
 
 <script>
-  // ---------- Sistema de diapositivas ----------
+  document.querySelectorAll('.accordion-header').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btn.closest('.accordion-item').classList.toggle('open');
+    });
+  });
+
+  document.querySelectorAll('.tabs').forEach(function(tabGroup){
+    tabGroup.querySelectorAll('.tab-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const target = btn.dataset.tab;
+        tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        tabGroup.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        tabGroup.querySelector('.tab-panel[data-panel="' + target + '"]').classList.add('active');
+      });
+    });
+  });
+
+  document.querySelectorAll('.flip-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      card.classList.toggle('flipped');
+    });
+  });
+
+  document.querySelectorAll('.scenario').forEach(function(sc){
+    const correcta = sc.dataset.correct;
+    const feedback = sc.querySelector('.scenario-feedback');
+    const opciones = sc.querySelectorAll('.scenario-opt');
+
+    opciones.forEach(function(opt){
+      opt.addEventListener('click', function(){
+        const letra = opt.dataset.letra;
+        opciones.forEach(function(o){
+          o.disabled = true;
+          if(o.dataset.letra === correcta) o.classList.add('correct');
+          else if(o === opt) o.classList.add('incorrect');
+        });
+        feedback.classList.add('show');
+      });
+    });
+  });
+
   const slides = Array.from(document.querySelectorAll('.slide'));
   slides.forEach(function(s){
     s.dataset.unitIndex = s.closest('.unit').dataset.unit;
@@ -836,7 +834,6 @@
     if(currentSlide < slides.length - 1) mostrarSlide(currentSlide + 1);
   });
 
-  // ---------- Navegación por unidades: salta a la primera pantalla de esa unidad ----------
   document.querySelectorAll('.unit-tab').forEach(function(tab){
     tab.addEventListener('click', function(){
       const n = tab.dataset.unit;
@@ -846,52 +843,6 @@
   });
 
   mostrarSlide(0);
-
-  // ---------- Acordeones ----------
-  document.querySelectorAll('.accordion-header').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      btn.closest('.accordion-item').classList.toggle('open');
-    });
-  });
-
-  // ---------- Pestañas ----------
-  document.querySelectorAll('.tabs').forEach(function(tabGroup){
-    tabGroup.querySelectorAll('.tab-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        const target = btn.dataset.tab;
-        tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        tabGroup.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        tabGroup.querySelector('.tab-panel[data-panel="' + target + '"]').classList.add('active');
-      });
-    });
-  });
-
-  // ---------- Tarjetas de volteo ----------
-  document.querySelectorAll('.flip-card').forEach(function(card){
-    card.addEventListener('click', function(){
-      card.classList.toggle('flipped');
-    });
-  });
-
-  // ---------- Escenarios evaluativos ----------
-  document.querySelectorAll('.scenario').forEach(function(sc){
-    const correcta = sc.dataset.correct;
-    const feedback = sc.querySelector('.scenario-feedback');
-    const opciones = sc.querySelectorAll('.scenario-opt');
-
-    opciones.forEach(function(opt){
-      opt.addEventListener('click', function(){
-        const letra = opt.dataset.letra;
-        opciones.forEach(function(o){
-          o.disabled = true;
-          if(o.dataset.letra === correcta) o.classList.add('correct');
-          else if(o === opt) o.classList.add('incorrect');
-        });
-        feedback.classList.add('show');
-      });
-    });
-  });
 </script>
 
 </body>
