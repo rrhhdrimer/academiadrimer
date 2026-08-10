@@ -443,16 +443,21 @@
 
     let mensajeExtra = '';
     if(data.aprobado){
-      mensajeExtra = '¡Aprobaste el curso! Tu certificado estará disponible próximamente.';
+      mensajeExtra = '¡Aprobaste el curso! Ya puedes descargar tu certificado.';
     } else if(data.intentosRestantes > 0){
       mensajeExtra = 'No alcanzaste la nota mínima (13). Te queda ' + data.intentosRestantes + ' intento.';
     } else {
       mensajeExtra = 'No alcanzaste la nota mínima y ya usaste tus intentos disponibles. Contacta a Talento Humano.';
     }
 
+    const botonCertificado = data.aprobado
+      ? '<a href="certificado.html?curso=' + encodeURIComponent(codigoCurso) + '" class="btn" style="display:block; text-decoration:none; box-sizing:border-box; margin-bottom:10px;">Descargar certificado</a>'
+      : '';
+
     box.innerHTML =
       '<div class="nota-grande">' + data.nota + '</div>' +
       '<p>' + mensajeExtra + '</p>' +
+      botonCertificado +
       '<a href="dashboard.html" class="btn" style="display:block; text-decoration:none; box-sizing:border-box;">Volver a mis cursos</a>';
   }
 
