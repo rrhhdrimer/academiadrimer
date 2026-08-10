@@ -75,13 +75,15 @@
 
   .banner{ flex:1; min-height:0; display:flex; flex-direction:column; background:var(--navy-deep); color:#fff; padding:14px 18px; text-align:center; }
   .banner .img-wrap{ flex:1; min-height:0; border-radius:10px; overflow:hidden; margin-bottom:12px; }
-  .banner .img-wrap img{ width:100%; height:100%; object-fit:cover; }
+  .banner .img-wrap img{ width:100%; height:100%; object-fit:contain; background:var(--navy-deep); }
   .banner h1{ font-family:'Poppins', sans-serif; font-weight:700; color:#fff; margin:0 0 6px; font-size:21px; flex-shrink:0; }
   .banner p{ color:rgba(255,255,255,0.75); font-size:13px; margin:0; flex-shrink:0; }
 
   .imagen-full{ flex:1; min-height:0; display:flex; flex-direction:column; padding:14px; }
   .imagen-full .img-wrap{ flex:1; min-height:0; border-radius:10px; overflow:hidden; }
-  .imagen-full .img-wrap img{ width:100%; height:100%; object-fit:cover; }
+  .imagen-full .img-wrap img{ width:100%; height:100%; object-fit:contain; background:var(--card-bg); }
+  .imagen-full.fija{ flex:none; }
+  .imagen-full.fija .img-wrap{ flex:none; aspect-ratio:3/2; width:100%; }
 
   .quote-screen{ flex-shrink:0; padding:14px 22px 18px; text-align:center; }
   .quote-big{
@@ -230,7 +232,7 @@
 
 <div class="slide">
   <div class="banner">
-    <div class="img-wrap"><img src="img/portada.jpg" alt="Código de Conducta Drimer"></div>
+    <div class="img-wrap"><img src="img/portada.png" alt="Código de Conducta Drimer"></div>
     <h1>CÓDIGO DE CONDUCTA DRIMER</h1>
     <p>La forma en que actuamos también representa a Drimer.</p>
   </div>
@@ -251,7 +253,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
 
 <div class="slide">
   <div class="imagen-full">
-    <div class="img-wrap"><img src="img/responsabilidad-compartida.jpg" alt="Cumplir el Código y velar por su cumplimiento"></div>
+    <div class="img-wrap"><img src="img/responsabilidad-compartida.png" alt="Cumplir el Código y velar por su cumplimiento"></div>
   </div>
   <div class="quote-screen">
     <div class="quote-big">"El Código de Conducta es responsabilidad de todos."</div>
@@ -263,7 +265,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
     <h2 class="screen-title">POLÍTICA DE CERO TOLERANCIA</h2>
   </div>
   <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/cumplir-velar.jpg" alt="Política de Cero Tolerancia"></div>
+    <div class="img-wrap"><img src="img/cumplir-velar.png" alt="Política de Cero Tolerancia"></div>
   </div>
 </div>
 
@@ -293,8 +295,8 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
       </div>
     </div>
   </div>
-  <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/acoso-hostigamiento.jpg" alt="Es mi responsabilidad comunicar"></div>
+  <div class="imagen-full fija" style="padding-top:0;">
+    <div class="img-wrap"><img src="img/acoso-hostigamiento.png" alt="Es mi responsabilidad comunicar"></div>
   </div>
 </div>
 
@@ -368,7 +370,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
     <h2 class="screen-title">SALUD Y SEGURIDAD EN EL TRABAJO</h2>
   </div>
   <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/sst-hotspots.jpg" alt="4 puntos clave de seguridad"></div>
+    <div class="img-wrap"><img src="img/sst-hotspots.png" alt="4 puntos clave de seguridad"></div>
   </div>
   <div class="quote-screen">
     <div class="quote-big" style="text-align:center; font-size:14px;">NINGÚN RESULTADO JUSTIFICA TRABAJAR DE FORMA INSEGURA</div>
@@ -421,7 +423,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
     <h2 class="screen-title">PRIVACIDAD Y PROTECCIÓN DE INFORMACIÓN</h2>
   </div>
   <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/privacidad.jpg" alt="Privacidad y protección de información en el trabajo"></div>
+    <div class="img-wrap"><img src="img/privacidad.png" alt="Privacidad y protección de información en el trabajo"></div>
   </div>
 </div>
 
