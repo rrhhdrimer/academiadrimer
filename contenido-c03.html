@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Prevención del Hostigamiento Sexual Laboral — Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-deep:#051C2C;
+  --navy-mid:#384967;
+  --celeste:#2CADE4;
+  --blue:#307FE2;
+  --blue-light:#4C9FC8;
+  --card-bg:#DDE5ED;
+  --green-bg:#EBF0E3;
+  --gold:#F5C842;
+  --green:#1A7A4A;
+  --red:#E05252;
+  --white:#FFFFFF;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#EEF2F6;
+  color:var(--navy-mid);
+  -webkit-font-smoothing:antialiased;
+}
+svg{display:block;}
+button{font-family:'Poppins',sans-serif;}
+
+/* ===== Contenedor general ===== */
+.app{
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  height:100dvh;
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  background:var(--white);
+  position:relative;
+  overflow:hidden;
+}
+@media (min-width:700px){
+  .app{height:100vh;height:100dvh;}
+}
+
+/* ===== Barra de progreso ===== */
+.progreso{flex-shrink:0;padding:16px 20px 10px;}
+.progreso-texto{font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--navy-mid);margin-bottom:7px;}
+.progreso-track{height:4px;background:#E4E9EF;border-radius:3px;overflow:hidden;}
+.progreso-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .35s ease;}
+
+/* ===== Pantallas ===== */
+.pantallas{flex:1;position:relative;min-height:0;}
+.pantalla{
+  display:none;
+  flex-direction:column;
+  height:100%;
+  padding:6px 20px 4px;
+  overflow:hidden;
+}
+.pantalla.activa{display:flex;}
+.contenido{flex:1;display:flex;flex-direction:column;justify-content:center;overflow:hidden;gap:11px;min-height:0;}
+
+.screen-title{font-size:19px;font-weight:700;color:var(--celeste);text-transform:uppercase;line-height:1.24;margin:0 0 2px;}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--blue-light);margin:0;}
+p{margin:0;font-size:13.5px;line-height:1.55;color:var(--navy-mid);}
+.intro{margin-bottom:2px;}
+
+/* ===== Navegación inferior ===== */
+.nav-inferior{flex-shrink:0;display:flex;gap:10px;padding:12px 20px calc(14px + env(safe-area-inset-bottom));}
+.btn{flex:1;border:none;border-radius:11px;padding:13px;font-weight:600;font-size:14px;cursor:pointer;transition:transform .1s ease, opacity .2s ease;}
+.btn:active{transform:scale(.97);}
+#btnAnterior{background:var(--white);border:1.5px solid var(--card-bg);color:var(--navy-mid);}
+#btnAnterior:disabled{opacity:.3;cursor:default;}
+#btnAnterior:disabled:active{transform:none;}
+#btnSiguiente{background:var(--celeste);color:#fff;box-shadow:0 3px 10px rgba(44,173,228,.35);}
+#btnSiguiente.oculto{visibility:hidden;}
+
+/* ===== Tarjetas genéricas ===== */
+.cards{display:flex;flex-direction:column;gap:9px;}
+.card{background:var(--card-bg);border-radius:12px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;opacity:0;animation:cardIn .45s ease forwards;}
+.card:nth-child(1){animation-delay:.05s;}
+.card:nth-child(2){animation-delay:.35s;}
+.card:nth-child(3){animation-delay:.65s;}
+.card .icon-wrap{width:30px;height:30px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);}
+.card .icon-wrap svg{width:16px;height:16px;}
+.card .card-body{min-width:0;}
+.card .card-title{font-size:12.5px;font-weight:700;color:var(--navy-deep);margin:0 0 2px;text-transform:uppercase;letter-spacing:.01em;}
+.card .card-text{font-size:12px;line-height:1.42;color:var(--navy-mid);margin:0;}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== Instrucción visible ===== */
+.instruccion{display:flex;align-items:center;gap:8px;background:#F3F6F9;border:1px dashed var(--blue-light);border-radius:10px;padding:9px 11px;font-size:11.5px;color:var(--navy-mid);}
+.instruccion svg{flex-shrink:0;width:15px;height:15px;color:var(--blue);}
+
+/* ===== Tarjetas de volteo ===== */
+.flip-grid{display:flex;flex-direction:column;gap:9px;}
+.flip-card{perspective:1000px;}
+.flip-inner{position:relative;display:grid;transition:transform .45s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d;cursor:pointer;}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-front,.flip-back{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:10px;min-height:52px;}
+.flip-front{background:var(--card-bg);}
+.flip-front .card-title{font-size:12.5px;font-weight:700;color:var(--navy-deep);text-transform:uppercase;margin:0;}
+.flip-front .icon-wrap{width:28px;height:28px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);}
+.flip-front .icon-wrap svg{width:15px;height:15px;}
+.flip-back{background:var(--navy-deep);transform:rotateY(180deg);}
+.flip-back p{color:#E7EEF5;font-size:11.8px;line-height:1.42;margin:0;}
+.flip-hint{margin-left:auto;flex-shrink:0;color:var(--blue-light);opacity:.7;}
+.flip-hint svg{width:13px;height:13px;}
+
+/* ===== Revelado progresivo (numerado) ===== */
+.reglas{display:flex;flex-direction:column;gap:12px;}
+.regla{display:flex;gap:12px;align-items:flex-start;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .35s ease;}
+.regla.visible{opacity:1;transform:translateY(0);}
+.regla .num-grande{font-size:28px;font-weight:700;color:var(--gold);line-height:1;flex-shrink:0;}
+.regla .regla-txt strong{display:block;font-size:12.8px;color:var(--navy-deep);margin-bottom:2px;letter-spacing:.01em;}
+.regla .regla-txt p{margin:0;font-size:12.5px;color:var(--navy-mid);}
+
+/* ===== Imagen protagonista ===== */
+.img-protagonista{position:relative;width:100%;border-radius:12px;overflow:hidden;background:var(--navy-deep);flex-shrink:0;height:30vh;max-height:150px;min-height:100px;}
+.img-protagonista picture,.img-protagonista img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.criterios{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:5px;}
+.criterios li{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:600;color:var(--navy-deep);text-transform:uppercase;letter-spacing:.01em;}
+.criterios li svg{color:var(--green);flex-shrink:0;width:15px;height:15px;}
+.nota-criterio{font-size:11.8px;color:var(--navy-mid);font-style:italic;margin-top:3px;}
+
+/* ===== Caso Práctico ===== */
+.caso-box{background:var(--navy-deep);border-radius:14px;padding:12px 14px;color:#fff;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+.caso-etiqueta{align-self:flex-start;background:var(--gold);color:var(--navy-deep);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 9px;border-radius:20px;text-transform:uppercase;}
+.caso-situacion{font-size:11.2px;line-height:1.4;color:#D9E2EC;margin:0;}
+.caso-pregunta{font-size:12.5px;font-weight:700;margin:0;color:#fff;line-height:1.3;}
+.caso-opciones{display:flex;flex-direction:column;gap:5px;}
+.opcion{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:6px 9px;font-size:11.2px;line-height:1.28;color:#fff;text-align:left;cursor:pointer;display:flex;gap:6px;}
+.opcion .letra{font-weight:700;color:var(--gold);flex-shrink:0;}
+.opcion.correcta{background:rgba(26,122,74,.85);border-color:var(--green);}
+.opcion.incorrecta{background:rgba(224,82,82,.85);border-color:var(--red);}
+.opcion:disabled{cursor:default;}
+.caso-feedback{display:none;font-size:11.2px;line-height:1.4;padding:8px 10px;border-radius:8px;}
+.caso-box.respondido .caso-etiqueta,
+.caso-box.respondido .caso-situacion{display:none;}
+.caso-box.respondido .caso-opciones{gap:4px;}
+.caso-box.respondido .opcion{padding:5px 9px;}
+.caso-box.respondido .caso-pregunta{font-size:11.8px;}
+.caso-feedback.mostrar{display:block;}
+.caso-feedback.ok{background:rgba(26,122,74,.2);border-left:3px solid var(--green);color:#E4F3EA;}
+.caso-feedback.mal{background:rgba(224,82,82,.2);border-left:3px solid var(--red);color:#FBE9E9;}
+
+/* ===== Cita destacada ===== */
+.cita{background:var(--card-bg);border-left:4px solid var(--gold);border-radius:4px 10px 10px 4px;padding:13px 15px;font-size:13.5px;font-weight:600;color:var(--navy-deep);line-height:1.5;}
+
+/* ===== Timeline / secuencia ===== */
+.timeline{display:flex;flex-direction:column;gap:8px;}
+.paso{display:flex;gap:10px;align-items:flex-start;opacity:0;animation:cardIn .4s ease forwards;}
+.paso:nth-child(1){animation-delay:.05s;}
+.paso:nth-child(2){animation-delay:.45s;}
+.paso:nth-child(3){animation-delay:.85s;}
+.paso:nth-child(4){animation-delay:1.25s;}
+.paso .num{width:24px;height:24px;border-radius:50%;background:var(--celeste);color:#fff;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.paso .paso-txt strong{display:block;font-size:12px;color:var(--navy-deep);text-transform:uppercase;margin-bottom:1px;letter-spacing:.01em;}
+.paso .paso-txt p{margin:0;font-size:11.5px;color:var(--navy-mid);line-height:1.4;}
+.pie-destacado{opacity:0;animation:cardIn .4s ease forwards;animation-delay:1.55s;margin-top:2px;font-size:11.5px;font-style:italic;color:var(--navy-mid);border-top:1px solid var(--card-bg);padding-top:8px;}
+
+/* ===== Portada ===== */
+.pantalla.p1{padding:0;}
+.pantalla.p1 .contenido{padding:0;gap:0;justify-content:flex-end;position:relative;height:100%;overflow:hidden;}
+.pantalla.p1 picture,.pantalla.p1 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.pantalla.p1 .portada-bg{position:absolute;inset:0;background:var(--navy-deep);}
+.portada-overlay{position:relative;z-index:2;background:linear-gradient(to top, rgba(5,28,44,.95) 0%, rgba(5,28,44,.7) 55%, rgba(5,28,44,0) 100%);padding:60px 20px 22px;}
+.portada-overlay h1{color:#fff;font-size:19px;font-weight:700;text-transform:uppercase;margin:0 0 9px;line-height:1.28;}
+.portada-overlay p{color:#DCE6EF;font-size:12.8px;margin:0;line-height:1.5;}
+
+/* ===== Bienvenida ===== */
+.bienvenida-wrap{display:flex;flex-direction:column;gap:14px;align-items:flex-start;text-align:left;}
+.bienvenida-wrap .eyebrow{align-self:center;}
+#bienvenidaTexto{font-size:14px;line-height:1.62;color:var(--navy-mid);min-height:150px;}
+#bienvenidaTexto p{margin:0 0 12px;font-size:14px;line-height:1.62;}
+#bienvenidaTexto p:last-child{margin-bottom:0;}
+.cursor-tw{display:inline-block;width:2px;background:var(--celeste);margin-left:1px;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+/* ===== Cierre final ===== */
+.pantalla.p14{padding:0;}
+.pantalla.p14 .contenido{background:var(--navy-deep);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px 26px;gap:0;}
+.cierre-check{width:62px;height:62px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:popIn .5s ease;}
+.cierre-check svg{width:30px;height:30px;color:#fff;}
+@keyframes popIn{0%{transform:scale(.4);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.pantalla.p14 h2{font-size:19px;font-weight:700;color:#fff;text-transform:uppercase;margin:0 0 13px;}
+.pantalla.p14 p{font-size:13.5px;color:#C9D4E0;line-height:1.55;margin:0 0 10px;}
+.pantalla.p14 .secundario{font-size:12px;color:var(--gold);font-weight:600;margin-top:6px;}
+
+/* Reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s !important;transition-duration:.001s !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Sprite de íconos ===== -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/><path d="M12 8v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="16" r=".9" fill="currentColor"/></symbol>
+<symbol id="ic-alert-user" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M4.5 19c.7-3 2.9-4.8 5.5-4.8s4.8 1.8 5.5 4.8" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M18.5 8v3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="18.5" cy="14" r=".9" fill="currentColor"/></symbol>
+<symbol id="ic-hand-stop" viewBox="0 0 24 24"><path d="M8 12V6a1.4 1.4 0 0 1 2.8 0v5M10.8 11V5a1.4 1.4 0 0 1 2.8 0v6M13.6 11V6a1.4 1.4 0 0 1 2.8 0v6M16.4 12v-2a1.4 1.4 0 0 1 2.8 0v5c0 3.6-2.3 6-5.8 6h-1.5c-2 0-3-.6-4.2-2.1l-3-3.8a1.35 1.35 0 0 1 2-1.8l1.7 1.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+<symbol id="ic-message" viewBox="0 0 24 24"><path d="M4 5.5h16v10H9l-4 3.5v-3.5H4v-10z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/><path d="M8 9.5h8M8 12.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+<symbol id="ic-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.7" fill="none"/><circle cx="8.5" cy="9.5" r="1.4" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 16l5-4.5 3.5 3L16 11l4 4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
+<symbol id="ic-proximity" viewBox="0 0 24 24"><circle cx="7.5" cy="12" r="3.6" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="16.5" cy="12" r="3.6" stroke="currentColor" stroke-width="1.6" fill="none"/></symbol>
+<symbol id="ic-gift" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="9.5" rx="1.2" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M4 10h16M12 10v9.5" stroke="currentColor" stroke-width="1.5"/><path d="M12 10c0-3-2.2-4.5-4-3.6-1.5.8-1 3.6 4 3.6zm0 0c0-3 2.2-4.5 4-3.6 1.5.8 1 3.6-4 3.6z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
+<symbol id="ic-alert-triangle" viewBox="0 0 24 24"><path d="M12 4.5l9 15.5H3l9-15.5z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/><path d="M12 10.5v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></symbol>
+<symbol id="ic-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M6.5 6.5l11 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+<symbol id="ic-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 12.3l2.6 2.6 5.4-5.8" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ic-leader" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="3.4" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M5 20c1-3.8 3.8-5.9 7-5.9s6 2.1 7 5.9" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></symbol>
+<symbol id="ic-people" viewBox="0 0 24 24"><circle cx="8.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="16" cy="9" r="2.2" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M3.3 19c.8-3.2 2.9-4.9 5.2-4.9s4.4 1.7 5.2 4.9M14.5 19c.5-2.4 2-3.9 4-3.9 1.7 0 3 1 3.6 2.6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></symbol>
+<symbol id="ic-mail-shield" viewBox="0 0 24 24"><path d="M4 6.5h13v10H4v-10z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M4.5 7l6 5 6-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 12.3l3-1.2v2.5c0 2-1.3 3.2-3 3.8-1.7-.6-3-1.8-3-3.8v-2.5l3 1.2z" stroke="currentColor" stroke-width="1.4" fill="#fff" stroke-linejoin="round"/></symbol>
+<symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" fill="none"/></symbol>
+<symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13.5h5.5L11 21l8-11h-5.5L13 3z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
+<symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4v-10z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="8.5" cy="10.3" r=".9" fill="currentColor"/><circle cx="12" cy="10.3" r=".9" fill="currentColor"/><circle cx="15.5" cy="10.3" r=".9" fill="currentColor"/></symbol>
+<symbol id="ic-tap" viewBox="0 0 24 24"><path d="M11 3v9M11 12L8 9.5M11 12l3-2.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="11" cy="18.5" rx="6" ry="2.3" stroke="currentColor" stroke-width="1.4" fill="none"/></symbol>
+<symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 11v5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="7.8" r=".9" fill="currentColor"/></symbol>
+<symbol id="ic-arrow" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ic-check-big" viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs>
+</svg>
+
+<div class="app">
+
+  <div class="progreso">
+    <div class="progreso-texto" id="progresoTexto">Pantalla 1 de 14</div>
+    <div class="progreso-track"><div class="progreso-fill" id="progresoFill" style="width:7.14%"></div></div>
+  </div>
+
+  <div class="pantallas">
+
+    <!-- PANTALLA 1 — PORTADA -->
+    <section class="pantalla p1 activa" data-index="0">
+      <div class="contenido">
+        <div class="portada-bg"></div>
+        <picture>
+          <source media="(min-width:700px)" srcset="assets/portada-hostigamiento-desktop.png">
+          <img src="assets/portada-hostigamiento.png" alt="">
+        </picture>
+        <div class="portada-overlay">
+          <h1>Prevención del Hostigamiento Sexual Laboral</h1>
+          <p>Reconocer una situación es el primer paso para saber cómo actuar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 2 — BIENVENIDA -->
+    <section class="pantalla" data-index="1">
+      <div class="contenido">
+        <div class="bienvenida-wrap">
+          <p class="eyebrow">Antes de empezar</p>
+          <div id="bienvenidaTexto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 3 — QUÉ ES -->
+    <section class="pantalla" data-index="2">
+      <div class="contenido">
+        <h2 class="screen-title">¿Qué es el hostigamiento sexual laboral?</h2>
+        <p class="intro">Es una forma de violencia que puede presentarse mediante conductas de naturaleza o connotación sexual o sexista dirigidas hacia otra persona de manera no deseada.</p>
+        <div class="cards">
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-shield"/></svg></div><div class="card-body"><p class="card-title">Forma de violencia</p><p class="card-text">No debe reducirse a una "broma" o una simple incomodidad interpersonal.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-alert-user"/></svg></div><div class="card-body"><p class="card-title">Puede ser sexual o sexista</p><p class="card-text">Puede manifestarse mediante distintos comportamientos físicos, verbales, gestuales u otros.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-hand-stop"/></svg></div><div class="card-body"><p class="card-title">Es no deseada</p><p class="card-text">La conducta se dirige hacia otra persona sin que esta la desee.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 4 — NO ES SOLO CONTACTO FÍSICO -->
+    <section class="pantalla" data-index="3">
+      <div class="contenido">
+        <h2 class="screen-title">No es solo contacto físico</h2>
+        <div class="instruccion"><svg><use href="#ic-tap"/></svg><span>Toca cada tarjeta para conocer algunos ejemplos.</span></div>
+        <div class="flip-grid">
+          <div class="flip-card" data-flip>
+            <div class="flip-inner">
+              <div class="flip-front"><div class="icon-wrap"><svg><use href="#ic-message"/></svg></div><p class="card-title">Palabras y mensajes</p><span class="flip-hint"><svg><use href="#ic-arrow"/></svg></span></div>
+              <div class="flip-back"><p>Comentarios, insinuaciones, proposiciones o expresiones de naturaleza sexual.</p></div>
+            </div>
+          </div>
+          <div class="flip-card" data-flip>
+            <div class="flip-inner">
+              <div class="flip-front"><div class="icon-wrap"><svg><use href="#ic-image"/></svg></div><p class="card-title">Imágenes y gestos</p><span class="flip-hint"><svg><use href="#ic-arrow"/></svg></span></div>
+              <div class="flip-back"><p>Gestos obscenos o exposición y envío de contenido de naturaleza sexual.</p></div>
+            </div>
+          </div>
+          <div class="flip-card" data-flip>
+            <div class="flip-inner">
+              <div class="flip-front"><div class="icon-wrap"><svg><use href="#ic-proximity"/></svg></div><p class="card-title">Acercamientos</p><span class="flip-hint"><svg><use href="#ic-arrow"/></svg></span></div>
+              <div class="flip-back"><p>Acercamientos corporales, roces, tocamientos u otras conductas físicas de naturaleza sexual no deseadas.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 5 — TAMBIÉN PUEDE HABER PRESIÓN -->
+    <section class="pantalla" data-index="4">
+      <div class="contenido">
+        <h2 class="screen-title">También puede haber presión</h2>
+        <div class="cards">
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-gift"/></svg></div><div class="card-body"><p class="card-title">Beneficios a cambio de favores</p><p class="card-text">Prometer directa o indirectamente un trato preferente o beneficio laboral a cambio de favores sexuales.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-alert-triangle"/></svg></div><div class="card-body"><p class="card-title">Amenazas o exigencias</p><p class="card-text">Presionar o amenazar a una persona para obtener una conducta de naturaleza sexual no deseada.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-block"/></svg></div><div class="card-body"><p class="card-title">Trato hostil después del rechazo</p><p class="card-text">Responder con hostilidad o trato ofensivo frente al rechazo de una conducta de este tipo.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 6 — DOS REGLAS -->
+    <section class="pantalla" data-index="5" data-reveal-total="2">
+      <div class="contenido">
+        <h2 class="screen-title">Dos reglas que debes recordar</h2>
+        <div class="instruccion"><svg><use href="#ic-info"/></svg><span>Avanza para descubrir cada regla.</span></div>
+        <div class="reglas">
+          <div class="regla" data-reveal-item="0"><span class="num-grande">1</span><div class="regla-txt"><strong>No tiene que repetirse</strong><p>No se requiere que la conducta ocurra varias veces.</p></div></div>
+          <div class="regla" data-reveal-item="1"><span class="num-grande">2</span><div class="regla-txt"><strong>No se requiere acreditar un rechazo previo</strong><p>La persona afectada no necesita demostrar que previamente manifestó su rechazo.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 7 — NO DEPENDE DEL CARGO -->
+    <section class="pantalla" data-index="6">
+      <div class="contenido">
+        <h2 class="screen-title">No depende del cargo, el horario o el lugar</h2>
+        <div class="img-protagonista">
+          <picture>
+            <source media="(min-width:700px)" srcset="assets/contextos-hostigamiento-desktop.png">
+            <img src="assets/contextos-hostigamiento.png" alt="">
+          </picture>
+        </div>
+        <p class="intro">Una posible situación de hostigamiento sexual laboral puede producirse:</p>
+        <ul class="criterios">
+          <li><svg><use href="#ic-check"/></svg>Entre personas con o sin jerarquía</li>
+          <li><svg><use href="#ic-check"/></svg>Dentro o fuera del horario de trabajo</li>
+          <li><svg><use href="#ic-check"/></svg>Dentro o fuera del centro de trabajo</li>
+        </ul>
+        <p class="nota-criterio">Cuando ocurre en el marco de una relación laboral.</p>
+      </div>
+    </section>
+
+    <!-- PANTALLA 8 — CASO PRÁCTICO 1 -->
+    <section class="pantalla" data-index="7">
+      <div class="contenido">
+        <div class="caso-box" data-caso data-correcta="C">
+          <span class="caso-etiqueta">Caso práctico</span>
+          <p class="caso-situacion">Un supervisor comienza a enviar a una persona de su equipo mensajes personales fuera del horario laboral. En varios mensajes comenta su cuerpo y le propone verse a solas. La persona responde únicamente los temas de trabajo y nunca le dice expresamente que se detenga.</p>
+          <p class="caso-pregunta">¿Cuál es el criterio más adecuado para analizar esta situación?</p>
+          <div class="caso-opciones">
+            <button class="opcion" data-letra="A"><span class="letra">A.</span><span>No corresponde considerarla porque los mensajes fueron enviados fuera del horario laboral.</span></button>
+            <button class="opcion" data-letra="B"><span class="letra">B.</span><span>Solo podría ser relevante si la persona expresa claramente que rechaza los mensajes.</span></button>
+            <button class="opcion" data-letra="C"><span class="letra">C.</span><span>Puede tratarse de una posible situación de hostigamiento y debe tomarse en serio aunque ocurra fuera del horario y no exista un rechazo expreso.</span></button>
+            <button class="opcion" data-letra="D"><span class="letra">D.</span><span>Solo correspondería intervenir si además existiera contacto físico.</span></button>
+          </div>
+          <div class="caso-feedback ok" data-feedback-ok>Correcto. El hostigamiento sexual puede producirse fuera del horario o del centro de trabajo cuando ocurre en el marco de una relación laboral. Además, no se requiere acreditar rechazo previo ni contacto físico.</div>
+          <div class="caso-feedback mal" data-feedback-mal>Revisa el criterio. Que ocurra fuera del horario, que no exista contacto físico o que la persona no haya manifestado expresamente su rechazo no descarta por sí solo una posible situación.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 9 — SI TE OCURRE A TI -->
+    <section class="pantalla" data-index="8">
+      <div class="contenido">
+        <div class="cita">No necesitas esperar a que vuelva a ocurrir para comunicar una posible situación.</div>
+        <div class="cards">
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-check"/></svg></div><div class="card-body"><p class="card-title">No tiene que repetirse</p><p class="card-text">Una conducta puede ser relevante aunque ocurra una sola vez.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-check"/></svg></div><div class="card-body"><p class="card-title">No necesitas acreditar un rechazo previo</p><p class="card-text">No es necesario demostrar que antes dijiste "no" o pediste que la conducta se detuviera.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 10 — DÓNDE PUEDES COMUNICARLO -->
+    <section class="pantalla" data-index="9">
+      <div class="contenido">
+        <h2 class="screen-title">¿Dónde puedes comunicarlo?</h2>
+        <p class="intro">Si enfrentas o conoces una posible situación, puedes comunicarla mediante cualquiera de estos canales:</p>
+        <div class="cards">
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-leader"/></svg></div><div class="card-body"><p class="card-title">Jefe inmediato</p><p class="card-text">Comunica la situación a tu jefe inmediato.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-people"/></svg></div><div class="card-body"><p class="card-title">Recursos Humanos</p><p class="card-text">Puedes comunicarla directamente a Recursos Humanos.</p></div></div>
+          <div class="card"><div class="icon-wrap"><svg><use href="#ic-mail-shield"/></svg></div><div class="card-body"><p class="card-title">Te escuchamos</p><p class="card-text">Si deseas realizar un reporte anónimo: <a href="mailto:tescuchamos@drimer.com.pe" style="color:var(--blue);font-weight:600;">tescuchamos@drimer.com.pe</a></p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 11 — CASO PRÁCTICO 2 -->
+    <section class="pantalla" data-index="10">
+      <div class="contenido">
+        <div class="caso-box" data-caso data-correcta="D">
+          <span class="caso-etiqueta">Caso práctico</span>
+          <p class="caso-situacion">Durante una jornada de trabajo escuchas que un compañero realiza comentarios de contenido sexual hacia otra persona. La persona cambia de tema y continúa trabajando. Después, tu compañero te dice que "solo estaba bromeando".</p>
+          <p class="caso-pregunta">¿Qué harías?</p>
+          <div class="caso-opciones">
+            <button class="opcion" data-letra="A"><span class="letra">A.</span><span>No hacer nada porque la situación no fue dirigida hacia ti.</span></button>
+            <button class="opcion" data-letra="B"><span class="letra">B.</span><span>Esperar a que vuelva a ocurrir para confirmar que realmente existe un problema.</span></button>
+            <button class="opcion" data-letra="C"><span class="letra">C.</span><span>Comentar el caso con otros compañeros para saber qué opinan.</span></button>
+            <button class="opcion" data-letra="D"><span class="letra">D.</span><span>Evitar convertirte en investigador y comunicar lo observado mediante uno de los canales disponibles para que la situación pueda ser evaluada.</span></button>
+          </div>
+          <div class="caso-feedback ok" data-feedback-ok>Correcto. Una posible situación también puede ponerse en conocimiento de la organización a través de un tercero. El procedimiento existe para evaluar e investigar los hechos.</div>
+          <div class="caso-feedback mal" data-feedback-mal>No necesitas ser la persona directamente afectada para comunicar lo que observaste. Además, esperar a que vuelva a ocurrir no es necesario, y difundir la situación entre compañeros no permite activar el procedimiento correspondiente.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 12 — QUÉ OCURRE DESPUÉS -->
+    <section class="pantalla" data-index="11">
+      <div class="contenido">
+        <h2 class="screen-title">¿Qué ocurre después de un reporte?</h2>
+        <p class="intro" style="margin-bottom:2px;">El procedimiento contempla distintas etapas para atender y evaluar la situación.</p>
+        <div class="timeline">
+          <div class="paso"><span class="num">1</span><div class="paso-txt"><strong>Recepción</strong><p>Recursos Humanos recibe la queja o denuncia.</p></div></div>
+          <div class="paso"><span class="num">2</span><div class="paso-txt"><strong>Protección y atención</strong><p>El procedimiento contempla medidas de protección y la puesta a disposición de canales de atención para la persona afectada.</p></div></div>
+          <div class="paso"><span class="num">3</span><div class="paso-txt"><strong>Investigación</strong><p>Se investigan los hechos y se valoran los elementos disponibles.</p></div></div>
+          <div class="paso"><span class="num">4</span><div class="paso-txt"><strong>Decisión</strong><p>La investigación concluye y se determina lo que corresponda según los hechos evaluados.</p></div></div>
+        </div>
+        <p class="pie-destacado">Durante la investigación se respeta el debido procedimiento para ambas partes.</p>
+      </div>
+    </section>
+
+    <!-- PANTALLA 13 — QUÉ DEBES RECORDAR -->
+    <section class="pantalla" data-index="12" data-reveal-total="3">
+      <div class="contenido">
+        <h2 class="screen-title">Qué debes recordar</h2>
+        <div class="cards" style="gap:9px;">
+          <div class="card" data-reveal-item="0" style="animation:none;opacity:0;"><div class="icon-wrap"><svg><use href="#ic-eye"/></svg></div><div class="card-body"><p class="card-title">Reconoce</p><p class="card-text">El hostigamiento sexual laboral no se limita al contacto físico.</p></div></div>
+          <div class="card" data-reveal-item="1" style="animation:none;opacity:0;"><div class="icon-wrap"><svg><use href="#ic-bolt"/></svg></div><div class="card-body"><p class="card-title">Actúa</p><p class="card-text">No es necesario esperar a que una conducta se repita ni acreditar un rechazo previo.</p></div></div>
+          <div class="card" data-reveal-item="2" style="animation:none;opacity:0;"><div class="icon-wrap"><svg><use href="#ic-chat"/></svg></div><div class="card-body"><p class="card-title">Comunica</p><p class="card-text">Si te ocurre o conoces una posible situación, utiliza los canales disponibles.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 14 — CIERRE -->
+    <section class="pantalla p14" data-index="13">
+      <div class="contenido">
+        <div>
+          <div class="cierre-check"><svg><use href="#ic-check-big"/></svg></div>
+          <h2>Curso completado</h2>
+          <p>Prevenir también significa saber reconocer una posible situación y actuar cuando corresponde.</p>
+          <p class="secundario">Ahora puedes continuar con la evaluación del curso.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="nav-inferior">
+    <button class="btn" id="btnAnterior">Anterior</button>
+    <button class="btn" id="btnSiguiente">Siguiente</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const pantallas = Array.from(document.querySelectorAll('.pantalla'));
+  const total = pantallas.length;
+  let actual = 0;
+
+  const revealState = {}; // index -> revealed count
+  pantallas.forEach(function(p){
+    const idx = parseInt(p.dataset.index, 10);
+    if(p.dataset.revealTotal){ revealState[idx] = 0; }
+  });
+
+  const progresoTexto = document.getElementById('progresoTexto');
+  const progresoFill = document.getElementById('progresoFill');
+  const btnAnterior = document.getElementById('btnAnterior');
+  const btnSiguiente = document.getElementById('btnSiguiente');
+
+  let bienvenidaLanzada = false;
+
+  function pendientesEnPantalla(idx){
+    const p = pantallas[idx];
+    const revealTotal = parseInt(p.dataset.revealTotal || '0', 10);
+    if(!revealTotal) return 0;
+    return revealTotal - (revealState[idx] || 0);
+  }
+
+  function revelarSiguienteItem(idx){
+    const p = pantallas[idx];
+    const count = revealState[idx] || 0;
+    const item = p.querySelector('[data-reveal-item="' + count + '"]');
+    if(item){
+      item.classList.add('visible');
+      item.style.opacity = '1';
+      item.style.transform = 'translateY(0)';
+    }
+    revealState[idx] = count + 1;
+  }
+
+  function render(){
+    pantallas.forEach(function(p, i){ p.classList.toggle('activa', i === actual); });
+
+    progresoTexto.textContent = 'Pantalla ' + (actual + 1) + ' de ' + total;
+    progresoFill.style.width = ((actual + 1) / total * 100) + '%';
+
+    btnAnterior.disabled = (actual === 0);
+
+    if(actual === total - 1){
+      btnSiguiente.classList.add('oculto');
+    } else {
+      btnSiguiente.classList.remove('oculto');
+      const pendientes = pendientesEnPantalla(actual);
+      const esPenultima = (actual === total - 2);
+      btnSiguiente.textContent = (pendientes === 0 && esPenultima) ? 'Finalizar curso' : 'Siguiente';
+    }
+
+    if(actual === 1 && !bienvenidaLanzada){
+      bienvenidaLanzada = true;
+      lanzarTypewriter();
+    }
+  }
+
+  btnSiguiente.addEventListener('click', function(){
+    const pendientes = pendientesEnPantalla(actual);
+    if(pendientes > 0){
+      revelarSiguienteItem(actual);
+      render();
+      return;
+    }
+    if(actual < total - 1){
+      actual++;
+      render();
+    }
+  });
+
+  btnAnterior.addEventListener('click', function(){
+    if(actual > 0){
+      actual--;
+      render();
+    }
+  });
+
+  // ---------- Tarjetas de volteo ----------
+  document.querySelectorAll('[data-flip]').forEach(function(card){
+    card.addEventListener('click', function(){
+      card.classList.toggle('flipped');
+    });
+  });
+
+  // ---------- Caso Práctico ----------
+  document.querySelectorAll('[data-caso]').forEach(function(caso){
+    const correcta = caso.dataset.correcta;
+    const opciones = Array.from(caso.querySelectorAll('.opcion'));
+    const fbOk = caso.querySelector('[data-feedback-ok]');
+    const fbMal = caso.querySelector('[data-feedback-mal]');
+    let respondido = false;
+
+    opciones.forEach(function(op){
+      op.addEventListener('click', function(){
+        if(respondido) return;
+        respondido = true;
+        caso.classList.add('respondido');
+        const letra = op.dataset.letra;
+
+        opciones.forEach(function(o){
+          o.disabled = true;
+          if(o.dataset.letra === correcta) o.classList.add('correcta');
+        });
+
+        if(letra !== correcta){
+          op.classList.add('incorrecta');
+          fbMal.classList.add('mostrar');
+        } else {
+          fbOk.classList.add('mostrar');
+        }
+      });
+    });
+  });
+
+  // ---------- Typewriter Bienvenida ----------
+  function lanzarTypewriter(){
+    const parrafos = [
+      'Una situación de hostigamiento sexual laboral no siempre empieza con algo evidente.',
+      'Puede aparecer en un comentario, un mensaje, una insinuación, un acercamiento o una presión.',
+      'La clave es aprender a reconocerla y saber cómo actuar.'
+    ];
+    const contenedor = document.getElementById('bienvenidaTexto');
+    contenedor.innerHTML = '';
+    let pIndex = 0;
+
+    function escribirParrafo(){
+      if(pIndex >= parrafos.length) return;
+      const texto = parrafos[pIndex];
+      const p = document.createElement('p');
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor-tw';
+      p.appendChild(cursor);
+      contenedor.appendChild(p);
+      let charIndex = 0;
+
+      function escribirChar(){
+        if(charIndex < texto.length){
+          cursor.insertAdjacentText('beforebegin', texto.charAt(charIndex));
+          charIndex++;
+          setTimeout(escribirChar, 16);
+        } else {
+          cursor.remove();
+          pIndex++;
+          setTimeout(escribirParrafo, 220);
+        }
+      }
+      escribirChar();
+    }
+    escribirParrafo();
+  }
+
+  render();
+})();
+</script>
+
+</body>
+</html>
