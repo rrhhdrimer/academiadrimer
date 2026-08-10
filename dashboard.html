@@ -69,7 +69,7 @@
   .hamburger{ background:none; border:none; color:#fff; font-size:20px; cursor:pointer; line-height:1; padding:2px 4px; }
   .topbar-title{ font-weight:600; font-size:15px; }
 
-  main{ max-width:1080px; margin:0 auto; padding:26px 18px 60px; }
+  main{ max-width:1360px; margin:0 auto; padding:26px 24px 60px; }
 
   /* ---------- Encabezado ---------- */
   .page-head{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:4px; }
@@ -120,12 +120,13 @@
   .period-title:first-of-type{ margin-top:4px; }
 
   /* ---------- Vista grid ---------- */
-  .cards-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+  .cards-grid{ display:grid; grid-template-columns:1fr; gap:20px; }
   @media (min-width:640px){ .cards-grid{ grid-template-columns:1fr 1fr; } }
-  @media (min-width:960px){ .cards-grid{ grid-template-columns:1fr 1fr 1fr 1fr; } }
+  @media (min-width:960px){ .cards-grid{ grid-template-columns:1fr 1fr 1fr; } }
+  @media (min-width:1280px){ .cards-grid{ grid-template-columns:1fr 1fr 1fr 1fr; } }
 
   .course-card{
-    background:var(--card); border:1px solid var(--line); border-radius:13px;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
     overflow:hidden; display:flex; flex-direction:column; cursor:pointer;
     transition:box-shadow .15s ease, transform .1s ease;
   }
@@ -138,29 +139,29 @@
     background:linear-gradient(135deg, #14203A 0%, #24365C 100%);
     display:flex; align-items:center; justify-content:center;
   }
-  .card-image .placeholder svg{ width:34px; height:34px; opacity:0.35; }
+  .card-image .placeholder svg{ width:40px; height:40px; opacity:0.35; }
 
   .tipo-badge{
-    position:absolute; left:9px; bottom:9px;
+    position:absolute; left:11px; bottom:11px;
     display:flex; align-items:center; gap:4px;
-    font-size:9.5px; font-weight:700; letter-spacing:0.02em; text-transform:uppercase;
-    padding:4px 9px; border-radius:20px; color:#fff;
+    font-size:10.5px; font-weight:700; letter-spacing:0.02em; text-transform:uppercase;
+    padding:5px 10px; border-radius:20px; color:#fff;
     background:rgba(20,32,58,0.72); backdrop-filter:blur(2px);
   }
   .tipo-badge.libre{ background:rgba(62,105,87,0.82); }
-  .tipo-badge svg{ width:10px; height:10px; }
+  .tipo-badge svg{ width:11px; height:11px; }
 
-  .card-body{ padding:13px 14px 12px; display:flex; flex-direction:column; gap:5px; flex:1; }
-  .card-programa{ font-size:9.5px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.03em; min-height:11px; }
-  .card-nombre{ font-weight:600; font-size:14px; line-height:1.32; color:var(--ink); }
+  .card-body{ padding:17px 19px 17px; display:flex; flex-direction:column; gap:7px; flex:1; }
+  .card-programa{ font-size:10.5px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.03em; min-height:12px; }
+  .card-nombre{ font-weight:600; font-size:16.5px; line-height:1.32; color:var(--ink); }
 
-  .status-badge{ align-self:flex-start; font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; margin-top:2px; }
+  .status-badge{ align-self:flex-start; font-size:11px; font-weight:600; padding:5px 12px; border-radius:20px; margin-top:3px; }
   .status-badge.pendiente{ background:#EDEEF0; color:var(--ink-soft); }
-  .status-badge.aprobado{ background:var(--green-bg); color:var(--green); }
-  .status-badge.desaprobado{ background:var(--rust-bg); color:var(--rust); }
+  .status-badge.aprobado{ background:var(--green); color:#fff; }
+  .status-badge.desaprobado{ background:var(--rust); color:#fff; }
 
-  .card-footer{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:8px; }
-  .card-profesor{ font-size:11px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card-footer{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:10px; }
+  .card-profesor{ font-size:12px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   /* ---------- Vista lista ---------- */
   .cards-list{ display:flex; flex-direction:column; gap:8px; }
