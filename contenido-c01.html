@@ -23,9 +23,11 @@
     --white:#FFFFFF;
   }
   *{ box-sizing:border-box; }
+  html{ background:#E4E7EA; }
   html, body{ height:100%; }
   body{
-    margin:0;
+    margin:0 auto;
+    max-width:480px;
     font-family:'Poppins', sans-serif;
     background:var(--white);
     color:var(--navy-mid);
@@ -35,6 +37,7 @@
     flex-direction:column;
     height:100vh;
     overflow:hidden;
+    box-shadow:0 0 40px rgba(5,28,44,0.10);
   }
   img{ max-width:100%; display:block; }
 
@@ -200,7 +203,8 @@
   .cierre-final p{ color:rgba(255,255,255,0.8); font-size:14px; }
 
   .nav-inferior{
-    position:fixed; bottom:0; left:0; right:0;
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px;
     background:var(--white); border-top:1px solid var(--border-soft);
     padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; z-index:20;
   }
