@@ -264,24 +264,23 @@
   @keyframes blink{50%{opacity:0;}}
   @media (prefers-reduced-motion: reduce){.cursor-tw{display:none;}}
 
-  /* ===== Pantalla 3: revelado progresivo (una tarjeta protagonista) ===== */
+  /* ===== Pantalla 3: revelado progresivo (tarjetas acumuladas) ===== */
   .s3-stage{
-    position:relative;
-    flex:1;
-    min-height:0;
-  }
-  .s3-item{
-    position:absolute;
-    inset:0;
     display:flex;
     flex-direction:column;
-    justify-content:flex-start;
-    opacity:0;
-    transform:translateY(8px);
-    pointer-events:none;
-    transition:opacity .35s ease, transform .35s ease;
+    gap:9px;
+    flex:1;
+    min-height:0;
+    justify-content:center;
   }
-  .s3-item.visible{opacity:1;transform:none;pointer-events:auto;position:relative;}
+  .s3-item{
+    opacity:0;
+    max-height:0;
+    transform:translateY(8px);
+    overflow:hidden;
+    transition:opacity .35s ease, transform .35s ease, max-height .35s ease;
+  }
+  .s3-item.visible{opacity:1;transform:none;max-height:220px;}
   .s3-item .tarjeta{opacity:1;transform:none;}
 
   /* ===== Pantalla 5: timeline ===== */
@@ -548,8 +547,8 @@
     .mensaje-final{ font-size:15px; padding:13px 16px; margin-top:14px; }
     .texto-secundario{ font-size:13.5px; margin-top:10px; }
 
-    /* Pantalla 3: la tarjeta protagonista centrada en el espacio disponible */
-    .s3-stage{ display:flex; flex-direction:column; justify-content:center; }
+    /* Pantalla 3: tarjetas acumuladas, agrandadas para escritorio */
+    .s3-item.visible{ max-height:260px; }
 
     /* Timeline: se mantiene vertical (conserva el conector), pero centrado */
     .timeline{ justify-content:center; }
@@ -785,8 +784,6 @@
               <p class="tarjeta-texto">Identificas una forma más práctica, segura o efectiva de hacer algo y quieres proponerla.</p>
             </div>
           </div>
-          <div class="mensaje-final visible">Comunicar ayuda a detectar problemas, atender situaciones y encontrar oportunidades para mejorar.</div>
-          <p class="texto-secundario visible">No importa cómo se llame la comunicación. Lo importante es hacerla llegar.</p>
         </div>
       </div>
     </section>
@@ -985,7 +982,6 @@
           </div>
         </div>
       </div>
-      <p class="mensaje-final" style="margin-top:8px;">No necesitas saber cómo llamarlo. Necesitas saber cuándo comunicarlo.</p>
     </section>
 
     <!-- PANTALLA 11 — CIERRE FINAL -->
@@ -1119,7 +1115,7 @@
     s3Step++;
     for(var i=0;i<s3Items.length;i++){
       var idx = parseInt(s3Items[i].getAttribute('data-index'), 10);
-      s3Items[i].classList.toggle('visible', idx === s3Step);
+      if(idx <= s3Step){ s3Items[i].classList.add('visible'); }
     }
     s3Instruccion.classList.add('oculto');
   }
