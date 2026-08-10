@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Procedimiento de Quejas, Reclamos y Sugerencias — Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#051C2C;
+    --navy-texto:#384967;
+    --celeste:#2CADE4;
+    --azul-acento:#307FE2;
+    --azul-claro:#4C9FC8;
+    --fondo-tarjeta:#DDE5ED;
+    --verde-suave:#EBF0E3;
+    --dorado:#F5C842;
+    --correcto:#1A7A4A;
+    --incorrecto:#E05252;
+    --blanco:#FFFFFF;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:#0000;
+    font-family:'Poppins', Arial, sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body{background:var(--blanco);}
+
+  button{font-family:inherit;}
+  a{color:var(--azul-acento);}
+
+  .app{
+    position:relative;
+    height:100%;
+    max-width:900px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    background:var(--blanco);
+    overflow:hidden;
+  }
+
+  /* ===== Barra de progreso ===== */
+  .progreso{
+    flex:0 0 auto;
+    padding:10px 18px 8px;
+  }
+  .progreso-texto{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.05em;
+    color:var(--azul-claro);
+    text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  .progreso-track{
+    height:4px;
+    background:var(--fondo-tarjeta);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progreso-fill{
+    height:100%;
+    width:9.0909%;
+    background:var(--dorado);
+    border-radius:2px;
+    transition:width .35s ease;
+  }
+
+  /* ===== Contenedor de pantallas ===== */
+  .pantallas{
+    flex:1 1 auto;
+    position:relative;
+    min-height:0;
+  }
+  .pantalla{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    padding:14px 18px;
+    overflow:hidden;
+  }
+  .pantalla.activa{display:flex;}
+
+  .titulo-pantalla{
+    font-size:19px;
+    font-weight:700;
+    color:var(--celeste);
+    text-transform:uppercase;
+    line-height:1.25;
+    margin:2px 0 8px;
+    flex:0 0 auto;
+  }
+  .eyebrow{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.08em;
+    color:var(--azul-claro);
+    text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  .intro-texto{
+    font-size:13px;
+    color:var(--navy-texto);
+    line-height:1.5;
+    margin:0 0 10px;
+    flex:0 0 auto;
+  }
+  .instruccion{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    background:var(--fondo-tarjeta);
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:12px;
+    color:var(--navy-texto);
+    margin-bottom:10px;
+    flex:0 0 auto;
+    transition:opacity .3s ease, max-height .3s ease, margin .3s ease, padding .3s ease;
+    max-height:60px;
+  }
+  .instruccion.oculto{
+    opacity:0;
+    max-height:0;
+    padding-top:0;
+    padding-bottom:0;
+    margin-bottom:0;
+    overflow:hidden;
+  }
+  .instruccion svg{flex:0 0 auto;width:18px;height:18px;color:var(--azul-acento);}
+
+  /* ===== Tarjetas genéricas ===== */
+  .tarjetas-lista{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    flex:1;
+    min-height:0;
+    justify-content:flex-start;
+  }
+  .tarjeta{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background:var(--fondo-tarjeta);
+    border-radius:10px;
+    padding:10px 11px;
+    opacity:0;
+    transform:translateY(6px);
+    transition:opacity .4s ease, transform .4s ease;
+    flex:0 0 auto;
+  }
+  .tarjeta.visible{opacity:1;transform:none;}
+  .tarjeta.tono-verde{background:var(--verde-suave);}
+  .tarjeta-icono{
+    flex:0 0 auto;
+    width:26px;
+    height:26px;
+    color:var(--azul-acento);
+    margin-top:1px;
+  }
+  .tarjeta-texto-wrap{min-width:0;}
+  .tarjeta-titulo{
+    font-size:13px;
+    font-weight:700;
+    color:var(--navy-deep);
+    margin:0 0 2px;
+    text-transform:uppercase;
+    letter-spacing:.01em;
+  }
+  .tarjeta-texto{
+    font-size:12.5px;
+    color:var(--navy-texto);
+    line-height:1.42;
+    margin:0;
+  }
+  .tarjeta-texto a{font-weight:600;text-decoration:underline;}
+
+  .mensaje-final{
+    margin-top:8px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--navy-deep);
+    background:var(--verde-suave);
+    border-left:3px solid var(--dorado);
+    padding:9px 10px;
+    border-radius:6px;
+    line-height:1.4;
+    opacity:0;
+    transition:opacity .45s ease;
+    flex:0 0 auto;
+  }
+  .mensaje-final.visible{opacity:1;}
+  .texto-secundario{
+    font-size:11.5px;
+    color:var(--azul-claro);
+    margin-top:6px;
+    text-align:center;
+    line-height:1.4;
+    opacity:0;
+    transition:opacity .45s ease;
+    flex:0 0 auto;
+  }
+  .texto-secundario.visible{opacity:1;}
+
+  /* ===== Pantalla 1: Portada ===== */
+  .pantalla-portada{padding:0;position:relative;}
+  .portada-media{position:absolute;inset:0;width:100%;height:100%;}
+  .portada-media picture{display:block;width:100%;height:100%;}
+  .portada-media img{width:100%;height:100%;object-fit:cover;display:block;}
+  .portada-overlay{
+    position:relative;
+    z-index:2;
+    margin-top:auto;
+    padding:26px 20px 22px;
+    background:linear-gradient(to top, rgba(5,28,44,.92) 15%, rgba(5,28,44,.55) 60%, rgba(5,28,44,0) 100%);
+    opacity:0;
+    animation:fadeIn .6s ease forwards .15s;
+  }
+  @keyframes fadeIn{to{opacity:1;}}
+  .portada-titulo{
+    color:#fff;
+    font-size:21px;
+    font-weight:700;
+    line-height:1.28;
+    margin:0 0 8px;
+    text-transform:uppercase;
+  }
+  .portada-subtitulo{
+    color:var(--fondo-tarjeta);
+    font-size:13px;
+    line-height:1.5;
+    margin:0;
+  }
+
+  /* ===== Pantalla 2: Bienvenida ===== */
+  .pantalla-bienvenida{
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    gap:14px;
+  }
+  .bienvenida-icono{width:42px;height:42px;color:var(--azul-acento);}
+  .bienvenida-eyebrow{margin-bottom:2px;}
+  .bienvenida-texto{
+    font-size:16px;
+    line-height:1.6;
+    color:var(--navy-texto);
+    font-weight:500;
+    max-width:280px;
+    min-height:112px;
+  }
+  .cursor-tw{display:inline-block;width:2px;background:var(--azul-acento);margin-left:1px;animation:blink 1s step-start infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  @media (prefers-reduced-motion: reduce){.cursor-tw{display:none;}}
+
+  /* ===== Pantalla 3: revelado progresivo (una tarjeta protagonista) ===== */
+  .s3-stage{
+    position:relative;
+    flex:1;
+    min-height:0;
+  }
+  .s3-item{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    opacity:0;
+    transform:translateY(8px);
+    pointer-events:none;
+    transition:opacity .35s ease, transform .35s ease;
+  }
+  .s3-item.visible{opacity:1;transform:none;pointer-events:auto;position:relative;}
+  .s3-item .tarjeta{opacity:1;transform:none;}
+
+  /* ===== Pantalla 5: timeline ===== */
+  .timeline{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    flex:1;
+    min-height:0;
+  }
+  .paso{
+    display:flex;
+    gap:10px;
+    opacity:0;
+    transform:translateY(6px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .paso.visible{opacity:1;transform:none;}
+  .paso-marcador{
+    flex:0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:26px;
+  }
+  .paso-punto{
+    width:24px;height:24px;border-radius:50%;
+    background:var(--azul-acento);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+  }
+  .paso-punto svg{width:14px;height:14px;}
+  .paso-linea{
+    flex:1;width:2px;background:var(--fondo-tarjeta);min-height:10px;
+  }
+  .paso:last-child .paso-linea{display:none;}
+  .paso-contenido{padding-bottom:10px;padding-top:1px;}
+  .paso-titulo{
+    font-size:13px;font-weight:700;color:var(--navy-deep);
+    margin:0 0 2px;text-transform:uppercase;
+  }
+  .paso-texto{font-size:12.5px;color:var(--navy-texto);line-height:1.42;margin:0;}
+
+  /* ===== Pantalla 7: Caso Práctico ===== */
+  .cp-etiqueta{
+    display:inline-block;
+    background:var(--dorado);
+    color:var(--navy-deep);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:999px;
+    margin-bottom:8px;
+    flex:0 0 auto;
+  }
+  .cp-situacion{
+    background:var(--navy-deep);
+    color:#fff;
+    border-radius:10px;
+    padding:10px 11px;
+    font-size:12.5px;
+    line-height:1.48;
+    margin-bottom:9px;
+    flex:0 0 auto;
+    transition:max-height .35s ease, opacity .35s ease, padding .35s ease, margin .35s ease;
+    max-height:200px;
+    overflow:hidden;
+  }
+  .cp-situacion.colapsada{
+    max-height:0;
+    opacity:0;
+    padding-top:0;padding-bottom:0;
+    margin-bottom:0;
+  }
+  .cp-pregunta{
+    font-size:14px;
+    font-weight:700;
+    color:var(--navy-deep);
+    margin:0 0 8px;
+    flex:0 0 auto;
+  }
+  .cp-opciones{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    flex:0 0 auto;
+  }
+  .cp-opcion{
+    text-align:left;
+    background:var(--fondo-tarjeta);
+    border:2px solid transparent;
+    border-radius:9px;
+    padding:9px 10px;
+    font-size:12.5px;
+    line-height:1.4;
+    color:var(--navy-texto);
+    cursor:pointer;
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .cp-opcion .cp-letra{
+    flex:0 0 auto;
+    font-weight:700;
+    color:var(--azul-acento);
+  }
+  .cp-opcion:focus-visible{outline:2px solid var(--azul-acento);outline-offset:2px;}
+  .cp-opcion.correcta{
+    background:#E4F3EA;
+    border-color:var(--correcto);
+    color:var(--correcto);
+    font-weight:600;
+  }
+  .cp-opcion.correcta .cp-letra{color:var(--correcto);}
+  .cp-opcion.incorrecta{
+    background:#FCEAEA;
+    border-color:var(--incorrecto);
+    color:var(--incorrecto);
+    font-weight:600;
+  }
+  .cp-opcion.incorrecta .cp-letra{color:var(--incorrecto);}
+  .cp-marca{margin-left:auto;flex:0 0 auto;font-weight:700;font-size:11px;}
+  .cp-feedback-zona{margin-top:8px;flex:1;min-height:0;overflow:hidden;}
+  .cp-feedback{
+    display:none;
+    font-size:12.5px;
+    line-height:1.45;
+    color:var(--navy-texto);
+    background:var(--verde-suave);
+    border-left:3px solid var(--dorado);
+    border-radius:6px;
+    padding:8px 10px;
+    margin-bottom:6px;
+  }
+  .cp-feedback.visible{display:block;}
+  .cp-refuerzo{
+    display:none;
+    font-size:11.5px;
+    color:var(--azul-claro);
+    text-align:center;
+    font-weight:600;
+    line-height:1.4;
+  }
+  .cp-refuerzo.visible{display:block;}
+
+  /* ===== Pantalla 9: imagen protagonista ===== */
+  .pantalla-imagen-protagonista{padding:14px 18px;}
+  .imgprot-texto{
+    font-size:13px;color:var(--navy-texto);line-height:1.5;
+    margin:0 0 8px;flex:0 0 auto;
+  }
+  .imgprot-media{
+    flex:1;min-height:0;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;animation:fadeIn .6s ease forwards .1s;
+  }
+  .imgprot-media picture{display:block;width:100%;height:100%;}
+  .imgprot-media img{width:100%;height:100%;object-fit:contain;display:block;}
+
+  /* ===== Pantalla 11: Cierre ===== */
+  .pantalla-cierre{
+    background:var(--navy-deep);
+    color:#fff;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:8px;
+    padding:20px 24px;
+  }
+  .cierre-icono{
+    width:46px;height:46px;color:var(--dorado);margin-bottom:4px;
+  }
+  .cierre-eyebrow{
+    font-size:11px;font-weight:600;letter-spacing:.08em;
+    color:var(--dorado);text-transform:uppercase;margin:0 0 6px;
+  }
+  .cierre-titulo{
+    font-size:19px;font-weight:700;color:#fff;
+    text-transform:uppercase;margin:0 0 10px;line-height:1.25;
+  }
+  .cierre-mensaje{
+    font-size:14px;line-height:1.55;color:#EAF1F6;margin:0 0 12px;max-width:280px;
+  }
+  .cierre-refuerzo{
+    font-size:11.5px;color:#B9CBDA;line-height:1.5;margin:0 0 6px;max-width:280px;
+  }
+  .cierre-correo{
+    font-size:12.5px;font-weight:600;margin:0 0 12px;
+  }
+  .cierre-correo a{color:var(--dorado);text-decoration:underline;}
+  .cierre-cierre{
+    font-size:12px;color:#B9CBDA;line-height:1.5;max-width:280px;margin:0;
+  }
+
+  /* ===== Navegación inferior ===== */
+  .nav-inferior{
+    flex:0 0 auto;
+    display:flex;
+    gap:10px;
+    padding:10px 18px 16px;
+  }
+  .nav-inferior.oculto{display:none;}
+  .btn-nav{
+    flex:1;
+    border:none;
+    border-radius:10px;
+    padding:12px 10px;
+    font-weight:600;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:background .2s ease, transform .1s ease;
+  }
+  .btn-nav:active{transform:scale(.98);}
+  .btn-nav:focus-visible{outline:2px solid var(--navy-deep);outline-offset:2px;}
+  #btnAnterior{
+    background:var(--fondo-tarjeta);
+    color:var(--navy-texto);
+    flex:0 0 34%;
+  }
+  #btnAnterior.oculto{visibility:hidden;pointer-events:none;flex:0 0 0;width:0;padding:0;margin:0;}
+  #btnSiguiente{
+    background:var(--azul-acento);
+    color:#fff;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .tarjeta, .paso, .mensaje-final, .texto-secundario, .s3-item, .portada-overlay, .imgprot-media{
+      transition:none !important;
+      animation:none !important;
+    }
+  }
+
+  @media (min-width:700px){
+    .titulo-pantalla{font-size:22px;}
+    .pantalla{padding:22px 34px;}
+    .tarjeta{padding:13px 14px;}
+    .tarjeta-titulo{font-size:14px;}
+    .tarjeta-texto,.paso-texto{font-size:13.5px;}
+    .intro-texto,.cp-pregunta,.cp-opcion{font-size:14px;}
+    .bienvenida-texto{font-size:18px;max-width:420px;}
+    .portada-titulo{font-size:28px;}
+    .portada-subtitulo{font-size:15px;}
+    .cierre-titulo{font-size:24px;}
+    .cierre-mensaje{font-size:16px;max-width:420px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Sprite de iconos SVG (uso interno, no se muestra) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+
+  <symbol id="icon-dialogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </symbol>
+
+  <symbol id="icon-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+  </symbol>
+
+  <symbol id="icon-bombilla" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18h6"/><path d="M10 22h4"/>
+    <path d="M12 2a7 7 0 0 0-4 12.7c.6.5.9 1 .9 1.8V17h6.2v-.5c0-.8.3-1.3.9-1.8A7 7 0 0 0 12 2z"/>
+  </symbol>
+
+  <symbol id="icon-jefe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="3.4"/>
+    <path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6"/>
+    <path d="M12 2.6l.7 1.6 1.7.2-1.3 1.1.4 1.7-1.5-.9-1.5.9.4-1.7-1.3-1.1 1.7-.2z"/>
+  </symbol>
+
+  <symbol id="icon-personas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="8.5" cy="8" r="3"/>
+    <path d="M2.5 20c.6-3.4 3-5.4 6-5.4s5.4 2 6 5.4"/>
+    <circle cx="17" cy="7" r="2.4"/>
+    <path d="M15.3 12c2.6.3 4.4 2.1 4.9 4.6"/>
+  </symbol>
+
+  <symbol id="icon-correo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5" width="18" height="14" rx="2"/>
+    <path d="M3.5 6.5L12 13l8.5-6.5"/>
+  </symbol>
+
+  <symbol id="icon-recibe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12h4l2 3h6l2-3h4"/>
+    <path d="M5 12L6.5 5h11L19 12"/>
+    <path d="M3 12v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6"/>
+  </symbol>
+
+  <symbol id="icon-deriva" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12h8"/><path d="M14 6l6 6-6 6"/>
+  </symbol>
+
+  <symbol id="icon-evalua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="3.5" width="12" height="17" rx="2"/>
+    <path d="M9 3.5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v.5"/>
+    <path d="M9 12l2 2 4-4.5"/>
+  </symbol>
+
+  <symbol id="icon-responde" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    <path d="M8.5 11.5l2 2 4-4.3"/>
+  </symbol>
+
+  <symbol id="icon-candado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4.5" y="10.5" width="15" height="10" rx="2"/>
+    <path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"/>
+  </symbol>
+
+  <symbol id="icon-escudo-persona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.5l7.5 3v5.5c0 5-3.2 8.5-7.5 10.5-4.3-2-7.5-5.5-7.5-10.5V5.5z"/>
+    <circle cx="12" cy="10" r="2.2"/>
+    <path d="M8.6 16c.6-1.8 1.9-2.7 3.4-2.7s2.8.9 3.4 2.7"/>
+  </symbol>
+
+  <symbol id="icon-transparencia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="3.5" width="14" height="17" rx="2"/>
+    <path d="M8.5 8h7"/><path d="M8.5 12h7"/><path d="M8.5 16h4"/>
+    <circle cx="16.5" cy="16.5" r="0.2"/>
+  </symbol>
+
+  <symbol id="icon-proteccion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.5l7.5 3v5.5c0 5-3.2 8.5-7.5 10.5-4.3-2-7.5-5.5-7.5-10.5V5.5z"/>
+    <path d="M8.7 12l2.2 2.2 4.4-4.7"/>
+  </symbol>
+
+  <symbol id="icon-ojo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+
+  <symbol id="icon-escudo-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.5l7.5 3v5.5c0 5-3.2 8.5-7.5 10.5-4.3-2-7.5-5.5-7.5-10.5V5.5z"/>
+    <path d="M9 9.5h6"/><path d="M9 13h6"/>
+  </symbol>
+
+  <symbol id="icon-mensaje" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5" width="18" height="14" rx="2"/>
+    <path d="M3.5 6.5L12 13l8.5-6.5"/>
+  </symbol>
+
+  <symbol id="icon-identifica" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M11 8v3l2 2"/>
+  </symbol>
+
+  <symbol id="icon-confia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.5l7.5 3v5.5c0 5-3.2 8.5-7.5 10.5-4.3-2-7.5-5.5-7.5-10.5V5.5z"/>
+  </symbol>
+
+  <symbol id="icon-actua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 2L4 14h6l-1 8 9-12h-6z"/>
+  </symbol>
+
+  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.2l3 3 6-6.4"/>
+  </symbol>
+
+</defs>
+</svg>
+
+<div class="app" id="app">
+
+  <!-- Barra de progreso -->
+  <header class="progreso">
+    <p class="progreso-texto" id="progresoTexto">Pantalla 1 de 11</p>
+    <div class="progreso-track"><div class="progreso-fill" id="progresoFill"></div></div>
+  </header>
+
+  <!-- Pantallas -->
+  <main class="pantallas" id="pantallas">
+
+    <!-- PANTALLA 1 — PORTADA -->
+    <section class="pantalla pantalla-portada activa" data-screen="1">
+      <div class="portada-media">
+        <picture>
+          <source media="(min-width:700px)" srcset="assets/quejas-portada-desktop.png">
+          <img src="assets/quejas-portada.png" alt="Trabajadores conversando en un entorno laboral.">
+        </picture>
+      </div>
+      <div class="portada-overlay">
+        <h1 class="portada-titulo">PROCEDIMIENTO DE QUEJAS,<br>RECLAMOS Y SUGERENCIAS</h1>
+        <p class="portada-subtitulo">Cómo comunicar lo que necesita atención o puede mejorar</p>
+      </div>
+    </section>
+
+    <!-- PANTALLA 2 — BIENVENIDA -->
+    <section class="pantalla pantalla-bienvenida" data-screen="2">
+      <svg class="bienvenida-icono" aria-hidden="true"><use href="#icon-dialogo"/></svg>
+      <p class="eyebrow bienvenida-eyebrow">HABLEMOS</p>
+      <p class="bienvenida-texto" id="bienvenidaTexto" data-full="En el trabajo pueden surgir situaciones que preocupan, necesitan atención o simplemente podrían hacerse mejor. No necesitas saber cómo llamarlas. Lo importante es comunicarlas."></p>
+    </section>
+
+    <!-- PANTALLA 3 — LO QUE NECESITE ATENCIÓN, COMUNÍCALO -->
+    <section class="pantalla" data-screen="3">
+      <h2 class="titulo-pantalla">LO QUE NECESITE ATENCIÓN, COMUNÍCALO</h2>
+      <p class="intro-texto">En el trabajo pueden surgir situaciones que necesitan ser conocidas, atendidas o mejoradas.</p>
+      <div class="instruccion" id="s3Instruccion">
+        <svg aria-hidden="true"><use href="#icon-dialogo"/></svg>
+        <span>Pulsa "Siguiente" para ver algunos ejemplos.</span>
+      </div>
+
+      <div class="s3-stage">
+        <div class="s3-item" data-index="1">
+          <div class="tarjeta visible">
+            <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-dialogo"/></svg>
+            <div class="tarjeta-texto-wrap">
+              <p class="tarjeta-titulo">Una situación te preocupa</p>
+              <p class="tarjeta-texto">Algo que ocurre en el trabajo te genera incomodidad, preocupación o consideras que debería revisarse.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="s3-item" data-index="2">
+          <div class="tarjeta visible">
+            <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-lupa"/></svg>
+            <div class="tarjeta-texto-wrap">
+              <p class="tarjeta-titulo">Algo no está funcionando bien</p>
+              <p class="tarjeta-texto">Detectas un problema, una práctica inadecuada o una posible irregularidad que debería ser atendida.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="s3-item" data-index="3">
+          <div class="tarjeta visible">
+            <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-bombilla"/></svg>
+            <div class="tarjeta-texto-wrap">
+              <p class="tarjeta-titulo">Ves una oportunidad de mejora</p>
+              <p class="tarjeta-texto">Identificas una forma más práctica, segura o efectiva de hacer algo y quieres proponerla.</p>
+            </div>
+          </div>
+          <div class="mensaje-final visible">Comunicar ayuda a detectar problemas, atender situaciones y encontrar oportunidades para mejorar.</div>
+          <p class="texto-secundario visible">No importa cómo se llame la comunicación. Lo importante es hacerla llegar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 4 — TRES VÍAS PARA COMUNICAR -->
+    <section class="pantalla" data-screen="4">
+      <h2 class="titulo-pantalla">TRES VÍAS PARA COMUNICAR</h2>
+      <p class="intro-texto">Ante una situación que necesitas comunicar, puedes utilizar cualquiera de estas vías.</p>
+      <div class="tarjetas-lista">
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-jefe"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Jefe inmediato</p>
+            <p class="tarjeta-texto">Comunica directamente la situación identificada.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-personas"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Recursos Humanos</p>
+            <p class="tarjeta-texto">Acude directamente al área y explica lo ocurrido.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-correo"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Te Escuchamos</p>
+            <p class="tarjeta-texto">Si deseas realizar un reporte anónimo: <a href="mailto:tescuchamos@drimer.com.pe">tescuchamos@drimer.com.pe</a></p>
+          </div>
+        </div>
+      </div>
+      <p class="mensaje-final" style="margin-top:8px;">No necesitas buscar "el canal perfecto". Lo importante es que la situación llegue a Drimer.</p>
+    </section>
+
+    <!-- PANTALLA 5 — ¿QUÉ PASA DESPUÉS? -->
+    <section class="pantalla" data-screen="5">
+      <h2 class="titulo-pantalla">¿QUÉ PASA DESPUÉS?</h2>
+      <p class="intro-texto">Comunicar una situación activa un proceso de revisión y atención.</p>
+      <div class="timeline">
+        <div class="paso">
+          <div class="paso-marcador"><div class="paso-punto"><svg aria-hidden="true"><use href="#icon-recibe"/></svg></div><div class="paso-linea"></div></div>
+          <div class="paso-contenido"><p class="paso-titulo">Se recibe</p><p class="paso-texto">La comunicación es recibida y revisada.</p></div>
+        </div>
+        <div class="paso">
+          <div class="paso-marcador"><div class="paso-punto"><svg aria-hidden="true"><use href="#icon-deriva"/></svg></div><div class="paso-linea"></div></div>
+          <div class="paso-contenido"><p class="paso-titulo">Se deriva</p><p class="paso-texto">Se identifica a quién corresponde atender la situación.</p></div>
+        </div>
+        <div class="paso">
+          <div class="paso-marcador"><div class="paso-punto"><svg aria-hidden="true"><use href="#icon-evalua"/></svg></div><div class="paso-linea"></div></div>
+          <div class="paso-contenido"><p class="paso-titulo">Se evalúa</p><p class="paso-texto">Se revisa el caso y se define la respuesta o acción que corresponda.</p></div>
+        </div>
+        <div class="paso">
+          <div class="paso-marcador"><div class="paso-punto"><svg aria-hidden="true"><use href="#icon-responde"/></svg></div><div class="paso-linea"></div></div>
+          <div class="paso-contenido"><p class="paso-titulo">Se comunica</p><p class="paso-texto">El resultado es comunicado cuando corresponde.</p></div>
+        </div>
+      </div>
+      <p class="intro-texto" style="margin-top:4px;">Gestión Humana coordina este proceso con las áreas involucradas.</p>
+    </section>
+
+    <!-- PANTALLA 6 — QUÉ GARANTIZA DRIMER -->
+    <section class="pantalla" data-screen="6">
+      <h2 class="titulo-pantalla">QUÉ GARANTIZA DRIMER</h2>
+      <p class="intro-texto">Una comunicación debe ser tratada de manera segura, respetuosa y transparente.</p>
+      <div class="tarjetas-lista">
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-candado"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Confidencialidad</p>
+            <p class="tarjeta-texto">La información se trata de manera confidencial.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-escudo-persona"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Seguridad y respeto</p>
+            <p class="tarjeta-texto">Quien comunica una situación debe recibir un trato seguro y respetuoso.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-transparencia"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Transparencia</p>
+            <p class="tarjeta-texto">La situación debe gestionarse de manera clara y transparente.</p>
+          </div>
+        </div>
+        <div class="tarjeta tono-verde">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-proteccion"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Sin represalias</p>
+            <p class="tarjeta-texto">Drimer garantiza que no habrá represalias contra quien realice una comunicación de buena fe.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 7 — CASO PRÁCTICO -->
+    <section class="pantalla" data-screen="7" id="pantalla7">
+      <span class="cp-etiqueta">CASO PRÁCTICO</span>
+      <div class="cp-situacion" id="cpSituacion">En almacén, un compañero te cuenta que desde hace varios cierres le piden dejar sin corregir una diferencia de inventario para evitar demoras. Te dice que prefiere no decir nada porque "no quiere problemas".</div>
+      <p class="cp-pregunta">¿Qué harías?</p>
+      <div class="cp-opciones" id="cpOpciones">
+        <button type="button" class="cp-opcion" data-key="a" data-correct="false">
+          <span class="cp-letra">A</span><span>No intervenir porque el problema no me afecta directamente.</span>
+        </button>
+        <button type="button" class="cp-opcion" data-key="b" data-correct="false">
+          <span class="cp-letra">B</span><span>Esperar a que mi compañero presente primero una queja.</span>
+        </button>
+        <button type="button" class="cp-opcion" data-key="c" data-correct="true">
+          <span class="cp-letra">C</span><span>Comunicar los hechos que conozco mediante uno de los canales oficiales.</span>
+        </button>
+        <button type="button" class="cp-opcion" data-key="d" data-correct="false">
+          <span class="cp-letra">D</span><span>Preguntar a otros compañeros si también ocurre antes de comunicarlo.</span>
+        </button>
+      </div>
+
+      <div class="cp-feedback-zona" aria-live="polite">
+        <div class="cp-feedback" data-for="a">Que la situación no te afecte directamente no significa que deba quedar sin comunicar.</div>
+        <div class="cp-feedback" data-for="b">No es necesario esperar a que otra persona realice primero el reporte.</div>
+        <div class="cp-feedback" data-for="c">Correcto. No necesitas ser la persona directamente afectada para comunicar una posible irregularidad. Comunica los hechos que conoces. No necesitas investigarlos por tu cuenta.</div>
+        <div class="cp-feedback" data-for="d">No necesitas investigar ni ampliar el caso entre compañeros. Comunica únicamente los hechos que conoces para que puedan ser evaluados.</div>
+        <p class="cp-refuerzo" id="cpRefuerzo">Jefe inmediato&nbsp;|&nbsp;Recursos Humanos&nbsp;|&nbsp;Te Escuchamos para reporte anónimo</p>
+      </div>
+    </section>
+
+    <!-- PANTALLA 8 — SI NO TE PASÓ A TI, TAMBIÉN ACTÚA -->
+    <section class="pantalla" data-screen="8">
+      <h2 class="titulo-pantalla">SI NO TE PASÓ A TI, TAMBIÉN ACTÚA</h2>
+      <div class="tarjetas-lista" style="flex:0 0 auto;">
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-ojo"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">No ignores</p>
+            <p class="tarjeta-texto">Que no seas la persona directamente afectada no significa que una posible irregularidad deba quedar sin comunicar.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-escudo-doc"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">No encubras</p>
+            <p class="tarjeta-texto">No ocultes ni ayudes a mantener una posible irregularidad fuera del conocimiento de Drimer.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-mensaje"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Comunica</p>
+            <p class="tarjeta-texto">Transmite los hechos que realmente conoces mediante una de las tres vías oficiales.</p>
+          </div>
+        </div>
+      </div>
+      <p class="mensaje-final" style="margin-top:8px;">No necesitas investigar ni demostrar lo ocurrido. Tu responsabilidad es comunicar lo que conoces.</p>
+    </section>
+
+    <!-- PANTALLA 9 — COMUNICAR TAMBIÉN SIRVE PARA MEJORAR -->
+    <section class="pantalla pantalla-imagen-protagonista" data-screen="9">
+      <h2 class="titulo-pantalla">COMUNICAR TAMBIÉN SIRVE PARA MEJORAR</h2>
+      <p class="imgprot-texto">No todo lo que comunicas tiene que ser una irregularidad. También puedes compartir ideas, recomendaciones o situaciones que podrían hacerse mejor.</p>
+      <div class="imgprot-media">
+        <picture>
+          <source media="(min-width:700px)" srcset="assets/buzon-sugerencias-desktop.png">
+          <img src="assets/buzon-sugerencias.png" alt="Pieza institucional del Buzón de Sugerencias Te Escuchamos de Drimer.">
+        </picture>
+      </div>
+    </section>
+
+    <!-- PANTALLA 10 — QUÉDATE CON ESTO -->
+    <section class="pantalla" data-screen="10">
+      <h2 class="titulo-pantalla">QUÉDATE CON ESTO</h2>
+      <div class="tarjetas-lista">
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-identifica"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Identifica</p>
+            <p class="tarjeta-texto">¿Algo necesita atención o puede mejorar?</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-mensaje"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Comunica</p>
+            <p class="tarjeta-texto">Jefe inmediato, Recursos Humanos, Te Escuchamos.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-confia"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Confía</p>
+            <p class="tarjeta-texto">Confidencialidad, respeto, transparencia y sin represalias.</p>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <svg class="tarjeta-icono" aria-hidden="true"><use href="#icon-actua"/></svg>
+          <div class="tarjeta-texto-wrap">
+            <p class="tarjeta-titulo">Actúa</p>
+            <p class="tarjeta-texto">Si conoces una posible irregularidad, no la ignores ni la encubras.</p>
+          </div>
+        </div>
+      </div>
+      <p class="mensaje-final" style="margin-top:8px;">No necesitas saber cómo llamarlo. Necesitas saber cuándo comunicarlo.</p>
+    </section>
+
+    <!-- PANTALLA 11 — CIERRE FINAL -->
+    <section class="pantalla pantalla-cierre" data-screen="11">
+      <svg class="cierre-icono" aria-hidden="true"><use href="#icon-check"/></svg>
+      <p class="cierre-eyebrow">RUTA DRIMER ÍNTEGRO</p>
+      <h2 class="cierre-titulo">YA SABES CÓMO ACTUAR</h2>
+      <p class="cierre-mensaje">Si algo te preocupa, necesita atención o puede mejorar, comunícalo.</p>
+      <p class="cierre-refuerzo">Jefe inmediato&nbsp;|&nbsp;Recursos Humanos&nbsp;|&nbsp;Te Escuchamos para reporte anónimo</p>
+      <p class="cierre-correo"><a href="mailto:tescuchamos@drimer.com.pe">tescuchamos@drimer.com.pe</a></p>
+      <p class="cierre-cierre">Tu comunicación también ayuda a construir un mejor lugar para trabajar.</p>
+    </section>
+
+  </main>
+
+  <!-- Navegación inferior -->
+  <footer class="nav-inferior" id="footerNav">
+    <button type="button" class="btn-nav" id="btnAnterior">Anterior</button>
+    <button type="button" class="btn-nav" id="btnSiguiente">Siguiente</button>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var TOTAL = 11;
+  var current = 1;
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var pantallas = document.querySelectorAll('.pantalla');
+  var progresoTexto = document.getElementById('progresoTexto');
+  var progresoFill = document.getElementById('progresoFill');
+  var btnAnterior = document.getElementById('btnAnterior');
+  var btnSiguiente = document.getElementById('btnSiguiente');
+  var footerNav = document.getElementById('footerNav');
+
+  var typewriterDone = false;
+  var animatedScreens = {}; // screens 4,5,6,8,10 that already auto-animated
+  var s3Step = 0; // 0..3
+  var s3Items = document.querySelectorAll('.s3-item');
+  var s3Instruccion = document.getElementById('s3Instruccion');
+  var casoAnswered = false;
+
+  function renderProgreso(){
+    progresoTexto.textContent = 'Pantalla ' + current + ' de ' + TOTAL;
+    progresoFill.style.width = (current / TOTAL * 100) + '%';
+  }
+
+  function updateNav(){
+    if(current === 1){
+      btnAnterior.classList.add('oculto');
+    } else {
+      btnAnterior.classList.remove('oculto');
+    }
+
+    if(current === 11){
+      footerNav.classList.add('oculto');
+    } else {
+      footerNav.classList.remove('oculto');
+      btnSiguiente.textContent = (current === 10) ? 'FINALIZAR CURSO' : 'Siguiente';
+    }
+  }
+
+  function showScreen(n){
+    for(var i=0;i<pantallas.length;i++){ pantallas[i].classList.remove('activa'); }
+    var target = document.querySelector('.pantalla[data-screen="' + n + '"]');
+    if(target){ target.classList.add('activa'); }
+    current = n;
+    renderProgreso();
+    updateNav();
+    handleScreenEnter(n);
+  }
+
+  function handleScreenEnter(n){
+    if(n === 2 && !typewriterDone){
+      runTypewriter();
+    }
+    if(n === 4 || n === 5 || n === 6 || n === 8 || n === 10){
+      if(!animatedScreens[n]){
+        runStagger(n);
+        animatedScreens[n] = true;
+      } else {
+        var sel = '.pantalla[data-screen="' + n + '"] .tarjeta, .pantalla[data-screen="' + n + '"] .paso';
+        var els = document.querySelectorAll(sel);
+        for(var i=0;i<els.length;i++){ els[i].classList.add('visible'); }
+        var msg = document.querySelector('.pantalla[data-screen="' + n + '"] .mensaje-final');
+        if(msg){ msg.classList.add('visible'); }
+      }
+    }
+  }
+
+  function runStagger(n){
+    var sel = '.pantalla[data-screen="' + n + '"] .tarjeta, .pantalla[data-screen="' + n + '"] .paso';
+    var els = document.querySelectorAll(sel);
+    var delay = reducedMotion ? 0 : 750;
+    for(var i=0;i<els.length;i++){
+      (function(el, idx){
+        setTimeout(function(){ el.classList.add('visible'); }, idx * delay);
+      })(els[i], i);
+    }
+    var msg = document.querySelector('.pantalla[data-screen="' + n + '"] .mensaje-final');
+    if(msg){
+      setTimeout(function(){ msg.classList.add('visible'); }, els.length * delay);
+    }
+  }
+
+  function runTypewriter(){
+    typewriterDone = true;
+    var el = document.getElementById('bienvenidaTexto');
+    var full = el.getAttribute('data-full');
+    if(reducedMotion){
+      el.textContent = full;
+      return;
+    }
+    el.textContent = '';
+    var i = 0;
+    var speed = 26;
+    function tick(){
+      if(i <= full.length){
+        el.textContent = full.slice(0, i);
+        i++;
+        setTimeout(tick, speed);
+      }
+    }
+    tick();
+  }
+
+  function s3Reveal(){
+    s3Step++;
+    for(var i=0;i<s3Items.length;i++){
+      var idx = parseInt(s3Items[i].getAttribute('data-index'), 10);
+      s3Items[i].classList.toggle('visible', idx === s3Step);
+    }
+    s3Instruccion.classList.add('oculto');
+  }
+
+  function initCasoPractico(){
+    var opciones = document.querySelectorAll('#cpOpciones .cp-opcion');
+    for(var i=0;i<opciones.length;i++){
+      opciones[i].addEventListener('click', function(e){
+        if(casoAnswered) return;
+        casoAnswered = true;
+        var elegido = e.currentTarget;
+        var esCorrecta = elegido.getAttribute('data-correct') === 'true';
+
+        for(var j=0;j<opciones.length;j++){
+          var op = opciones[j];
+          op.disabled = true;
+          if(op.getAttribute('data-correct') === 'true'){
+            op.classList.add('correcta');
+            var mc = document.createElement('span');
+            mc.className = 'cp-marca';
+            mc.textContent = '✓';
+            op.appendChild(mc);
+          } else if(op === elegido){
+            op.classList.add('incorrecta');
+            var mi = document.createElement('span');
+            mi.className = 'cp-marca';
+            mi.textContent = '✗';
+            op.appendChild(mi);
+          }
+        }
+
+        var key = elegido.getAttribute('data-key');
+        var feedbacks = document.querySelectorAll('#pantalla7 .cp-feedback');
+        for(var k=0;k<feedbacks.length;k++){
+          feedbacks[k].classList.toggle('visible', feedbacks[k].getAttribute('data-for') === key);
+        }
+        document.getElementById('cpRefuerzo').classList.add('visible');
+        document.getElementById('cpSituacion').classList.add('colapsada');
+      });
+    }
+  }
+
+  btnSiguiente.addEventListener('click', function(){
+    if(current === 3 && s3Step < 3){
+      s3Reveal();
+      return;
+    }
+    if(current < TOTAL){
+      showScreen(current + 1);
+    }
+  });
+
+  btnAnterior.addEventListener('click', function(){
+    if(current > 1){
+      showScreen(current - 1);
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if(tag === 'BUTTON' || tag === 'A') return;
+    if(e.key === 'ArrowRight'){ btnSiguiente.click(); }
+    if(e.key === 'ArrowLeft' && !btnAnterior.classList.contains('oculto')){ btnAnterior.click(); }
+  });
+
+  initCasoPractico();
+  renderProgreso();
+  updateNav();
+
+})();
+</script>
+
+</body>
+</html>
