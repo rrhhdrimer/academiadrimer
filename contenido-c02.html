@@ -45,7 +45,7 @@ svg{display:block;}
   background:var(--white);
 }
 @media (min-width:768px){
-  .app{ max-width:100%; }
+  .app{ max-width:1080px; }
 }
 
 /* ===== Barra de progreso ===== */
@@ -516,9 +516,6 @@ svg{display:block;}
   max-width:60%;
   height:auto;
 }
-@media (min-width:768px){
-  .cierre .logo{width:200px;}
-}
 
 /* ===== Navegación fija ===== */
 .nav-fija{
@@ -560,6 +557,106 @@ svg{display:block;}
 
 /* Scrollbar oculta si algún contenido excediera por accesibilidad/zoom */
 .pantalla::-webkit-scrollbar{display:none;}
+
+/* ======================================================
+   ESCRITORIO — el contenido usa más ancho y se agranda,
+   en vez de quedar angosto y flotando con bordes blancos
+   ====================================================== */
+@media (min-width:768px){
+
+  .contenido{ max-width:min(90%, 800px); }
+
+  .progreso{ padding:20px 40px 12px; }
+  .progreso .texto{ font-size:13.5px; }
+  .progreso .barra{ height:6px; }
+
+  .pantalla{ padding:0 40px; }
+
+  .eyebrow{ font-size:14px; margin-bottom:12px; }
+  .screen-title{ font-size:32px; margin-bottom:20px; }
+  .parrafo{ font-size:17.5px; line-height:1.6; margin-bottom:22px; }
+
+  .instruccion{ font-size:15px; padding:16px 20px; gap:12px; margin-bottom:22px; border-radius:12px; }
+  .instruccion svg{ width:20px; height:20px; }
+
+  /* tarjetas comparativas (2 o 3) pasan a fila para llenar el ancho */
+  .cards{ flex-direction:row; gap:20px; }
+  .cards .card{
+    flex:1;
+    flex-direction:column;
+    align-items:flex-start;
+    padding:28px 26px;
+    gap:16px;
+    border-radius:16px;
+  }
+  .cards .card .icono{ width:52px; height:52px; border-radius:14px; }
+  .cards .card .icono svg{ width:26px; height:26px; }
+  .cards .card .titulo{ font-size:18px; }
+  .cards .card p{ font-size:15px; line-height:1.55; }
+
+  /* grid de 4 tarjetas cortas: una sola fila en vez de 2x2 */
+  .cards.grid2{ grid-template-columns:repeat(4, 1fr); gap:18px; }
+  .cards.grid2 .card{ padding:22px 20px; gap:14px; border-radius:14px; }
+  .cards.grid2 .card .icono{ width:44px; height:44px; }
+  .cards.grid2 .card .icono svg{ width:22px; height:22px; }
+  .cards.grid2 .card .titulo{ font-size:15.5px; }
+  .cards.grid2 .card p{ font-size:13.8px; line-height:1.48; }
+
+  .destacado{ font-size:16.5px; padding:18px 22px; margin-top:20px; border-radius:0 12px 12px 0; }
+  .nota{ font-size:14.5px; padding:16px 20px; margin-top:20px; border-radius:12px; }
+  .nota svg{ width:19px; height:19px; }
+
+  /* pestañas */
+  .tab-botones{ gap:10px; margin-bottom:22px; }
+  .tab-btn{ font-size:13.5px; padding:15px 10px; border-radius:10px; }
+  .tab-panel{ gap:16px; }
+  .tab-panel .icono-panel{ width:52px; height:52px; border-radius:13px; }
+  .tab-panel .icono-panel svg{ width:26px; height:26px; }
+  .tab-panel .titulo-panel{ font-size:18px; margin-bottom:6px; }
+  .tab-panel p{ font-size:16px; line-height:1.58; margin-bottom:10px; }
+
+  /* revelado progresivo */
+  .reveal-item.revelado{ max-height:220px; }
+
+  /* caso práctico */
+  .etiqueta-caso{ font-size:13px; padding:8px 14px; margin-bottom:20px; }
+  .situacion{ font-size:17px; line-height:1.55; margin-bottom:22px; }
+  .pregunta-caso{ font-size:17px; margin-bottom:16px; }
+  .opciones{ gap:12px; margin-bottom:18px; }
+  .opcion{ font-size:15.5px; padding:16px 18px; gap:14px; border-radius:12px; }
+  .opcion .letra{ width:25px; height:25px; font-size:13px; }
+  .caso.respondido .opcion{ padding:13px 17px; }
+  .feedback{ font-size:14.5px; padding:16px 20px; gap:12px; border-radius:12px; }
+  .feedback svg{ width:19px; height:19px; }
+
+  /* bienvenida */
+  .bienvenida-texto{ font-size:20px; line-height:1.7; }
+
+  /* portada */
+  .portada-overlay{ padding:40px 44px 96px; }
+  .portada-overlay h1{ font-size:34px; margin-bottom:10px; }
+  .portada-overlay p{ font-size:17px; }
+
+  /* cierre */
+  .cierre .check{ width:80px; height:80px; margin-bottom:22px; }
+  .cierre .check svg{ width:40px; height:40px; }
+  .cierre h1{ font-size:30px; margin-bottom:16px; }
+  .cierre p{ font-size:17px; max-width:460px; margin-bottom:22px; }
+  .cierre .tagline{ font-size:14px; margin-bottom:36px; }
+  .cierre .logo{ width:210px; }
+
+  /* navegación */
+  .nav-fija{ padding:16px 40px 28px; gap:16px; }
+  #btnAnterior{ width:56px; border-radius:13px; }
+  #btnAnterior svg{ width:21px; height:21px; }
+  #btnSiguiente{ font-size:16px; padding:16px; border-radius:13px; }
+  #btnSiguiente svg{ width:18px; height:18px; }
+}
+
+@media (min-width:1100px){
+  .contenido{ max-width:860px; }
+  .screen-title{ font-size:34px; }
+}
 </style>
 </head>
 <body>
