@@ -23,11 +23,9 @@
     --white:#FFFFFF;
   }
   *{ box-sizing:border-box; }
-  html{ background:#E4E7EA; }
   html, body{ height:100%; }
   body{
-    margin:0 auto;
-    max-width:480px;
+    margin:0;
     font-family:'Poppins', sans-serif;
     background:var(--white);
     color:var(--navy-mid);
@@ -37,7 +35,6 @@
     flex-direction:column;
     height:100vh;
     overflow:hidden;
-    box-shadow:0 0 40px rgba(5,28,44,0.10);
   }
   img{ max-width:100%; display:block; }
 
@@ -78,12 +75,14 @@
 
   .banner{ flex:1; min-height:0; display:flex; flex-direction:column; background:var(--navy-deep); color:#fff; padding:14px 18px; text-align:center; }
   .banner .img-wrap{ flex:1; min-height:0; border-radius:10px; overflow:hidden; margin-bottom:12px; }
+  .banner .img-wrap picture{ display:block; width:100%; height:100%; }
   .banner .img-wrap img{ width:100%; height:100%; object-fit:contain; background:var(--navy-deep); }
   .banner h1{ font-family:'Poppins', sans-serif; font-weight:700; color:#fff; margin:0 0 6px; font-size:21px; flex-shrink:0; }
   .banner p{ color:rgba(255,255,255,0.75); font-size:13px; margin:0; flex-shrink:0; }
 
   .imagen-full{ flex:1; min-height:0; display:flex; flex-direction:column; padding:14px; }
   .imagen-full .img-wrap{ flex:1; min-height:0; border-radius:10px; overflow:hidden; }
+  .imagen-full .img-wrap picture{ display:block; width:100%; height:100%; }
   .imagen-full .img-wrap img{ width:100%; height:100%; object-fit:contain; background:var(--card-bg); }
   .imagen-full.fija{ flex:none; }
   .imagen-full.fija .img-wrap{ flex:none; aspect-ratio:3/2; width:100%; }
@@ -203,8 +202,7 @@
   .cierre-final p{ color:rgba(255,255,255,0.8); font-size:14px; }
 
   .nav-inferior{
-    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-    width:100%; max-width:480px;
+    position:fixed; bottom:0; left:0; right:0;
     background:var(--white); border-top:1px solid var(--border-soft);
     padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; z-index:20;
   }
@@ -236,7 +234,7 @@
 
 <div class="slide">
   <div class="banner">
-    <div class="img-wrap"><img src="img/portada.png" alt="Código de Conducta Drimer"></div>
+    <div class="img-wrap"><picture><source media="(min-width: 700px)" srcset="img/portada-desktop.png"><img src="img/portada.png" alt="Código de Conducta Drimer"></picture></div>
     <h1>CÓDIGO DE CONDUCTA DRIMER</h1>
     <p>La forma en que actuamos también representa a Drimer.</p>
   </div>
@@ -257,7 +255,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
 
 <div class="slide">
   <div class="imagen-full">
-    <div class="img-wrap"><img src="img/responsabilidad-compartida.png" alt="Cumplir el Código y velar por su cumplimiento"></div>
+    <div class="img-wrap"><picture><source media="(min-width: 700px)" srcset="img/responsabilidad-compartida-desktop.png"><img src="img/responsabilidad-compartida.png" alt="Cumplir el Código y velar por su cumplimiento"></picture></div>
   </div>
   <div class="quote-screen">
     <div class="quote-big">"El Código de Conducta es responsabilidad de todos."</div>
@@ -269,7 +267,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
     <h2 class="screen-title">POLÍTICA DE CERO TOLERANCIA</h2>
   </div>
   <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/cumplir-velar.png" alt="Política de Cero Tolerancia"></div>
+    <div class="img-wrap"><picture><source media="(min-width: 700px)" srcset="img/cumplir-velar-desktop.png"><img src="img/cumplir-velar.png" alt="Política de Cero Tolerancia"></picture></div>
   </div>
 </div>
 
@@ -374,7 +372,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
     <h2 class="screen-title">SALUD Y SEGURIDAD EN EL TRABAJO</h2>
   </div>
   <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/sst-hotspots.png" alt="4 puntos clave de seguridad"></div>
+    <div class="img-wrap"><picture><source media="(min-width: 700px)" srcset="img/sst-hotspots-desktop.png"><img src="img/sst-hotspots.png" alt="4 puntos clave de seguridad"></picture></div>
   </div>
   <div class="quote-screen">
     <div class="quote-big" style="text-align:center; font-size:14px;">NINGÚN RESULTADO JUSTIFICA TRABAJAR DE FORMA INSEGURA</div>
@@ -427,7 +425,7 @@ En este curso conocerás qué espera Drimer de cada trabajador y qué hacer cuan
     <h2 class="screen-title">PRIVACIDAD Y PROTECCIÓN DE INFORMACIÓN</h2>
   </div>
   <div class="imagen-full" style="padding-top:0;">
-    <div class="img-wrap"><img src="img/privacidad.png" alt="Privacidad y protección de información en el trabajo"></div>
+    <div class="img-wrap"><picture><source media="(min-width: 700px)" srcset="img/privacidad-desktop.png"><img src="img/privacidad.png" alt="Privacidad y protección de información en el trabajo"></picture></div>
   </div>
 </div>
 
