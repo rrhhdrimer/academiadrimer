@@ -214,7 +214,7 @@
   .texto-secundario.visible{opacity:1;}
 
   /* ===== Pantalla 1: Portada ===== */
-  .pantalla-portada{padding:0;position:relative;}
+  .pantalla-portada{padding:0;position:relative;height:100%;}
   .portada-media{position:absolute;inset:0;width:100%;height:100%;}
   .portada-media picture{display:block;width:100%;height:100%;}
   .portada-media img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -516,18 +516,88 @@
     }
   }
 
-  @media (min-width:700px){
-    .titulo-pantalla{font-size:22px;}
-    .pantalla{padding:22px 34px;}
-    .tarjeta{padding:13px 14px;}
-    .tarjeta-titulo{font-size:14px;}
-    .tarjeta-texto,.paso-texto{font-size:13.5px;}
-    .intro-texto,.cp-pregunta,.cp-opcion{font-size:14px;}
-    .bienvenida-texto{font-size:18px;max-width:420px;}
-    .portada-titulo{font-size:28px;}
-    .portada-subtitulo{font-size:15px;}
-    .cierre-titulo{font-size:24px;}
-    .cierre-mensaje{font-size:16px;max-width:420px;}
+  @media (min-width:768px){
+
+    /* Centrar verticalmente el contenido de cada pantalla para repartir
+       el espacio sobrante arriba/abajo en vez de dejarlo todo abajo */
+    .pantalla{ padding:0 40px; justify-content:center; }
+    .pantalla-portada,
+    .pantalla-cierre{ padding:0; }
+    .pantalla-imagen-protagonista{ padding:0 40px; }
+
+    .titulo-pantalla{ font-size:32px; margin-bottom:8px; }
+    .eyebrow{ font-size:14px; }
+    .intro-texto{ font-size:17px; line-height:1.55; margin-bottom:16px; }
+    .instruccion{ font-size:14.5px; padding:14px 18px; gap:12px; border-radius:11px; }
+    .instruccion svg{ width:20px; height:20px; }
+
+    /* Tarjetas: de columna a fila para llenar el ancho */
+    .tarjetas-lista{ flex-direction:row; gap:16px; }
+    .tarjeta{
+      flex:1;
+      flex-direction:column;
+      align-items:flex-start;
+      padding:22px 20px;
+      gap:12px;
+      border-radius:15px;
+    }
+    .tarjeta-icono{ width:34px; height:34px; }
+    .tarjeta-titulo{ font-size:15.5px; }
+    .tarjeta-texto{ font-size:14px; line-height:1.5; }
+
+    .mensaje-final{ font-size:15px; padding:13px 16px; margin-top:14px; }
+    .texto-secundario{ font-size:13.5px; margin-top:10px; }
+
+    /* Pantalla 3: la tarjeta protagonista centrada en el espacio disponible */
+    .s3-stage{ display:flex; flex-direction:column; justify-content:center; }
+
+    /* Timeline: se mantiene vertical (conserva el conector), pero centrado */
+    .timeline{ justify-content:center; }
+    .paso{ gap:14px; }
+    .paso-punto{ width:30px; height:30px; }
+    .paso-punto svg{ width:17px; height:17px; }
+    .paso-titulo{ font-size:15.5px; }
+    .paso-texto{ font-size:14px; }
+    .paso-contenido{ padding-bottom:16px; }
+
+    /* Caso Práctico */
+    .cp-etiqueta{ font-size:12.5px; padding:6px 14px; margin-bottom:12px; }
+    .cp-situacion{ font-size:15.5px; line-height:1.5; padding:16px 18px; margin-bottom:14px; }
+    .cp-pregunta{ font-size:17px; margin-bottom:12px; }
+    .cp-opciones{ gap:10px; }
+    .cp-opcion{ font-size:14.5px; padding:13px 16px; gap:11px; border-radius:11px; }
+    .cp-feedback-zona{ display:flex; flex-direction:column; justify-content:center; }
+    .cp-feedback{ font-size:14px; padding:12px 15px; }
+    .cp-refuerzo{ font-size:13px; }
+
+    /* Imagen protagonista */
+    .imgprot-texto{ font-size:16px; margin-bottom:14px; }
+
+    /* Bienvenida */
+    .bienvenida-icono{ width:52px; height:52px; }
+    .bienvenida-texto{ font-size:20px; max-width:520px; min-height:auto; }
+
+    /* Portada */
+    .portada-titulo{ font-size:34px; margin-bottom:12px; }
+    .portada-subtitulo{ font-size:17px; }
+    .portada-overlay{ padding:0 44px 100px; }
+
+    /* Cierre */
+    .cierre-icono{ width:58px; height:58px; margin-bottom:6px; }
+    .cierre-eyebrow{ font-size:13px; margin-bottom:10px; }
+    .cierre-titulo{ font-size:32px; margin-bottom:14px; }
+    .cierre-mensaje{ font-size:18px; margin-bottom:14px; }
+    .cierre-refuerzo{ font-size:14px; max-width:460px; margin-bottom:10px; }
+    .cierre-correo{ font-size:15px; margin-bottom:16px; }
+    .cierre-cierre{ font-size:14px; max-width:460px; }
+
+    /* Navegación */
+    .nav-inferior{ padding:16px 40px 28px; gap:16px; }
+    .btn-nav{ font-size:16px; padding:16px 12px; border-radius:12px; }
+  }
+
+  @media (min-width:1100px){
+    .titulo-pantalla{ font-size:34px; }
   }
 </style>
 </head>
