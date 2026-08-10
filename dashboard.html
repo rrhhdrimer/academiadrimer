@@ -6,6 +6,8 @@
 <title>Cursos — Academia Drimer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="assets/js/jspdf.umd.min.js"></script>
+<script src="assets/js/jszip.min.js"></script>
 <style>
   :root{
     --paper: #EEF0EF;
@@ -21,6 +23,31 @@
     --line: #DADDDA;
     --sidebar-w: 232px;
   }
+
+  /* Fuentes auto-hospedadas SOLO para el motor de certificados (canvas).
+     Familia con nombre distinto a 'Poppins' para no chocar con la
+     versión de Google Fonts que usa el resto de esta página. */
+  @font-face{
+    font-family:'Pinyon Script';
+    src:url('assets/fonts/PinyonScript.woff2') format('woff2');
+    font-weight:400; font-style:normal; font-display:block;
+  }
+  @font-face{
+    font-family:'Poppins Cert';
+    src:url('assets/fonts/Poppins-Regular.woff2') format('woff2');
+    font-weight:400; font-style:normal; font-display:block;
+  }
+  @font-face{
+    font-family:'Poppins Cert';
+    src:url('assets/fonts/Poppins-SemiBold.woff2') format('woff2');
+    font-weight:600; font-style:normal; font-display:block;
+  }
+  @font-face{
+    font-family:'Poppins Cert';
+    src:url('assets/fonts/Poppins-Bold.woff2') format('woff2');
+    font-weight:700; font-style:normal; font-display:block;
+  }
+
   *{ box-sizing:border-box; }
   body{
     margin:0;
@@ -198,6 +225,49 @@
   }
   .page-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
   .page-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  /* ---------- Gestión académica ---------- */
+  .gestion-grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:18px; }
+  @media (min-width:860px){ .gestion-grid{ grid-template-columns:1fr 1fr; } }
+  .gestion-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; display:flex; flex-direction:column;
+  }
+  .gestion-card-wide{ grid-column:1 / -1; }
+  .gestion-card h3{ margin:0 0 6px; font-size:15.5px; font-weight:600; color:var(--ink); }
+  .gestion-desc{ font-size:12.5px; color:var(--ink-soft); margin:0 0 14px; line-height:1.5; }
+  .gestion-label{ font-size:11px; font-weight:600; color:var(--ink-soft); margin:8px 0 5px; text-transform:uppercase; letter-spacing:0.02em; }
+  .gestion-input{
+    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px;
+    font-size:13px; font-family:'Poppins', sans-serif; color:var(--ink); background:#FBFBFA; margin-bottom:4px;
+  }
+  .gestion-input:focus{ outline:none; border-color:var(--gold); background:#fff; }
+  select.gestion-input{
+    appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234B5670' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center; padding-right:30px;
+  }
+  .gestion-btn{
+    margin-top:12px; background:var(--ink); color:#fff; border:none; border-radius:8px;
+    font-size:13px; font-weight:600; padding:11px 16px; cursor:pointer; align-self:flex-start;
+  }
+  .gestion-btn:hover{ background:#1c2c4d; }
+  .gestion-btn:disabled{ opacity:0.55; cursor:not-allowed; }
+  .gestion-btn-danger{ background:var(--rust); }
+  .gestion-btn-danger:hover{ background:#83392a; }
+  .gestion-msg{ font-size:12.5px; margin-top:10px; line-height:1.5; }
+  .gestion-msg.ok{ color:var(--green); }
+  .gestion-msg.error{ color:var(--rust); }
+  .gestion-msg.progreso{ color:var(--ink-soft); }
+
+  .modo-toggle{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+  .modo-btn{
+    border:1px solid var(--line); background:#FBFBFA; color:var(--ink-soft);
+    font-size:12px; font-weight:600; padding:8px 13px; border-radius:20px; cursor:pointer;
+    font-family:'Poppins', sans-serif;
+  }
+  .modo-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .gestion-campos{ max-width:360px; }
 </style>
 </head>
 <body>
@@ -219,7 +289,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="nav-item active" href="dashboard.html">
+      <a class="nav-item active" href="dashboard.html" id="navCursos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
         Cursos
       </a>
@@ -240,6 +310,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5L7 22l5-3 5 3-1.5-9.5"/></svg>
         Certificados
       </a>
+      <a class="nav-item hidden" href="#" id="navGestion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Gestión académica
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -256,6 +330,7 @@
     </header>
 
     <main>
+      <div id="vistaCursos">
       <div class="page-head">
         <h2>Cursos</h2>
         <span class="progress-mini" id="progressMini"></span>
@@ -301,6 +376,71 @@
       </div>
 
       <div class="pagination" id="pagination"></div>
+      </div>
+
+      <div id="vistaGestion" class="hidden">
+        <div class="page-head">
+          <h2>Gestión académica</h2>
+        </div>
+        <p class="subtitle">Herramientas administrativas para alumnos y certificados.</p>
+
+        <div class="gestion-grid">
+
+          <div class="gestion-card">
+            <h3>Resetear contraseña</h3>
+            <p class="gestion-desc">Cambia la contraseña de un alumno a <strong>0000</strong>.</p>
+            <label class="gestion-label" for="inputResetDni">DNI del alumno</label>
+            <input type="text" id="inputResetDni" class="gestion-input" placeholder="Ej. 45394036">
+            <button id="btnResetPassword" class="gestion-btn">Resetear contraseña</button>
+            <div id="resetMsg" class="gestion-msg"></div>
+          </div>
+
+          <div class="gestion-card">
+            <h3>Eliminar alumno</h3>
+            <p class="gestion-desc">Borra todos los registros del alumno (Usuarios, Intentos, Resultados y Mensajes). Esta acción no se puede deshacer.</p>
+            <label class="gestion-label" for="inputEliminarDni">DNI del alumno</label>
+            <input type="text" id="inputEliminarDni" class="gestion-input" placeholder="Ej. 45394036">
+            <label class="gestion-label" for="inputEliminarConfirmar">Repite el DNI para confirmar</label>
+            <input type="text" id="inputEliminarConfirmar" class="gestion-input" placeholder="Repite el DNI">
+            <button id="btnEliminarAlumno" class="gestion-btn gestion-btn-danger">Eliminar alumno</button>
+            <div id="eliminarMsg" class="gestion-msg"></div>
+          </div>
+
+          <div class="gestion-card gestion-card-wide">
+            <h3>Descargar certificados</h3>
+            <p class="gestion-desc">Genera los certificados en PDF de los alumnos aprobados y los descarga en un solo archivo .zip.</p>
+
+            <div class="modo-toggle">
+              <button type="button" class="modo-btn active" data-modo="curso">Masivo por curso</button>
+              <button type="button" class="modo-btn" data-modo="dniCurso">DNI + curso específico</button>
+              <button type="button" class="modo-btn" data-modo="dniTodos">DNI, todos sus certificados</button>
+            </div>
+
+            <div id="camposCertCurso" class="gestion-campos">
+              <label class="gestion-label" for="selectCertCurso1">Curso</label>
+              <select id="selectCertCurso1" class="gestion-input"></select>
+            </div>
+
+            <div id="camposCertDniCurso" class="gestion-campos hidden">
+              <label class="gestion-label" for="inputCertDni1">DNI del alumno</label>
+              <input type="text" id="inputCertDni1" class="gestion-input" placeholder="Ej. 45394036">
+              <label class="gestion-label" for="selectCertCurso2">Curso</label>
+              <select id="selectCertCurso2" class="gestion-input"></select>
+            </div>
+
+            <div id="camposCertDniTodos" class="gestion-campos hidden">
+              <label class="gestion-label" for="inputCertDni2">DNI del alumno</label>
+              <input type="text" id="inputCertDni2" class="gestion-input" placeholder="Ej. 45394036">
+            </div>
+
+            <button id="btnDescargarCert" class="gestion-btn">Generar y descargar</button>
+            <div id="certMsg" class="gestion-msg"></div>
+          </div>
+
+        </div>
+
+        <canvas id="certCanvasAdmin" width="2000" height="1414" style="display:none"></canvas>
+      </div>
     </main>
   </div>
 
@@ -377,6 +517,7 @@
       estadoUsuario = await resEstado.json();
 
       poblarPeriodos();
+      poblarSelectsCertificado();
       renderProgresoMini();
       aplicarFiltrosYRenderizar();
     } catch(err){
@@ -606,6 +747,405 @@
   document.getElementById('selectPeriodo').addEventListener('change', aplicarFiltrosYRenderizar);
   document.getElementById('selectFiltro').addEventListener('change', aplicarFiltrosYRenderizar);
   document.getElementById('selectPorPagina').addEventListener('change', aplicarFiltrosYRenderizar);
+
+  // ============================================================
+  // GESTIÓN ACADÉMICA (solo admin)
+  // ============================================================
+  const vistaCursosEl = document.getElementById('vistaCursos');
+  const vistaGestionEl = document.getElementById('vistaGestion');
+  const navCursos = document.getElementById('navCursos');
+  const navGestion = document.getElementById('navGestion');
+
+  if(rol === 'admin'){
+    navGestion.classList.remove('hidden');
+  }
+
+  function mostrarVista(vista){
+    if(vista === 'gestion'){
+      vistaCursosEl.classList.add('hidden');
+      vistaGestionEl.classList.remove('hidden');
+      navGestion.classList.add('active');
+      navCursos.classList.remove('active');
+    } else {
+      vistaGestionEl.classList.add('hidden');
+      vistaCursosEl.classList.remove('hidden');
+      navCursos.classList.add('active');
+      navGestion.classList.remove('active');
+    }
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+
+  navCursos.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('cursos'); });
+  navGestion.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('gestion'); });
+
+  function poblarSelectsCertificado(){
+    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
+    selects.forEach(function(sel){
+      if(!sel) return;
+      sel.innerHTML = '';
+      todosLosCursos.forEach(function(c){
+        const opt = document.createElement('option');
+        opt.value = c.codigo;
+        opt.textContent = c.codigo + ' — ' + c.nombre;
+        sel.appendChild(opt);
+      });
+    });
+  }
+
+  // ---------- Resetear contraseña ----------
+  document.getElementById('btnResetPassword').addEventListener('click', async function(){
+    const dniInput = document.getElementById('inputResetDni').value.trim();
+    const msg = document.getElementById('resetMsg');
+
+    if(!dniInput){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Ingresa un DNI.';
+      return;
+    }
+
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Procesando...';
+    this.disabled = true;
+
+    try{
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'adminResetPassword', dni: dniInput })
+      });
+      const data = await res.json();
+      if(data.ok){
+        msg.className = 'gestion-msg ok';
+        msg.textContent = 'Listo — la contraseña de ' + data.nombre + ' ahora es 0000.';
+        document.getElementById('inputResetDni').value = '';
+      } else {
+        msg.className = 'gestion-msg error';
+        msg.textContent = data.mensaje || 'No se pudo resetear la contraseña.';
+      }
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+    this.disabled = false;
+  });
+
+  // ---------- Eliminar alumno ----------
+  document.getElementById('btnEliminarAlumno').addEventListener('click', async function(){
+    const dniInput = document.getElementById('inputEliminarDni').value.trim();
+    const confirmInput = document.getElementById('inputEliminarConfirmar').value.trim();
+    const msg = document.getElementById('eliminarMsg');
+
+    if(!dniInput || !confirmInput){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Completa ambos campos.';
+      return;
+    }
+    if(dniInput !== confirmInput){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Los DNI no coinciden — revísalos.';
+      return;
+    }
+    if(!window.confirm('¿Seguro que quieres eliminar por completo al alumno con DNI ' + dniInput + '? Esta acción no se puede deshacer.')){
+      return;
+    }
+
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Eliminando...';
+    this.disabled = true;
+
+    try{
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'adminEliminarAlumno', dni: dniInput })
+      });
+      const data = await res.json();
+      if(data.ok){
+        msg.className = 'gestion-msg ok';
+        const c = data.conteo;
+        msg.textContent = 'Se eliminó a ' + data.nombre + ' — ' + c.usuarios + ' fila(s) de Usuarios, ' +
+          c.intentos + ' de Intentos, ' + c.resultados + ' de Resultados, ' + c.mensajes + ' de Mensajes.';
+        document.getElementById('inputEliminarDni').value = '';
+        document.getElementById('inputEliminarConfirmar').value = '';
+      } else {
+        msg.className = 'gestion-msg error';
+        msg.textContent = data.mensaje || 'No se pudo eliminar al alumno.';
+      }
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+    this.disabled = false;
+  });
+
+  // ---------- Descargar certificados (masivo) ----------
+  let modoCertActual = 'curso';
+  document.querySelectorAll('.modo-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.modo-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      modoCertActual = btn.dataset.modo;
+      document.getElementById('camposCertCurso').classList.toggle('hidden', modoCertActual !== 'curso');
+      document.getElementById('camposCertDniCurso').classList.toggle('hidden', modoCertActual !== 'dniCurso');
+      document.getElementById('camposCertDniTodos').classList.toggle('hidden', modoCertActual !== 'dniTodos');
+    });
+  });
+
+  /* ---- Motor de certificado (copiado de certificado.html, adaptado para
+     generar varios en lote). No tocar sin volver a medir la plantilla. ---- */
+  const CERT_LIENZO = { w: 2000, h: 1414 };
+
+  const CERT_NOMBRE_CFG = {
+    fontFamily: "'Pinyon Script', cursive",
+    maxSize: 150, minSize: 60, baselineY: 716, maxWidth: 1450,
+    color: '#1A1720', centerX: 1000
+  };
+  const CERT_PARRAFO_CFG = {
+    fontFamily: "'Poppins Cert', sans-serif",
+    size: 33, minSize: 24, lineHeight: 50, baseY: 830, maxLines: 3, maxWidth: 1482,
+    color: '#1A1720', centerX: 1000,
+    prefijo: 'Por haber completado satisfactoriamente el curso ',
+    sufijo: ' como parte de la Ruta Drimer Íntegro, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
+  };
+  const CERT_FECHA_CFG = {
+    fontFamily: "'Poppins Cert', sans-serif",
+    weight: '600', size: 30, letterSpacing: 2, baselineY: 1338,
+    color: '#1A1720', centerX: 1000
+  };
+  const CERT_MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
+    'AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+
+  function certFormatearFechaLarga(valor){
+    let d;
+    if(valor instanceof Date){
+      d = valor;
+    } else {
+      const partes = valor.split('-').map(Number);
+      d = new Date(partes[0], partes[1]-1, partes[2]);
+    }
+    return d.getDate() + ' DE ' + CERT_MESES[d.getMonth()] + ' DEL ' + d.getFullYear();
+  }
+
+  function certMedirTamañoAjustado(ctx, texto, cfg){
+    let size = cfg.maxSize;
+    ctx.font = size + 'px ' + cfg.fontFamily;
+    while(ctx.measureText(texto).width > cfg.maxWidth && size > cfg.minSize){
+      size -= 2;
+      ctx.font = size + 'px ' + cfg.fontFamily;
+    }
+    return size;
+  }
+
+  function certDibujarNombre(ctx, nombre){
+    const cfg = CERT_NOMBRE_CFG;
+    const size = certMedirTamañoAjustado(ctx, nombre, cfg);
+    ctx.font = size + 'px ' + cfg.fontFamily;
+    ctx.fillStyle = cfg.color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(nombre, cfg.centerX, cfg.baselineY);
+  }
+
+  function certArmarParrafo(ctx, nombreCurso, cfg){
+    const tokens = [];
+    cfg.prefijo.trim().split(' ').forEach(function(w){ tokens.push({text:w, bold:false}); });
+    nombreCurso.trim().split(' ').forEach(function(w){ tokens.push({text:w, bold:true}); });
+    cfg.sufijo.trim().split(' ').forEach(function(w){ tokens.push({text:w, bold:false}); });
+
+    let size = cfg.size;
+
+    function envolverConTamaño(fontSize){
+      const fontReg = '400 ' + fontSize + 'px ' + cfg.fontFamily;
+      const fontBold = '700 ' + fontSize + 'px ' + cfg.fontFamily;
+      ctx.font = fontReg;
+      const spaceW = ctx.measureText(' ').width;
+
+      const lines = [];
+      let cur = [];
+      let curW = 0;
+
+      tokens.forEach(function(tok){
+        ctx.font = tok.bold ? fontBold : fontReg;
+        const w = ctx.measureText(tok.text).width;
+        const add = cur.length ? w + spaceW : w;
+        if(cur.length && curW + add > cfg.maxWidth){
+          lines.push({tokens: cur, width: curW});
+          cur = [Object.assign({}, tok, {width: w})];
+          curW = w;
+        } else {
+          cur.push(Object.assign({}, tok, {width: w}));
+          curW += add;
+        }
+      });
+      if(cur.length) lines.push({tokens: cur, width: curW});
+      return lines;
+    }
+
+    let lines = envolverConTamaño(size);
+    while(lines.length > cfg.maxLines && size > cfg.minSize){
+      size -= 1;
+      lines = envolverConTamaño(size);
+    }
+    return { lines: lines, size: size };
+  }
+
+  function certDibujarParrafo(ctx, nombreCurso){
+    const cfg = CERT_PARRAFO_CFG;
+    const resultado = certArmarParrafo(ctx, nombreCurso, cfg);
+    const lines = resultado.lines, size = resultado.size;
+    const fontReg = '400 ' + size + 'px ' + cfg.fontFamily;
+    const fontBold = '700 ' + size + 'px ' + cfg.fontFamily;
+    ctx.font = fontReg;
+    const spaceW = ctx.measureText(' ').width;
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = cfg.color;
+
+    lines.forEach(function(line, i){
+      let x = cfg.centerX - line.width/2;
+      const y = cfg.baseY + i*cfg.lineHeight;
+      line.tokens.forEach(function(tok){
+        ctx.font = tok.bold ? fontBold : fontReg;
+        ctx.textAlign = 'left';
+        ctx.fillText(tok.text, x, y);
+        x += tok.width + spaceW;
+      });
+    });
+  }
+
+  function certDibujarFecha(ctx, textoFecha){
+    const cfg = CERT_FECHA_CFG;
+    ctx.font = cfg.weight + ' ' + cfg.size + 'px ' + cfg.fontFamily;
+    ctx.fillStyle = cfg.color;
+    ctx.textBaseline = 'alphabetic';
+
+    const letras = textoFecha.split('');
+    let totalW = 0;
+    letras.forEach(function(ch, i){
+      totalW += ctx.measureText(ch).width;
+      if(i < letras.length-1) totalW += cfg.letterSpacing;
+    });
+
+    ctx.textAlign = 'left';
+    let x = cfg.centerX - totalW/2;
+    letras.forEach(function(ch){
+      ctx.fillText(ch, x, cfg.baselineY);
+      x += ctx.measureText(ch).width + cfg.letterSpacing;
+    });
+  }
+
+  function certCargarImagen(src){
+    return new Promise(function(resolve, reject){
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function(){ resolve(img); };
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  let certPlantillaImg = null;
+  let certFuentesListas = false;
+
+  async function certAsegurarFuentesCargadas(){
+    if(certFuentesListas) return;
+    await Promise.all([
+      document.fonts.load(CERT_NOMBRE_CFG.maxSize + 'px ' + CERT_NOMBRE_CFG.fontFamily),
+      document.fonts.load('400 ' + CERT_PARRAFO_CFG.size + 'px ' + CERT_PARRAFO_CFG.fontFamily),
+      document.fonts.load('700 ' + CERT_PARRAFO_CFG.size + 'px ' + CERT_PARRAFO_CFG.fontFamily),
+      document.fonts.load(CERT_FECHA_CFG.weight + ' ' + CERT_FECHA_CFG.size + 'px ' + CERT_FECHA_CFG.fontFamily)
+    ]);
+    await document.fonts.ready;
+    certFuentesListas = true;
+  }
+
+  async function certRenderizar(ctx, datos){
+    await certAsegurarFuentesCargadas();
+    if(!certPlantillaImg){
+      certPlantillaImg = await certCargarImagen('assets/certificado-plantilla.png');
+    }
+    ctx.clearRect(0, 0, CERT_LIENZO.w, CERT_LIENZO.h);
+    ctx.drawImage(certPlantillaImg, 0, 0, CERT_LIENZO.w, CERT_LIENZO.h);
+    certDibujarNombre(ctx, datos.nombre);
+    certDibujarParrafo(ctx, datos.curso);
+    certDibujarFecha(ctx, datos.fechaTexto);
+  }
+
+  async function certGenerarPdfBlob(canvas, ctx, datos){
+    await certRenderizar(ctx, datos);
+    const jsPDFctor = window.jspdf.jsPDF;
+    const pdf = new jsPDFctor({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    pdf.addImage(dataUrl, 'PNG', 0, 0, 297, 210);
+    return pdf.output('blob');
+  }
+
+  document.getElementById('btnDescargarCert').addEventListener('click', async function(){
+    const msg = document.getElementById('certMsg');
+    const modo = modoCertActual;
+    let dniParam = '', cursoParam = '';
+
+    if(modo === 'curso'){
+      cursoParam = document.getElementById('selectCertCurso1').value;
+      if(!cursoParam){ msg.className = 'gestion-msg error'; msg.textContent = 'Elige un curso.'; return; }
+    } else if(modo === 'dniCurso'){
+      dniParam = document.getElementById('inputCertDni1').value.trim();
+      cursoParam = document.getElementById('selectCertCurso2').value;
+      if(!dniParam || !cursoParam){ msg.className = 'gestion-msg error'; msg.textContent = 'Completa el DNI y el curso.'; return; }
+    } else {
+      dniParam = document.getElementById('inputCertDni2').value.trim();
+      if(!dniParam){ msg.className = 'gestion-msg error'; msg.textContent = 'Ingresa un DNI.'; return; }
+    }
+
+    this.disabled = true;
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Buscando certificados aprobados...';
+
+    try{
+      const url = WEB_APP_URL + '?action=getCertificadosMasivo&modo=' + encodeURIComponent(modo) +
+        '&dni=' + encodeURIComponent(dniParam) + '&curso=' + encodeURIComponent(cursoParam);
+      const res = await fetch(url);
+      const lista = await res.json();
+
+      if(!lista || !lista.length){
+        msg.className = 'gestion-msg error';
+        msg.textContent = 'No hay certificados aprobados que coincidan con lo que elegiste.';
+        this.disabled = false;
+        return;
+      }
+
+      const canvas = document.getElementById('certCanvasAdmin');
+      const ctx = canvas.getContext('2d');
+      const zip = new JSZip();
+
+      for(let i = 0; i < lista.length; i++){
+        const item = lista[i];
+        msg.textContent = 'Generando ' + (i+1) + ' de ' + lista.length + ': ' + item.nombre + '...';
+        const fechaTexto = certFormatearFechaLarga(item.fecha);
+        const blob = await certGenerarPdfBlob(canvas, ctx, { nombre: item.nombre, curso: item.nombreCurso, fechaTexto: fechaTexto });
+        const nombreArchivo = 'Certificado_' + item.codigoCurso + '_' + item.nombre.replace(/\s+/g,'_') + '.pdf';
+        zip.file(nombreArchivo, blob);
+      }
+
+      msg.textContent = 'Empaquetando ' + lista.length + ' certificado(s)...';
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+      const urlDescarga = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = urlDescarga;
+      a.download = 'Certificados_' + modo + (cursoParam ? '_' + cursoParam : '') + (dniParam ? '_' + dniParam : '') + '.zip';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(urlDescarga);
+
+      msg.className = 'gestion-msg ok';
+      msg.textContent = 'Listo — se descargaron ' + lista.length + ' certificado(s).';
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Ocurrió un error generando los certificados. Intenta de nuevo.';
+    }
+    this.disabled = false;
+  });
 
   init();
 </script>
