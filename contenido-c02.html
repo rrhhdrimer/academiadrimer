@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ética Empresarial — Academia Drimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-deep:#051C2C;
+  --navy-mid:#384967;
+  --celeste:#2CADE4;
+  --blue:#307FE2;
+  --blue-light:#4C9FC8;
+  --card-bg:#DDE5ED;
+  --green-bg:#EBF0E3;
+  --gold:#F5C842;
+  --green:#1A7A4A;
+  --red:#E05252;
+  --white:#FFFFFF;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:var(--white);
+  color:var(--navy-mid);
+  -webkit-font-smoothing:antialiased;
+}
+svg{display:block;}
+
+/* ===== Contenedor general ===== */
+.app{
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  width:100%;
+  max-width:600px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  background:var(--white);
+}
+@media (min-width:768px){
+  .app{ max-width:100%; }
+}
+
+/* ===== Barra de progreso ===== */
+.progreso{
+  flex:0 0 auto;
+  padding:10px 20px 6px;
+  background:var(--white);
+  position:relative;
+  z-index:20;
+}
+.progreso .texto{
+  font-size:10.5px;
+  font-weight:600;
+  color:var(--navy-mid);
+  margin:0 0 6px;
+  letter-spacing:.03em;
+}
+.progreso .barra{
+  height:4px;
+  background:var(--card-bg);
+  border-radius:4px;
+  overflow:hidden;
+}
+.progreso .relleno{
+  height:100%;
+  width:6.66%;
+  background:var(--gold);
+  border-radius:4px;
+  transition:width .35s ease;
+}
+
+/* ===== Área de pantallas ===== */
+.pantallas{
+  flex:1 1 auto;
+  position:relative;
+  overflow:hidden;
+  min-height:0;
+}
+.pantalla{
+  position:absolute;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  padding:14px 22px 10px;
+}
+.pantalla.activa{
+  display:flex;
+}
+.pantalla.activa.anim{
+  animation:fadeIn .35s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.contenido{
+  max-width:540px;
+  margin:0 auto;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  height:100%;
+}
+.contenido.centrado{
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+/* pantallas a pantalla completa (portada / cierre) */
+.pantalla-full{
+  padding:0;
+}
+
+/* ===== Tipografía general ===== */
+.eyebrow{
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--blue-light);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin:0 0 8px;
+}
+.screen-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--celeste);
+  text-transform:uppercase;
+  line-height:1.22;
+  margin:0 0 10px;
+  letter-spacing:.01em;
+}
+.parrafo{
+  font-size:13px;
+  line-height:1.5;
+  color:var(--navy-mid);
+  margin:0 0 12px;
+}
+.parrafo:last-child{margin-bottom:0;}
+.parrafo b{color:var(--navy-deep);}
+
+/* ===== Caja de instrucción ===== */
+.instruccion{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:var(--card-bg);
+  border-radius:10px;
+  padding:9px 12px;
+  margin:0 0 12px;
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--navy-deep);
+  line-height:1.3;
+}
+.instruccion svg{width:16px;height:16px;flex:0 0 auto;color:var(--blue);}
+
+/* ===== Tarjetas ===== */
+.cards{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  min-height:0;
+  overflow:hidden;
+}
+.card{
+  background:var(--card-bg);
+  border-radius:12px;
+  padding:11px 13px;
+  display:flex;
+  gap:11px;
+  align-items:flex-start;
+  opacity:0;
+  transform:translateY(8px);
+}
+.card.mostrar{
+  animation:cardIn .45s ease forwards;
+}
+@keyframes cardIn{to{opacity:1;transform:translateY(0);}}
+.card .icono{
+  width:32px;height:32px;
+  border-radius:9px;
+  background:rgba(48,127,226,.14);
+  display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;
+  color:var(--blue);
+}
+.card .icono svg{width:17px;height:17px;}
+.card .txt{min-width:0;}
+.card .titulo{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--navy-deep);
+  margin:0 0 2px;
+  letter-spacing:.01em;
+}
+.card p{
+  font-size:11.8px;
+  line-height:1.38;
+  color:var(--navy-mid);
+  margin:0;
+}
+
+/* grid 2x2 para 4 tarjetas cortas */
+.cards.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.cards.grid2 .card{
+  flex-direction:column;
+  align-items:flex-start;
+  padding:10px 10px;
+  gap:6px;
+}
+.cards.grid2 .card .icono{width:28px;height:28px;border-radius:8px;}
+.cards.grid2 .card .icono svg{width:15px;height:15px;}
+.cards.grid2 .card .titulo{font-size:11px;}
+.cards.grid2 .card p{font-size:10.8px;line-height:1.32;}
+
+/* Destacado tipo cita */
+.destacado{
+  border-left:3px solid var(--gold);
+  background:var(--card-bg);
+  border-radius:0 10px 10px 0;
+  padding:10px 13px;
+  margin-top:10px;
+  font-size:12px;
+  line-height:1.42;
+  color:var(--navy-deep);
+  font-weight:500;
+}
+.destacado b{color:var(--navy-deep);}
+
+/* Nota / aclaración pequeña */
+.nota{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  background:var(--green-bg);
+  border-radius:10px;
+  padding:9px 12px;
+  margin-top:10px;
+  font-size:11.3px;
+  line-height:1.4;
+  color:var(--navy-deep);
+}
+.nota svg{width:15px;height:15px;flex:0 0 auto;color:var(--green);margin-top:1px;}
+
+/* ===== Pestañas ===== */
+.tabs{display:flex;flex-direction:column;min-height:0;}
+.tab-botones{
+  display:flex;
+  gap:6px;
+  margin-bottom:11px;
+}
+.tab-btn{
+  flex:1;
+  border:none;
+  background:var(--card-bg);
+  color:var(--navy-mid);
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  font-size:10px;
+  letter-spacing:.01em;
+  padding:9px 4px;
+  border-radius:8px;
+  cursor:pointer;
+  text-transform:uppercase;
+  line-height:1.2;
+  transition:background .2s,color .2s;
+}
+.tab-btn.activa{
+  background:var(--navy-deep);
+  color:var(--white);
+}
+.tab-panel{display:none;}
+.tab-panel.activa{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  animation:fadeIn .3s ease;
+}
+.tab-panel .icono-panel{
+  width:34px;height:34px;
+  border-radius:10px;
+  background:rgba(48,127,226,.14);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--blue);
+  margin-bottom:2px;
+}
+.tab-panel .icono-panel svg{width:18px;height:18px;}
+.tab-panel .titulo-panel{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--navy-deep);
+  margin:0 0 4px;
+  text-transform:uppercase;
+  letter-spacing:.01em;
+}
+.tab-panel p{
+  font-size:12.3px;
+  line-height:1.46;
+  color:var(--navy-mid);
+  margin:0 0 6px;
+}
+.tab-panel p:last-child{margin-bottom:0;}
+
+/* ===== Revelado progresivo ===== */
+.reveal-item{
+  opacity:0;
+  transform:translateY(8px);
+  max-height:0;
+  overflow:hidden;
+  transition:opacity .35s ease, transform .35s ease, max-height .35s ease, margin .35s ease;
+  margin-bottom:0;
+}
+.reveal-item.revelado{
+  opacity:1;
+  transform:translateY(0);
+  max-height:120px;
+  margin-bottom:9px;
+}
+.reveal-item.revelado:last-child{margin-bottom:0;}
+
+/* ===== Caso Práctico ===== */
+.pantalla-caso{
+  background:var(--navy-deep);
+}
+.pantalla-caso .contenido{color:var(--white);}
+.etiqueta-caso{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(245,200,66,.14);
+  color:var(--gold);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:5px 10px;
+  border-radius:20px;
+  margin-bottom:11px;
+  align-self:flex-start;
+}
+.etiqueta-caso svg{width:13px;height:13px;}
+.situacion{
+  font-size:13px;
+  line-height:1.42;
+  color:#E8EEF5;
+  margin:0 0 10px;
+  transition:font-size .25s ease, margin .25s ease;
+}
+.pregunta-caso{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--white);
+  margin:0 0 7px;
+  transition:margin .25s ease;
+}
+.opciones{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:8px;
+  transition:gap .25s ease, margin .25s ease;
+}
+.opcion{
+  display:flex;
+  gap:9px;
+  align-items:flex-start;
+  text-align:left;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.14);
+  border-radius:10px;
+  padding:8px 11px;
+  font-family:'Poppins',sans-serif;
+  color:#E8EEF5;
+  font-size:11.8px;
+  line-height:1.34;
+  cursor:pointer;
+  transition:padding .25s ease;
+}
+.opcion .letra{
+  flex:0 0 auto;
+  width:18px;height:18px;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;
+  font-weight:700;
+}
+.caso.respondido .opcion{cursor:default;padding:6px 10px;}
+.caso.respondido .opciones{gap:5px;margin-bottom:7px;}
+.caso.respondido .situacion{font-size:11.5px;margin-bottom:7px;}
+.caso.respondido .pregunta-caso{margin-bottom:5px;}
+.opcion.correcta{
+  background:rgba(26,122,74,.28);
+  border-color:var(--green);
+}
+.opcion.correcta .letra{background:var(--green);color:#fff;}
+.opcion.incorrecta{
+  background:rgba(224,82,82,.24);
+  border-color:var(--red);
+}
+.opcion.incorrecta .letra{background:var(--red);color:#fff;}
+
+.feedback{
+  display:none;
+  gap:7px;
+  align-items:flex-start;
+  border-radius:10px;
+  padding:8px 11px;
+  font-size:11px;
+  line-height:1.36;
+}
+.feedback.mostrar{display:flex;animation:fadeIn .3s ease;}
+.feedback svg{width:15px;height:15px;flex:0 0 auto;margin-top:1px;}
+.feedback-correcto{background:rgba(26,122,74,.2);color:#CDEBD9;}
+.feedback-correcto svg{color:var(--green);}
+.feedback-incorrecto{background:rgba(224,82,82,.18);color:#F6D6D6;}
+.feedback-incorrecto svg{color:var(--red);}
+
+/* ===== Portada ===== */
+.portada-media{
+  position:absolute;inset:0;
+}
+.portada-media img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.portada-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:26px 24px 84px;
+  background:linear-gradient(180deg, rgba(5,28,44,0) 0%, rgba(5,28,44,.55) 45%, rgba(5,28,44,.92) 100%);
+}
+.portada-overlay h1{
+  color:var(--white);
+  font-size:21px;
+  font-weight:700;
+  text-transform:uppercase;
+  margin:0 0 6px;
+  line-height:1.2;
+}
+.portada-overlay p{
+  color:#DCE6EF;
+  font-size:13px;
+  margin:0;
+  line-height:1.4;
+}
+
+/* ===== Bienvenida ===== */
+.bienvenida-texto{
+  font-size:14px;
+  line-height:1.6;
+  color:var(--navy-deep);
+  font-weight:500;
+}
+.cursor{
+  display:inline-block;
+  color:var(--celeste);
+  animation:parpadeo .8s steps(1) infinite;
+}
+@keyframes parpadeo{50%{opacity:0;}}
+
+/* ===== Cierre final ===== */
+.cierre{
+  background:var(--navy-deep);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:32px 30px;
+}
+.cierre .check{
+  width:58px;height:58px;
+  border-radius:50%;
+  background:rgba(245,200,66,.14);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;
+}
+.cierre .check svg{width:30px;height:30px;color:var(--gold);}
+.cierre .eyebrow{color:var(--gold);margin-bottom:8px;}
+.cierre h1{
+  color:var(--white);
+  font-size:19px;
+  font-weight:700;
+  text-transform:uppercase;
+  margin:0 0 12px;
+}
+.cierre p{
+  color:#C9D6E3;
+  font-size:12.8px;
+  line-height:1.55;
+  max-width:320px;
+  margin:0 0 16px;
+}
+.cierre .tagline{
+  color:var(--celeste);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.12em;
+  margin-bottom:26px;
+}
+.cierre .logo{
+  width:150px;
+  max-width:60%;
+  height:auto;
+}
+@media (min-width:768px){
+  .cierre .logo{width:200px;}
+}
+
+/* ===== Navegación fija ===== */
+.nav-fija{
+  flex:0 0 auto;
+  display:flex;
+  gap:10px;
+  padding:8px 22px 14px;
+  background:var(--white);
+  position:relative;
+  z-index:20;
+}
+.btn-nav{
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  border:none;
+  border-radius:11px;
+  cursor:pointer;
+  transition:opacity .2s, transform .12s;
+}
+.btn-nav:active{transform:scale(.97);}
+#btnAnterior{
+  flex:0 0 auto;
+  width:46px;
+  background:var(--card-bg);
+  color:var(--navy-mid);
+  display:flex;align-items:center;justify-content:center;
+}
+#btnAnterior svg{width:18px;height:18px;}
+#btnAnterior.invisible{visibility:hidden;}
+#btnSiguiente{
+  flex:1;
+  background:var(--navy-deep);
+  color:var(--white);
+  font-size:13.5px;
+  padding:12px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+#btnSiguiente svg{width:15px;height:15px;}
+
+/* Scrollbar oculta si algún contenido excediera por accesibilidad/zoom */
+.pantalla::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+
+<!-- ===================== SPRITE DE ÍCONOS ===================== -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+
+<symbol id="ic-regalo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="9" width="18" height="4"></rect>
+  <rect x="4" y="13" width="16" height="8"></rect>
+  <line x1="12" y1="9" x2="12" y2="21"></line>
+  <path d="M12 9C12 9 9 9 8 7.2C7.2 5.8 8 4.2 9.4 4.4C11 4.6 12 7 12 9Z"></path>
+  <path d="M12 9C12 9 15 9 16 7.2C16.8 5.8 16 4.2 14.6 4.4C13 4.6 12 7 12 9Z"></path>
+</symbol>
+
+<symbol id="ic-vinculo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="8" cy="8" r="3"></circle>
+  <circle cx="17" cy="15" r="3"></circle>
+  <path d="M4 20c0-2.6 2-4.4 4.3-4.4"></path>
+  <path d="M13.2 12.4C14.6 11 16 10.8 17.3 11.4"></path>
+  <path d="M10.6 9.6L14.6 13"></path>
+</symbol>
+
+<symbol id="ic-doc-editado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path>
+  <path d="M14 3v4h4"></path>
+  <path d="M15.5 13.5 18 16l-1.6 1.6-2.5-2.5Z"></path>
+  <path d="M13.6 15.3 12 18.5l3.2-1.6Z"></path>
+</symbol>
+
+<symbol id="ic-carpeta-candado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
+  <rect x="9.5" y="12" width="7" height="5.2" rx="1"></rect>
+  <path d="M11 12v-1.6a2 2 0 0 1 4 0V12"></path>
+</symbol>
+
+<symbol id="ic-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="10.5" cy="10.5" r="6.5"></circle>
+  <line x1="15.3" y1="15.3" x2="21" y2="21"></line>
+</symbol>
+
+<symbol id="ic-escudo-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"></path>
+  <path d="M9 12l2 2 4-4.2"></path>
+</symbol>
+
+<symbol id="ic-doc-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path>
+  <path d="M14 3v4h4"></path>
+  <path d="M8.6 14.6l2 2 4-4.4"></path>
+</symbol>
+
+<symbol id="ic-balanza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="12" y1="3" x2="12" y2="19"></line>
+  <line x1="5" y1="7" x2="19" y2="7"></line>
+  <path d="M5 7l-3 6a3 3 0 0 0 6 0Z"></path>
+  <path d="M19 7l-3 6a3 3 0 0 0 6 0Z"></path>
+  <line x1="8.5" y1="21" x2="15.5" y2="21"></line>
+</symbol>
+
+<symbol id="ic-megafono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 10v4a1 1 0 0 0 1 1h2l4 4V5l-4 4H4a1 1 0 0 0-1 1Z"></path>
+  <path d="M15.5 8.5a4.5 4.5 0 0 1 0 7"></path>
+  <path d="M18.3 6a8.3 8.3 0 0 1 0 12"></path>
+</symbol>
+
+<symbol id="ic-carpeta-abierta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 8V6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5V9"></path>
+  <path d="M3 8h17.5a1 1 0 0 1 1 1.3l-2 8A1.5 1.5 0 0 1 18 18.5H5.4a1.5 1.5 0 0 1-1.45-1.1L1.5 9.3A1 1 0 0 1 2.5 8Z"></path>
+</symbol>
+
+<symbol id="ic-carpeta-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
+  <path d="M9.3 13.6l1.8 1.8 3.6-3.8"></path>
+</symbol>
+
+<symbol id="ic-mano-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M8 12.5V6a1.5 1.5 0 0 1 3 0v5"></path>
+  <path d="M11 11V4.5a1.5 1.5 0 0 1 3 0V11"></path>
+  <path d="M14 11.2V6a1.5 1.5 0 0 1 3 0v8.5"></path>
+  <path d="M8 12.5 6.4 11a1.4 1.4 0 0 0-2 2l3.3 4.6A5 5 0 0 0 11.7 20H14a5 5 0 0 0 5-5v-1.5"></path>
+</symbol>
+
+<symbol id="ic-ojo-tachado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"></path>
+  <circle cx="12" cy="12" r="3"></circle>
+  <line x1="4" y1="20" x2="20" y2="4"></line>
+</symbol>
+
+<symbol id="ic-jefe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="7.5" r="3.3"></circle>
+  <path d="M4.5 20c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"></path>
+  <path d="M9.5 3.2 12 1.5l2.5 1.7-1 2.1h-3Z"></path>
+</symbol>
+
+<symbol id="ic-grupo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="8" r="3"></circle>
+  <path d="M3 20c0-3.5 2.7-5.8 6-5.8s6 2.3 6 5.8"></path>
+  <circle cx="17.3" cy="8.6" r="2.4"></circle>
+  <path d="M15.3 14.6c2.6.4 4.4 2.4 4.4 5.4"></path>
+</symbol>
+
+<symbol id="ic-sobre" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="5.5" width="18" height="13" rx="1.5"></rect>
+  <path d="M3.5 6.5 12 13l8.5-6.5"></path>
+</symbol>
+
+<symbol id="ic-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="9"></circle>
+  <line x1="12" y1="11" x2="12" y2="16.5"></line>
+  <circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"></circle>
+</symbol>
+
+<symbol id="ic-nota" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="9"></circle>
+  <path d="M8.5 12.3l2.2 2.2 4.5-4.9"></path>
+</symbol>
+
+<symbol id="ic-caso" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 2 3 6.5V12c0 5.2 3.6 9 9 10 5.4-1 9-4.8 9-10V6.5Z"></path>
+  <line x1="12" y1="8" x2="12" y2="13"></line>
+  <circle cx="12" cy="16" r="0.9" fill="currentColor" stroke="none"></circle>
+</symbol>
+
+<symbol id="ic-check-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="9.5"></circle>
+  <path d="M7.5 12.3l3 3 6-6.4"></path>
+</symbol>
+
+<symbol id="ic-alerta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3 2.5 20h19Z"></path>
+  <line x1="12" y1="9.3" x2="12" y2="14"></line>
+  <circle cx="12" cy="16.8" r="0.9" fill="currentColor" stroke="none"></circle>
+</symbol>
+
+<symbol id="ic-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M9 18l6-6-6-6"></path>
+</symbol>
+
+<symbol id="ic-flecha-izq" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M15 18l-6-6 6-6"></path>
+</symbol>
+
+<symbol id="ic-check-grande" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 12.5l4.5 4.5L19 7"></path>
+</symbol>
+
+</defs>
+</svg>
+
+<div class="app">
+
+  <!-- ===== Barra de progreso ===== -->
+  <div class="progreso">
+    <p class="texto" id="progresoTexto">Pantalla 1 de 15</p>
+    <div class="barra"><div class="relleno" id="progresoRelleno"></div></div>
+  </div>
+
+  <!-- ===== Pantallas ===== -->
+  <div class="pantallas">
+
+    <!-- PANTALLA 1 — PORTADA -->
+    <section class="pantalla pantalla-full">
+      <div class="portada-media">
+        <picture>
+          <source srcset="assets/etica-portada-desktop.png" media="(min-width:768px)">
+          <img src="assets/etica-portada.png" alt="Equipo profesional de Drimer conversando en una reunión de trabajo">
+        </picture>
+      </div>
+      <div class="portada-overlay">
+        <h1>Ética Empresarial</h1>
+        <p>Decisiones íntegras en el trabajo</p>
+      </div>
+    </section>
+
+    <!-- PANTALLA 2 — BIENVENIDA -->
+    <section class="pantalla">
+      <div class="contenido centrado">
+        <p class="eyebrow">Bienvenida</p>
+        <p class="bienvenida-texto" data-typewriter data-texto="La ética empresarial se demuestra en decisiones concretas: aceptar o rechazar un beneficio, registrar lo ocurrido sin alterarlo, transparentar un interés personal y usar correctamente la información.&#10;&#10;En este curso aprenderás a reconocer estas situaciones y decidir cómo actuar."></p>
+      </div>
+    </section>
+
+    <!-- PANTALLA 3 — ANTES DE DECIDIR, DETECTA LA SEÑAL -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Antes de decidir, detecta la señal</h2>
+        <p class="parrafo">Una decisión merece atención cuando aparece alguna de estas situaciones:</p>
+        <div class="cards grid2">
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-regalo"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Beneficio</p>
+              <p>Alguien ofrece o solicita algo que podría influir en una decisión.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-vinculo"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Interés personal</p>
+              <p>Una relación o interés personal podría afectar la objetividad.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-doc-editado"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Manipulación</p>
+              <p>Se propone alterar u ocultar información para que una situación parezca distinta.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-carpeta-candado"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Uso indebido de información</p>
+              <p>Se quiere utilizar información de Drimer para un fin ajeno a la empresa.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 4 — REGALOS, FAVORES E INFLUENCIAS INDEBIDAS -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Regalos, favores e influencias indebidas</h2>
+        <div class="instruccion">
+          <svg><use href="#ic-info"></use></svg>
+          <span>Toca cada pestaña para conocer qué debes observar y cómo actuar.</span>
+        </div>
+        <div class="tabs">
+          <div class="tab-botones">
+            <button class="tab-btn activa" data-tab="t1">Qué rechaza Drimer</button>
+            <button class="tab-btn" data-tab="t2">Qué debes observar</button>
+            <button class="tab-btn" data-tab="t3">Cómo actuar</button>
+          </div>
+          <div class="tab-panel activa" data-panel="t1">
+            <div class="icono-panel"><svg><use href="#ic-regalo"></use></svg></div>
+            <p class="titulo-panel">Qué rechaza Drimer</p>
+            <p>Drimer prohíbe cualquier forma de soborno, extorsión o práctica corrupta.</p>
+            <p>No deben ofrecerse ni aceptarse regalos, invitaciones o favores con la intención de influir en una decisión comercial.</p>
+          </div>
+          <div class="tab-panel" data-panel="t2">
+            <div class="icono-panel"><svg><use href="#ic-lupa"></use></svg></div>
+            <p class="titulo-panel">Qué debes observar</p>
+            <p>El riesgo no depende únicamente de llamar al beneficio "regalo" o "agradecimiento".</p>
+            <p>Observa quién lo ofrece, qué decisión está en juego y si busca influir en la objetividad.</p>
+          </div>
+          <div class="tab-panel" data-panel="t3">
+            <div class="icono-panel"><svg><use href="#ic-escudo-check"></use></svg></div>
+            <p class="titulo-panel">Cómo actuar</p>
+            <p>Si un beneficio busca influir en una decisión, debe rechazarse.</p>
+            <p>Si se identifica una posible irregularidad, también debe comunicarse.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 5 — CASO PRÁCTICO: EL "AGRADECIMIENTO" -->
+    <section class="pantalla pantalla-caso">
+      <div class="contenido caso">
+        <span class="etiqueta-caso"><svg><use href="#ic-caso"></use></svg>Caso práctico</span>
+        <p class="situacion">Estás participando en la evaluación de propuestas de proveedores.<br><br>Uno de ellos te entrega un regalo "por agradecimiento" y comenta: "Ojalá sigamos contando con tu apoyo en esta selección."</p>
+        <p class="pregunta-caso">¿Qué harías?</p>
+        <div class="opciones">
+          <button class="opcion" data-correcta="false"><span class="letra">A</span><span>Aceptaría el regalo porque no me pidió nada de forma directa.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">B</span><span>Lo aceptaría, pero igual tomaría la decisión de manera objetiva.</span></button>
+          <button class="opcion" data-correcta="true"><span class="letra">C</span><span>Rechazaría el regalo y comunicaría la situación por una vía oficial.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">D</span><span>Lo aceptaría si otros proveedores también entregan obsequios.</span></button>
+        </div>
+        <div class="feedback feedback-correcto">
+          <svg><use href="#ic-check-ok"></use></svg>
+          <span><b>Correcto.</b> El contexto importa. El beneficio aparece mientras existe una decisión comercial y puede comprometer la objetividad. Rechazarlo y comunicar la situación protege la integridad de la decisión.</span>
+        </div>
+        <div class="feedback feedback-incorrecto">
+          <svg><use href="#ic-alerta"></use></svg>
+          <span>No es la mejor decisión. Que el beneficio sea presentado como un "agradecimiento" no elimina el riesgo si puede influir en una decisión comercial. La conducta correcta es rechazarlo y comunicar la situación.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 6 — CUANDO "HACER QUE CUADRE" CRUZA LA LÍNEA -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Cuando "hacer que cuadre" cruza la línea</h2>
+        <p class="parrafo">Drimer rechaza la alteración de documentos, inventarios, gastos o registros para presentar una realidad distinta.</p>
+        <div class="cards">
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-doc-check"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Corregir</p>
+              <p>Reconocer lo ocurrido y mantener la información de acuerdo con la realidad.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-doc-editado"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Ocultar o manipular</p>
+              <p>Cambiar un dato, documento, inventario, gasto o registro para disimular una diferencia o irregularidad.</p>
+            </div>
+          </div>
+        </div>
+        <div class="destacado">Que el problema parezca pequeño no convierte la manipulación en una solución.</div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 7 — CASO PRÁCTICO: UNA DIFERENCIA PEQUEÑA -->
+    <section class="pantalla pantalla-caso">
+      <div class="contenido caso">
+        <span class="etiqueta-caso"><svg><use href="#ic-caso"></use></svg>Caso práctico</span>
+        <p class="situacion">Al cerrar un registro de inventario aparece una pequeña diferencia.<br><br>Un compañero propone cambiar un dato para que el saldo cuadre y dice que después podrán solucionarlo.</p>
+        <p class="pregunta-caso">¿Qué harías?</p>
+        <div class="opciones">
+          <button class="opcion" data-correcta="false"><span class="letra">A</span><span>Aceptaría porque la diferencia es pequeña y después puede corregirse.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">B</span><span>Modificaría solo el dato necesario para evitar el problema.</span></button>
+          <button class="opcion" data-correcta="true"><span class="letra">C</span><span>No alteraría el registro y comunicaría la situación.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">D</span><span>Esperaría a comprobar si vuelve a ocurrir antes de decir algo.</span></button>
+        </div>
+        <div class="feedback feedback-correcto">
+          <svg><use href="#ic-check-ok"></use></svg>
+          <span><b>Correcto.</b> Modificar un registro para ocultar una diferencia sigue siendo manipulación aunque el problema parezca menor. Corresponde no participar, no encubrir y comunicar la situación.</span>
+        </div>
+        <div class="feedback feedback-incorrecto">
+          <svg><use href="#ic-alerta"></use></svg>
+          <span>Revisa el criterio. El tamaño de la diferencia no cambia la naturaleza de la conducta. Un registro no debe modificarse para mostrar algo distinto de lo ocurrido.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 8 — CUANDO LO PERSONAL ENTRA EN LA DECISIÓN -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Cuando lo personal entra en la decisión</h2>
+        <div class="instruccion">
+          <svg><use href="#ic-info"></use></svg>
+          <span>Toca cada pestaña para revisar el criterio.</span>
+        </div>
+        <div class="tabs">
+          <div class="tab-botones">
+            <button class="tab-btn activa" data-tab="p1">Qué es</button>
+            <button class="tab-btn" data-tab="p2">Qué reconocer</button>
+            <button class="tab-btn" data-tab="p3">Qué hacer</button>
+          </div>
+          <div class="tab-panel activa" data-panel="p1">
+            <div class="icono-panel"><svg><use href="#ic-vinculo"></use></svg></div>
+            <p class="titulo-panel">Qué es</p>
+            <p>Existe un posible conflicto de interés cuando un interés personal o de personas cercanas puede influir en una decisión laboral.</p>
+          </div>
+          <div class="tab-panel" data-panel="p2">
+            <div class="icono-panel"><svg><use href="#ic-balanza"></use></svg></div>
+            <p class="titulo-panel">Qué debes reconocer</p>
+            <p>Puede existir un riesgo cuando una decisión involucra familiares o personas cercanas, intereses personales o beneficios vinculados con la decisión.</p>
+          </div>
+          <div class="tab-panel" data-panel="p3">
+            <div class="icono-panel"><svg><use href="#ic-megafono"></use></svg></div>
+            <p class="titulo-panel">Qué debes hacer</p>
+            <p>Todo trabajador debe identificar y comunicar cualquier situación en la que sus intereses personales puedan entrar en conflicto con los de Drimer.</p>
+          </div>
+        </div>
+        <div class="nota">
+          <svg><use href="#ic-nota"></use></svg>
+          <span><b>Aclaración:</b> tener un vínculo personal no significa automáticamente haber cometido una falta. El conflicto debe reconocerse y transparentarse.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 9 — CASO PRÁCTICO: EL PROVEEDOR CONOCIDO -->
+    <section class="pantalla pantalla-caso">
+      <div class="contenido caso">
+        <span class="etiqueta-caso"><svg><use href="#ic-caso"></use></svg>Caso práctico</span>
+        <p class="situacion">Participas en la evaluación de propuestas y descubres que una de las empresas pertenece a un familiar cercano.<br><br>Consideras que podrías evaluar la propuesta objetivamente.</p>
+        <p class="pregunta-caso">¿Qué harías?</p>
+        <div class="opciones">
+          <button class="opcion" data-correcta="false"><span class="letra">A</span><span>Continuaría sin decir nada porque puedo separar lo personal del trabajo.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">B</span><span>Descartaría automáticamente al proveedor para evitar cualquier cuestionamiento.</span></button>
+          <button class="opcion" data-correcta="true"><span class="letra">C</span><span>Comunicaría el posible conflicto antes de continuar interviniendo en la decisión.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">D</span><span>Le pediría a mi familiar que no mencione nuestra relación.</span></button>
+        </div>
+        <div class="feedback feedback-correcto">
+          <svg><use href="#ic-check-ok"></use></svg>
+          <span><b>Correcto.</b> El posible conflicto no desaparece porque la persona considere que puede actuar objetivamente. La responsabilidad es identificarlo y comunicarlo.</span>
+        </div>
+        <div class="feedback feedback-incorrecto">
+          <svg><use href="#ic-alerta"></use></svg>
+          <span>No basta con confiar en la propia objetividad. Cuando un interés personal puede relacionarse con una decisión laboral, debe transparentarse.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 10 — TENER ACCESO NO SIGNIFICA PODER USARLA -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Tener acceso no significa poder usarla</h2>
+        <p class="parrafo">Drimer establece que la información sensible propia y de terceros debe utilizarse únicamente para fines empresariales legítimos.</p>
+        <div class="cards">
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-carpeta-abierta"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Acceso por el trabajo</p>
+              <p>Una función puede dar acceso a información de clientes, estrategias, finanzas u otra información privada.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-carpeta-check"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Uso permitido</p>
+              <p>Ese acceso no autoriza a compartir, utilizar o aprovechar la información para fines ajenos a la empresa.</p>
+            </div>
+          </div>
+        </div>
+        <div class="destacado">Acceder legítimamente a una información no autoriza a utilizarla para cualquier propósito. Si se identifica un posible uso indebido por otra persona, la situación debe comunicarse.</div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 11 — CASO PRÁCTICO: INFORMACIÓN QUE PODRÍA AYUDAR -->
+    <section class="pantalla pantalla-caso">
+      <div class="contenido caso">
+        <span class="etiqueta-caso"><svg><use href="#ic-caso"></use></svg>Caso práctico</span>
+        <p class="situacion">Por tu trabajo accedes a información comercial que todavía no ha sido difundida.<br><br>Un conocido te pregunta por ella porque podría ayudarlo en una negociación.</p>
+        <p class="pregunta-caso">¿Qué harías?</p>
+        <div class="opciones">
+          <button class="opcion" data-correcta="false"><span class="letra">A</span><span>Compartiría solo una parte porque no estoy enviando el documento completo.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">B</span><span>Le daría una orientación general sin enviar ningún archivo.</span></button>
+          <button class="opcion" data-correcta="true"><span class="letra">C</span><span>No utilizaría ni compartiría la información para ese fin.</span></button>
+          <button class="opcion" data-correcta="false"><span class="letra">D</span><span>La compartiría si la persona promete mantenerla en reserva.</span></button>
+        </div>
+        <div class="feedback feedback-correcto">
+          <svg><use href="#ic-check-ok"></use></svg>
+          <span><b>Correcto.</b> Tener acceso a información por razones laborales no autoriza a utilizarla para beneficiar a una persona o para fines ajenos a Drimer.</span>
+        </div>
+        <div class="feedback feedback-incorrecto">
+          <svg><use href="#ic-alerta"></use></svg>
+          <span>El problema no depende de enviar o no el archivo completo. También existe un uso indebido cuando la información se comparte o aprovecha para un propósito ajeno al trabajo.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 12 — VER UNA IRREGULARIDAD TAMBIÉN EXIGE ACTUAR -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Ver una irregularidad también exige actuar</h2>
+        <p class="parrafo">La responsabilidad ética no termina en: "Yo no participé."</p>
+        <div class="instruccion">
+          <svg><use href="#ic-info"></use></svg>
+          <span>Pulsa Siguiente para descubrir cómo actuar.</span>
+        </div>
+        <div class="cards">
+          <div class="card reveal-item">
+            <div class="icono"><svg><use href="#ic-mano-stop"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">No participar</p>
+              <p>No realizar ni apoyar la conducta indebida.</p>
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="icono"><svg><use href="#ic-ojo-tachado"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">No encubrir</p>
+              <p>No ayudar a ocultar, justificar o normalizar lo ocurrido.</p>
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="icono"><svg><use href="#ic-megafono"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Comunicar</p>
+              <p>Si se identifica una posible irregularidad o conducta sospechosa, debe comunicarse.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 13 — CÓMO COMUNICAR UNA POSIBLE IRREGULARIDAD -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Cómo comunicar una posible irregularidad</h2>
+        <p class="parrafo">Todo trabajador que identifique una posible irregularidad puede comunicar la situación mediante las vías oficiales:</p>
+        <div class="cards">
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-jefe"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Jefe inmediato</p>
+              <p>Comunicar directamente la situación identificada.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-grupo"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Recursos Humanos</p>
+              <p>Comunicar directamente lo ocurrido.</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-sobre"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">Te Escuchamos</p>
+              <p>Reporte anónimo: tescuchamos@drimer.com.pe</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 14 — ANTES DE ACTUAR, HAZTE CUATRO PREGUNTAS -->
+    <section class="pantalla">
+      <div class="contenido">
+        <h2 class="screen-title">Antes de actuar, hazte cuatro preguntas</h2>
+        <div class="cards grid2">
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-regalo"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">1. ¿Hay un beneficio?</p>
+              <p>¿Busca influir en una decisión?</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-vinculo"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">2. ¿Hay un interés personal?</p>
+              <p>¿Puede afectar la objetividad?</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-doc-editado"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">3. ¿Se altera información?</p>
+              <p>¿Se está ocultando algo?</p>
+            </div>
+          </div>
+          <div class="card stagger-card">
+            <div class="icono"><svg><use href="#ic-carpeta-candado"></use></svg></div>
+            <div class="txt">
+              <p class="titulo">4. ¿Uso indebido?</p>
+              <p>¿Es un fin ajeno a Drimer?</p>
+            </div>
+          </div>
+        </div>
+        <div class="destacado">Si se identifica una posible irregularidad: no participar, no encubrir y comunicar.</div>
+      </div>
+    </section>
+
+    <!-- PANTALLA 15 — CIERRE -->
+    <section class="pantalla pantalla-full">
+      <div class="cierre">
+        <div class="check"><svg><use href="#ic-check-grande"></use></svg></div>
+        <p class="eyebrow">Curso completado</p>
+        <h1>Ética Empresarial</h1>
+        <p>Actuar con integridad también significa reconocer una situación de riesgo y tomar la decisión correcta frente a ella.</p>
+        <p class="tagline">RECONOCER &middot; DECIDIR &middot; ACTUAR</p>
+        <img class="logo" src="assets/drimer-logo-blanco.png" alt="Drimer">
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== Navegación fija ===== -->
+  <div class="nav-fija" id="navFija">
+    <button class="btn-nav" id="btnAnterior"><svg><use href="#ic-flecha-izq"></use></svg></button>
+    <button class="btn-nav" id="btnSiguiente">Siguiente<svg><use href="#ic-flecha"></use></svg></button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.pantalla'));
+  var total = slides.length;
+  var currentSlide = 0;
+  var escrituraToken = 0;
+
+  var progresoTexto = document.getElementById('progresoTexto');
+  var progresoRelleno = document.getElementById('progresoRelleno');
+  var btnAnterior = document.getElementById('btnAnterior');
+  var btnSiguiente = document.getElementById('btnSiguiente');
+  var navFija = document.getElementById('navFija');
+
+  var TXT_SIGUIENTE = 'Siguiente<svg><use href="#ic-flecha"></use></svg>';
+  var TXT_FINALIZAR = 'Finalizar curso<svg><use href="#ic-flecha"></use></svg>';
+
+  function escribir(el){
+    var texto = el.getAttribute('data-texto');
+    if(el.getAttribute('data-hecho') === '1'){
+      el.innerHTML = texto.replace(/\n\n/g,'<br><br>');
+      return;
+    }
+    escrituraToken++;
+    var miToken = escrituraToken;
+    el.innerHTML = '';
+    var i = 0;
+    function paso(){
+      if(miToken !== escrituraToken) return;
+      if(i <= texto.length){
+        el.innerHTML = texto.slice(0, i).replace(/\n\n/g,'<br><br>') + '<span class="cursor">&#9612;</span>';
+        i++;
+        setTimeout(paso, 15);
+      } else {
+        el.innerHTML = texto.replace(/\n\n/g,'<br><br>');
+        el.setAttribute('data-hecho','1');
+      }
+    }
+    paso();
+  }
+
+  function activarStagger(pantalla){
+    var cards = pantalla.querySelectorAll('.stagger-card');
+    cards.forEach(function(el, i){
+      el.classList.remove('mostrar');
+      void el.offsetWidth;
+      setTimeout(function(){ el.classList.add('mostrar'); }, i * 850);
+    });
+  }
+
+  function mostrarSlide(n){
+    slides[currentSlide].classList.remove('activa','anim');
+    currentSlide = n;
+    var activa = slides[currentSlide];
+    activa.classList.add('activa','anim');
+
+    progresoTexto.textContent = 'Pantalla ' + (currentSlide + 1) + ' de ' + total;
+    progresoRelleno.style.width = ((currentSlide + 1) / total * 100) + '%';
+
+    btnAnterior.classList.toggle('invisible', currentSlide === 0);
+
+    if(currentSlide === total - 1){
+      navFija.style.display = 'none';
+    } else {
+      navFija.style.display = 'flex';
+      btnSiguiente.innerHTML = (currentSlide === total - 2) ? TXT_FINALIZAR : TXT_SIGUIENTE;
+    }
+
+    activarStagger(activa);
+
+    var bienvenida = activa.querySelector('[data-typewriter]');
+    if(bienvenida) escribir(bienvenida);
+
+    activa.scrollTop = 0;
+  }
+
+  btnAnterior.addEventListener('click', function(){
+    if(currentSlide > 0) mostrarSlide(currentSlide - 1);
+  });
+
+  btnSiguiente.addEventListener('click', function(){
+    var activa = slides[currentSlide];
+    var pendiente = activa.querySelector('.reveal-item:not(.revelado)');
+    if(pendiente){
+      pendiente.classList.add('revelado');
+      return;
+    }
+    if(currentSlide < total - 1) mostrarSlide(currentSlide + 1);
+  });
+
+  // Pestañas
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var grupo = btn.closest('.tabs');
+      grupo.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('activa'); });
+      grupo.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('activa'); });
+      btn.classList.add('activa');
+      grupo.querySelector('.tab-panel[data-panel="' + btn.getAttribute('data-tab') + '"]').classList.add('activa');
+    });
+  });
+
+  // Caso práctico
+  document.querySelectorAll('.pantalla-caso').forEach(function(pantalla){
+    var caso = pantalla.querySelector('.caso');
+    var opciones = pantalla.querySelectorAll('.opcion');
+    opciones.forEach(function(op){
+      op.addEventListener('click', function(){
+        if(caso.classList.contains('respondido')) return;
+        caso.classList.add('respondido');
+        if(op.getAttribute('data-correcta') === 'true'){
+          op.classList.add('correcta');
+          pantalla.querySelector('.feedback-correcto').classList.add('mostrar');
+        } else {
+          op.classList.add('incorrecta');
+          pantalla.querySelector('.opcion[data-correcta="true"]').classList.add('correcta');
+          pantalla.querySelector('.feedback-incorrecto').classList.add('mostrar');
+        }
+      });
+    });
+  });
+
+  // Estado inicial
+  slides[0].classList.add('activa');
+  activarStagger(slides[0]);
+  var bienvenidaInicial = slides[0].querySelector('[data-typewriter]');
+  if(bienvenidaInicial) escribir(bienvenidaInicial);
+  btnAnterior.classList.add('invisible');
+})();
+</script>
+
+</body>
+</html>
