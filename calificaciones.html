@@ -19,7 +19,7 @@
     --rust: #9C4A38;
     --rust-bg: #F6E7E3;
     --line: #DADDDA;
-    --sidebar-w: 232px;
+    --sidebar-w: 244px;
   }
   *{ box-sizing:border-box; }
   body{
@@ -81,7 +81,7 @@
     padding:16px 20px;
     border-bottom:1px solid rgba(255,255,255,0.08);
   }
-  .sidebar-user .name{ font-size:13.5px; font-weight:600; }
+  .sidebar-user .name{ font-size:13.5px; font-weight:600; line-height:1.35; word-break:break-word; }
   .sidebar-user .role{
     font-family:'Poppins', sans-serif;
     font-size:10px;
@@ -474,18 +474,12 @@
 
   async function cargarCalificaciones(){
     try{
-      const [resCursos, resEstado, resNombre] = await Promise.all([
+      const [resCursos, resEstado] = await Promise.all([
         fetch(WEB_APP_URL + '?action=getCursos'),
-        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni)),
-        fetch(WEB_APP_URL + '?action=getNombreCompleto&dni=' + encodeURIComponent(dni))
+        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
       ]);
       const cursos = await resCursos.json();
       const estado = await resEstado.json();
-      const datosNombre = await resNombre.json();
-
-      if(datosNombre && datosNombre.ok){
-        document.getElementById('perfilNombre').textContent = datosNombre.nombre;
-      }
 
       renderResumen(cursos, estado);
       renderTabla(cursos, estado);

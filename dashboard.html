@@ -21,7 +21,7 @@
     --rust: #9C4A38;
     --rust-bg: #F6E7E3;
     --line: #DADDDA;
-    --sidebar-w: 232px;
+    --sidebar-w: 244px;
   }
 
   /* Fuentes auto-hospedadas SOLO para el motor de certificados (canvas).
@@ -904,7 +904,7 @@
     size: 33, minSize: 24, lineHeight: 50, baseY: 830, maxLines: 3, maxWidth: 1482,
     color: '#1A1720', centerX: 1000,
     prefijo: 'Por haber completado satisfactoriamente el curso ',
-    sufijo: ' como parte de la Ruta Drimer Íntegro, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
+    sufijo: ' como parte de la Ruta Drimer Íntegro 2026, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
   };
   const CERT_FECHA_CFG = {
     fontFamily: "'Poppins Cert', sans-serif",
@@ -925,6 +925,14 @@
     return d.getDate() + ' DE ' + CERT_MESES[d.getMonth()] + ' DEL ' + d.getFullYear();
   }
 
+  /* Misma transformación que certificado.html: la base guarda los nombres
+     en MAYÚSCULAS, y para el certificado se ven mejor en formato título. */
+  function certATitleCase(texto){
+    return texto.toLowerCase().replace(/(^|\s|-)(\S)/g, function(_, sep, letra){
+      return sep + letra.toUpperCase();
+    });
+  }
+
   function certMedirTamañoAjustado(ctx, texto, cfg){
     let size = cfg.maxSize;
     ctx.font = size + 'px ' + cfg.fontFamily;
@@ -937,12 +945,13 @@
 
   function certDibujarNombre(ctx, nombre){
     const cfg = CERT_NOMBRE_CFG;
-    const size = certMedirTamañoAjustado(ctx, nombre, cfg);
+    const nombreFormateado = certATitleCase(nombre);
+    const size = certMedirTamañoAjustado(ctx, nombreFormateado, cfg);
     ctx.font = size + 'px ' + cfg.fontFamily;
     ctx.fillStyle = cfg.color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText(nombre, cfg.centerX, cfg.baselineY);
+    ctx.fillText(nombreFormateado, cfg.centerX, cfg.baselineY);
   }
 
   function certArmarParrafo(ctx, nombreCurso, cfg){

@@ -173,7 +173,7 @@ const PARRAFO_CFG = {
   color: '#1A1720',
   centerX: 1000,
   prefijo: 'Por haber completado satisfactoriamente el curso ',
-  sufijo: ' como parte de la Ruta Drimer Íntegro, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
+  sufijo: ' como parte de la Ruta Drimer Íntegro 2026, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
 };
 
 const FECHA_CFG = {
@@ -200,6 +200,16 @@ function formatearFechaLarga(valor){
   return `${d.getDate()} DE ${MESES[d.getMonth()]} DEL ${d.getFullYear()}`;
 }
 
+/* La base de datos guarda los nombres en MAYÚSCULAS. Para el certificado
+   se ven mejor en formato título (Primera Letra De Cada Palabra) — es una
+   transformación de texto instantánea, no requiere cargar ninguna fuente
+   nueva ni añade demora. */
+function aTitleCase(texto){
+  return texto.toLowerCase().replace(/(^|\s|-)(\S)/g, function(_, sep, letra){
+    return sep + letra.toUpperCase();
+  });
+}
+
 function medirTamañoAjustado(ctx, texto, cfg){
   let size = cfg.maxSize;
   ctx.font = `${size}px ${cfg.fontFamily}`;
@@ -212,12 +222,13 @@ function medirTamañoAjustado(ctx, texto, cfg){
 
 function dibujarNombre(ctx, nombre){
   const cfg = NOMBRE_CFG;
-  const size = medirTamañoAjustado(ctx, nombre, cfg);
+  const nombreFormateado = aTitleCase(nombre);
+  const size = medirTamañoAjustado(ctx, nombreFormateado, cfg);
   ctx.font = `${size}px ${cfg.fontFamily}`;
   ctx.fillStyle = cfg.color;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
-  ctx.fillText(nombre, cfg.centerX, cfg.baselineY);
+  ctx.fillText(nombreFormateado, cfg.centerX, cfg.baselineY);
 }
 
 function armarParrafo(ctx, nombreCurso, cfg){
