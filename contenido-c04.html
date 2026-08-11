@@ -271,16 +271,17 @@
     gap:9px;
     flex:1;
     min-height:0;
-    justify-content:center;
+    justify-content:safe center;
   }
   .s3-item{
     opacity:0;
     max-height:0;
+    flex-shrink:0;
     transform:translateY(8px);
     overflow:hidden;
     transition:opacity .35s ease, transform .35s ease, max-height .35s ease;
   }
-  .s3-item.visible{opacity:1;transform:none;max-height:220px;}
+  .s3-item.visible{opacity:1;transform:none;max-height:400px;}
   .s3-item .tarjeta{opacity:1;transform:none;}
 
   /* ===== Pantalla 5: timeline ===== */
@@ -519,7 +520,7 @@
 
     /* Centrar verticalmente el contenido de cada pantalla para repartir
        el espacio sobrante arriba/abajo en vez de dejarlo todo abajo */
-    .pantalla{ padding:0 40px; justify-content:center; }
+    .pantalla{ padding:0 40px; justify-content:safe center; }
     .pantalla-portada,
     .pantalla-cierre{ padding:0; }
     .pantalla-imagen-protagonista{ padding:0 40px; }
@@ -547,11 +548,16 @@
     .mensaje-final{ font-size:15px; padding:13px 16px; margin-top:14px; }
     .texto-secundario{ font-size:13.5px; margin-top:10px; }
 
-    /* Pantalla 3: tarjetas acumuladas, agrandadas para escritorio */
-    .s3-item.visible{ max-height:260px; }
+    /* Pantalla 3: tarjetas acumuladas, agrandadas para escritorio.
+       Con las 3 tarjetas simultáneas visibles, hay que compactar un
+       poco el padding para que las 3 quepan sin cortarse en pantallas
+       anchas pero no muy altas */
+    .s3-stage{ gap:4px; }
+    .s3-item .tarjeta{ padding:12px 16px !important; gap:7px !important; }
+    .s3-item .tarjeta-texto{ font-size:13px !important; line-height:1.42 !important; }
 
     /* Timeline: se mantiene vertical (conserva el conector), pero centrado */
-    .timeline{ justify-content:center; }
+    .timeline{ justify-content:safe center; }
     .paso{ gap:14px; }
     .paso-punto{ width:30px; height:30px; }
     .paso-punto svg{ width:17px; height:17px; }
@@ -565,7 +571,7 @@
     .cp-pregunta{ font-size:17px; margin-bottom:12px; }
     .cp-opciones{ gap:10px; }
     .cp-opcion{ font-size:14.5px; padding:13px 16px; gap:11px; border-radius:11px; }
-    .cp-feedback-zona{ display:flex; flex-direction:column; justify-content:center; }
+    .cp-feedback-zona{ display:flex; flex-direction:column; justify-content:safe center; }
     .cp-feedback{ font-size:14px; padding:12px 15px; }
     .cp-refuerzo{ font-size:13px; }
 
