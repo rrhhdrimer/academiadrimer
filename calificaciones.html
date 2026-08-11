@@ -474,12 +474,18 @@
 
   async function cargarCalificaciones(){
     try{
-      const [resCursos, resEstado] = await Promise.all([
+      const [resCursos, resEstado, resNombre] = await Promise.all([
         fetch(WEB_APP_URL + '?action=getCursos'),
-        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
+        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni)),
+        fetch(WEB_APP_URL + '?action=getNombreCompleto&dni=' + encodeURIComponent(dni))
       ]);
       const cursos = await resCursos.json();
       const estado = await resEstado.json();
+      const datosNombre = await resNombre.json();
+
+      if(datosNombre && datosNombre.ok){
+        document.getElementById('perfilNombre').textContent = datosNombre.nombre;
+      }
 
       renderResumen(cursos, estado);
       renderTabla(cursos, estado);
