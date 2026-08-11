@@ -71,11 +71,11 @@
   }
   .sidebar.open{ transform:translateX(0); }
   @media (min-width:860px){ .sidebar{ position:sticky; transform:none; } }
-  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:20px 20px 18px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .sidebar-brand{ display:flex; align-items:center; justify-content:center; gap:10px; padding:20px 20px 18px; border-bottom:1px solid rgba(255,255,255,0.08); }
   .seal{ width:30px; height:30px; border-radius:50%; border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .seal svg{ width:14px; height:14px; }
   .sidebar-brand span{ font-weight:600; font-size:15.5px; }
-  .brand-icon{ width:41px; height:auto; flex-shrink:0; display:block; margin:0 auto; }
+  .brand-icon{ width:41px; height:auto; flex-shrink:0; display:block; }
   .brand-text{ display:flex; flex-direction:column; line-height:1.15; }
   .brand-text .brand-line1{ font-weight:400; font-size:13.5px; color:#fff; }
   .brand-text .brand-line2{ font-weight:700; font-size:17px; color:#fff; margin-top:-2px; }
@@ -779,6 +779,12 @@
 
   navCursos.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('cursos'); });
   navGestion.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('gestion'); });
+
+  // Si se llega desde el link "Gestión académica" de otra página
+  // (dashboard.html?vista=gestion), abrir esa vista directamente.
+  if(rol === 'admin' && new URLSearchParams(window.location.search).get('vista') === 'gestion'){
+    mostrarVista('gestion');
+  }
 
   function poblarSelectsCertificado(){
     const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
