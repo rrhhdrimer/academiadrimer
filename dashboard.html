@@ -79,7 +79,7 @@
   .brand-text .brand-line1{ font-weight:400; font-size:13.5px; color:#fff; }
   .brand-text .brand-line2{ font-weight:700; font-size:17px; color:#fff; margin-top:-2px; }
   .sidebar-user{ padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
-  .sidebar-user .name{ font-size:13.5px; font-weight:600; }
+  .sidebar-user .name{ font-size:13.5px; font-weight:600; line-height:1.35; word-break:break-word; }
   .sidebar-user .role{ font-size:10px; color:var(--gold); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
   .sidebar-nav{ flex:1; padding:14px 12px; display:flex; flex-direction:column; gap:2px; }
   .nav-item{ display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:8px; font-size:13.5px; font-weight:500; color:rgba(255,255,255,0.75); cursor:pointer; }
@@ -896,7 +896,7 @@
 
   const CERT_NOMBRE_CFG = {
     fontFamily: "'Pinyon Script', cursive",
-    maxSize: 150, minSize: 60, baselineY: 716, maxWidth: 1450,
+    maxSize: 150, minSize: 40, baselineY: 716, maxWidth: 1450,
     color: '#1A1720', centerX: 1000
   };
   const CERT_PARRAFO_CFG = {
