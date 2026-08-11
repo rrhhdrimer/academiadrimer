@@ -510,12 +510,14 @@
 
   async function init(){
     try{
-      const [resCursos, resEstado] = await Promise.all([
-        fetch(WEB_APP_URL + '?action=getCursos'),
-        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
-      ]);
-      todosLosCursos = await resCursos.json();
-      estadoUsuario = await resEstado.json();
+      // Antes: 2 llamadas separadas a la Web App (getCursos + getEstadoUsuario).
+      // Ahora: 1 sola llamada combinada (getInicioSesion) — cada llamada a Apps
+      // Script tiene overhead fijo propio de la plataforma, así que reducir la
+      // cantidad de llamadas es lo que más se nota en velocidad de carga.
+      const res = await fetch(WEB_APP_URL + '?action=getInicioSesion&dni=' + encodeURIComponent(dni));
+      const data = await res.json();
+      todosLosCursos = data.cursos;
+      estadoUsuario = data.estado;
 
       poblarPeriodos();
       poblarSelectsCertificado();
