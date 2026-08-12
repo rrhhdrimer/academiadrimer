@@ -374,7 +374,22 @@
 </div>
 
 <script>
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+  // ---------- Conexión a Supabase (Edge Function "api") ----------
+  const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+  const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
+
+  async function llamarApi(action, params){
+    const res = await fetch(SUPABASE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(Object.assign({ action: action }, params || {}))
+    });
+    return res.json();
+  }
 
   const dni = sessionStorage.getItem('rdi_dni');
   const nombre = sessionStorage.getItem('rdi_nombre');
@@ -410,8 +425,7 @@
   async function actualizarBadgeMensajes(){
     if(rol !== 'admin' && rol !== 'profesor') return;
     try{
-      const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
-      const bandeja = await res.json();
+      const bandeja = await llamarApi('getBandejaAdmin');
       const totalNoLeidos = bandeja.reduce(function(sum, c){ return sum + (c.noLeidos || 0); }, 0);
       const badge = document.getElementById('navBadgeMensajes');
       if(totalNoLeidos > 0){
@@ -429,12 +443,9 @@
 
   async function cargarCertificados(){
     try{
-      const [resCursos, resEstado] = await Promise.all([
-        fetch(WEB_APP_URL + '?action=getCursos'),
-        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
-      ]);
-      const cursos = await resCursos.json();
-      const estado = await resEstado.json();
+      const data = await llamarApi('getInicioSesion', { dni: dni });
+      const cursos = data.cursos;
+      const estado = data.estado;
 
       renderResumen(cursos, estado);
       renderLista(cursos, estado);
