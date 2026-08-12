@@ -584,7 +584,8 @@
 
     async function initEstudiante(){
       try{
-        const cursos = await llamarApi('getCursos');
+        const inicio = await llamarApi('getInicioSesion', { dni: dni });
+        const cursos = inicio.cursos;
         const select = document.getElementById('cursoSelect');
         select.innerHTML = '<option value="">General (ningún curso en particular)</option>' +
           cursos.map(c => '<option value="' + c.codigo + '">' + c.nombre + '</option>').join('');
