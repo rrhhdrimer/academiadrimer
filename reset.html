@@ -229,7 +229,22 @@
   </div>
 
 <script>
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+  // ---------- Conexión a Supabase (Edge Function "api") ----------
+  const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+  const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
+
+  async function llamarApi(action, params){
+    const res = await fetch(SUPABASE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(Object.assign({ action: action }, params || {}))
+    });
+    return res.json();
+  }
 
   const form = document.getElementById('resetForm');
   const errorBox = document.getElementById('errorBox');
@@ -270,12 +285,7 @@
     btn.textContent = 'Guardando...';
 
     try{
-      const res = await fetch(WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'resetPassword', dni: dni, correo: correo, nuevaPassword: p1 })
-      });
-      const data = await res.json();
+      const data = await llamarApi('resetPassword', { dni: dni, correo: correo, nuevaPassword: p1 });
 
       if(data.ok){
         form.style.display = 'none';
