@@ -356,7 +356,22 @@ async function renderCertificado(ctx, { nombre, curso, fechaTexto }){
 
 /* ============================ Flujo real ============================ */
 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+// ---------- Conexión a Supabase (Edge Function "api") ----------
+const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
+
+async function llamarApi(action, params){
+  const res = await fetch(SUPABASE_FUNCTION_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'apikey': SUPABASE_ANON_KEY
+    },
+    body: JSON.stringify(Object.assign({ action: action }, params || {}))
+  });
+  return res.json();
+}
 
 const dni = sessionStorage.getItem('rdi_dni');
 if(!dni){
@@ -389,8 +404,7 @@ async function init(){
   }
 
   try{
-    const res = await fetch(WEB_APP_URL + '?action=getDatosCertificado&dni=' + encodeURIComponent(dni) + '&curso=' + encodeURIComponent(codigoCurso));
-    const data = await res.json();
+    const data = await llamarApi('getDatosCertificado', { dni: dni, curso: codigoCurso });
 
     if(!data.ok){
       mostrarError(data.mensaje || 'Aún no has aprobado el examen de este curso.');
