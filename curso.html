@@ -252,7 +252,22 @@
 </main>
 
 <script>
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+  // ---------- Conexión a Supabase (Edge Function "api") ----------
+  const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+  const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
+
+  async function llamarApi(action, params){
+    const res = await fetch(SUPABASE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(Object.assign({ action: action }, params || {}))
+    });
+    return res.json();
+  }
 
   const dni = sessionStorage.getItem('rdi_dni');
   if(!dni){ window.location.href = 'login.html'; }
@@ -276,12 +291,11 @@
       return;
     }
     try{
-      const [resCursos, resEstado] = await Promise.all([
-        fetch(WEB_APP_URL + '?action=getCursos'),
-        fetch(WEB_APP_URL + '?action=getEstadoUsuario&dni=' + encodeURIComponent(dni))
-      ]);
-      const cursos = await resCursos.json();
-      const estados = await resEstado.json();
+      // Antes: 2 llamadas separadas (getCursos + getEstadoUsuario). Ahora:
+      // 1 sola llamada combinada (getInicioSesion), igual que en dashboard.html.
+      const data = await llamarApi('getInicioSesion', { dni: dni });
+      const cursos = data.cursos;
+      const estados = data.estado;
 
       cursoActual = cursos.find(c => c.codigo === codigoCurso);
       if(!cursoActual){
@@ -352,8 +366,7 @@
     btn.textContent = 'Cargando preguntas...';
 
     try{
-      const res = await fetch(WEB_APP_URL + '?action=getPreguntas&curso=' + encodeURIComponent(codigoCurso));
-      preguntasActuales = await res.json();
+      preguntasActuales = await llamarApi('getPreguntas', { curso: codigoCurso });
 
       if(!preguntasActuales.length){
         mostrarError('Este curso todavía no tiene preguntas cargadas.');
@@ -420,12 +433,7 @@
     btn.textContent = 'Enviando...';
 
     try{
-      const res = await fetch(WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'submitExamen', dni: dni, curso: codigoCurso, respuestas: respuestas })
-      });
-      const data = await res.json();
+      const data = await llamarApi('submitExamen', { dni: dni, curso: codigoCurso, respuestas: respuestas });
       mostrarResultado(data);
     } catch(err){
       alert('No pudimos enviar tu examen. Intenta nuevamente.');
