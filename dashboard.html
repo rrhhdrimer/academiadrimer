@@ -440,7 +440,7 @@
 
         </div>
 
-        <canvas id="certCanvasAdmin" width="2000" height="1414" style="display:none"></canvas>
+        <canvas id="certCanvasAdmin" width="4000" height="2828" style="display:none"></canvas>
       </div>
     </main>
   </div>
@@ -906,24 +906,24 @@
 
   /* ---- Motor de certificado (copiado de certificado.html, adaptado para
      generar varios en lote). No tocar sin volver a medir la plantilla. ---- */
-  const CERT_LIENZO = { w: 2000, h: 1414 };
+  const CERT_LIENZO = { w: 4000, h: 2828 };
 
   const CERT_NOMBRE_CFG = {
     fontFamily: "'Pinyon Script', cursive",
-    maxSize: 150, minSize: 40, baselineY: 716, maxWidth: 1450,
-    color: '#1A1720', centerX: 1000
+    maxSize: 300, minSize: 80, baselineY: 1432, maxWidth: 2900,
+    color: '#1A1720', centerX: 2000
   };
   const CERT_PARRAFO_CFG = {
     fontFamily: "'Poppins Cert', sans-serif",
-    size: 33, minSize: 24, lineHeight: 50, baseY: 830, maxLines: 3, maxWidth: 1482,
-    color: '#1A1720', centerX: 1000,
+    size: 66, minSize: 48, lineHeight: 100, baseY: 1660, maxLines: 3, maxWidth: 2964,
+    color: '#1A1720', centerX: 2000,
     prefijo: 'Por haber completado satisfactoriamente el curso ',
     sufijo: ' como parte de la Ruta Drimer Íntegro 2026, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
   };
   const CERT_FECHA_CFG = {
     fontFamily: "'Poppins Cert', sans-serif",
-    weight: '600', size: 30, letterSpacing: 2, baselineY: 1338,
-    color: '#1A1720', centerX: 1000
+    weight: '600', size: 60, letterSpacing: 4, baselineY: 2676,
+    color: '#1A1720', centerX: 2000
   };
   const CERT_MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
     'AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];

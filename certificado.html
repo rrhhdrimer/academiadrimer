@@ -136,7 +136,7 @@
   <div class="estado-box" id="estadoBox">Cargando tu certificado…</div>
 
   <div class="preview-wrap" id="previewWrap">
-    <canvas id="certCanvas" width="2000" height="1414"></canvas>
+    <canvas id="certCanvas" width="4000" height="2828"></canvas>
   </div>
 
   <div class="acciones" id="acciones" style="display:none">
@@ -147,31 +147,31 @@
 <script>
 /* =======================================================================
    MOTOR DE CERTIFICADO — coordenadas medidas a pixel exacto sobre la
-   plantilla real (2000x1414). No tocar sin volver a medir la plantilla.
+   plantilla real (4000x2828). No tocar sin volver a medir la plantilla.
    ======================================================================= */
 
-const LIENZO = { w: 2000, h: 1414 };
+const LIENZO = { w: 4000, h: 2828 };
 
 const NOMBRE_CFG = {
   fontFamily: "'Pinyon Script', cursive",
-  maxSize: 150,
-  minSize: 40,
-  baselineY: 716,
-  maxWidth: 1450,
+  maxSize: 300,
+  minSize: 80,
+  baselineY: 1432,
+  maxWidth: 2900,
   color: '#1A1720',
-  centerX: 1000
+  centerX: 2000
 };
 
 const PARRAFO_CFG = {
   fontFamily: "'Poppins', sans-serif",
-  size: 33,
-  minSize: 24,
-  lineHeight: 50,
-  baseY: 830,
+  size: 66,
+  minSize: 48,
+  lineHeight: 100,
+  baseY: 1660,
   maxLines: 3,
-  maxWidth: 1482,
+  maxWidth: 2964,
   color: '#1A1720',
-  centerX: 1000,
+  centerX: 2000,
   prefijo: 'Por haber completado satisfactoriamente el curso ',
   sufijo: ' como parte de la Ruta Drimer Íntegro 2026, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.'
 };
@@ -179,11 +179,11 @@ const PARRAFO_CFG = {
 const FECHA_CFG = {
   fontFamily: "'Poppins', sans-serif",
   weight: '600',
-  size: 30,
-  letterSpacing: 2,
-  baselineY: 1338,
+  size: 60,
+  letterSpacing: 4,
+  baselineY: 2676,
   color: '#1A1720',
-  centerX: 1000
+  centerX: 2000
 };
 
 const MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
