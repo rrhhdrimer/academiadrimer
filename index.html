@@ -189,8 +189,14 @@
   </form>
 
 <script>
-  // URL del backend (Apps Script Web App)
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+  // ---------- Conexión a Supabase (Edge Function "api") ----------
+  // Reemplaza a WEB_APP_URL de Apps Script. La SUPABASE_ANON_KEY es
+  // pública a propósito — no es un secreto, es la llave que cualquier
+  // navegador necesita presentar para que la función lo deje pasar.
+  // La seguridad real vive en la función misma y en RLS, no en esconder
+  // esta llave.
+  const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+  const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
 
   const form = document.getElementById('loginForm');
   const errorBox = document.getElementById('errorBox');
@@ -220,11 +226,13 @@
     btn.textContent = 'Ingresando...';
 
     try{
-      // OJO: usamos text/plain para evitar problemas de CORS con Apps Script.
-      // El backend igual lee e.postData.contents como JSON.
-      const res = await fetch(WEB_APP_URL, {
+      const res = await fetch(SUPABASE_FUNCTION_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'apikey': SUPABASE_ANON_KEY
+        },
         body: JSON.stringify({ action: 'login', dni: dni, password: password })
       });
       const data = await res.json();
@@ -236,7 +244,6 @@
         sessionStorage.setItem('rdi_puesto', data.puesto || '');
         sessionStorage.setItem('rdi_area', data.area || '');
         sessionStorage.setItem('rdi_gerencia', data.gerencia || '');
-        // Próximo paso: redirigir a dashboard.html (aún no construido)
         window.location.href = 'dashboard.html';
       } else {
         showError(data.mensaje || 'No se pudo iniciar sesión.');
