@@ -385,7 +385,22 @@
 <div class="toast" id="toast">✓ <span id="toastText">Mensaje enviado</span></div>
 
 <script>
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+  // ---------- Conexión a Supabase (Edge Function "api") ----------
+  const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+  const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
+
+  async function llamarApi(action, params){
+    const res = await fetch(SUPABASE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(Object.assign({ action: action }, params || {}))
+    });
+    return res.json();
+  }
 
   const dni = sessionStorage.getItem('rdi_dni');
   const nombre = sessionStorage.getItem('rdi_nombre');
@@ -474,9 +489,7 @@
   async function actualizarBadgeMensajes(){
     if(rol !== 'admin' && rol !== 'profesor') return;
     try{
-      const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
-      const bandeja = await res.json();
-      const totalNoLeidos = bandeja.reduce(function(sum, c){ return sum + (c.noLeidos || 0); }, 0);
+      const bandeja = await llamarApi('getBandejaAdmin');
       const badge = document.getElementById('navBadgeMensajes');
       if(totalNoLeidos > 0){
         badge.textContent = totalNoLeidos > 9 ? '9+' : totalNoLeidos;
@@ -497,8 +510,7 @@
 
     async function cargarBandeja(){
       try{
-        const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
-        const bandeja = await res.json();
+        const bandeja = await llamarApi('getBandejaAdmin');
         renderBandeja(bandeja);
       } catch(err){
         document.getElementById('inboxList').innerHTML = '<div class="error-box">No pudimos cargar la bandeja.</div>';
@@ -534,12 +546,8 @@
       document.getElementById('threadAdmin').innerHTML = '<div class="loading">Cargando...</div>';
 
       // Marca como leído y trae el historial en paralelo
-      await fetch(WEB_APP_URL, {
-        method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body: JSON.stringify({ action:'marcarLeido', dni: dniUsuario })
-      });
-      const res = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dniUsuario));
-      const mensajes = await res.json();
+      await llamarApi('marcarLeido', { dni: dniUsuario });
+      const mensajes = await llamarApi('getMensajes', { dni: dniUsuario });
       renderThread('threadAdmin', mensajes);
       actualizarBadgeMensajes();
 
@@ -549,15 +557,12 @@
         const btn = this;
         btn.disabled = true;
         const armado = armarMensajeConCita(texto);
-        await fetch(WEB_APP_URL, {
-          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify({ action:'enviarMensaje', dni: dniUsuario, curso: armado.curso, remitente:'admin', mensaje: armado.mensaje })
-        });
+        await llamarApi('enviarMensaje', { dni: dniUsuario, curso: armado.curso, remitente: 'admin', mensaje: armado.mensaje });
         document.getElementById('respuestaTexto').value = '';
         cancelarCita();
         btn.disabled = false;
-        const res2 = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dniUsuario));
-        renderThread('threadAdmin', await res2.json());
+        const mensajesActualizados = await llamarApi('getMensajes', { dni: dniUsuario });
+        renderThread('threadAdmin', mensajesActualizados);
       };
     }
 
@@ -579,8 +584,7 @@
 
     async function initEstudiante(){
       try{
-        const resCursos = await fetch(WEB_APP_URL + '?action=getCursos');
-        const cursos = await resCursos.json();
+        const cursos = await llamarApi('getCursos');
         const select = document.getElementById('cursoSelect');
         select.innerHTML = '<option value="">General (ningún curso en particular)</option>' +
           cursos.map(c => '<option value="' + c.codigo + '">' + c.nombre + '</option>').join('');
@@ -591,8 +595,7 @@
 
     async function cargarHistorial(){
       try{
-        const res = await fetch(WEB_APP_URL + '?action=getMensajes&dni=' + encodeURIComponent(dni));
-        const mensajes = await res.json();
+        const mensajes = await llamarApi('getMensajes', { dni: dni });
         renderThread('threadEstudiante', mensajes, true);
       } catch(err){
         document.getElementById('threadEstudiante').innerHTML = '<div class="error-box">No pudimos cargar tu historial.</div>';
@@ -608,10 +611,7 @@
       btn.disabled = true; btn.textContent = 'Enviando...';
 
       try{
-        await fetch(WEB_APP_URL, {
-          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify({ action:'enviarMensaje', dni: dni, curso: curso, remitente:'usuario', mensaje: texto })
-        });
+        await llamarApi('enviarMensaje', { dni: dni, curso: curso, remitente: 'usuario', mensaje: texto });
         document.getElementById('mensajeTexto').value = '';
         mostrarToast('Mensaje enviado');
         await cargarHistorial();
