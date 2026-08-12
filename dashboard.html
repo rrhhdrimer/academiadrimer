@@ -448,7 +448,24 @@
 </div>
 
 <script>
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpGBl5tnCjLjjeAqdjIjHpPB6s0dy5379MHedP1pN5uOcYIrUhpn1wMall2Thhh8Psyg/exec';
+  // ---------- Conexión a Supabase (Edge Function "api") ----------
+  const SUPABASE_FUNCTION_URL = 'https://bvhpteltogflpyriplpz.supabase.co/functions/v1/api';
+  const SUPABASE_ANON_KEY = 'sb_publishable_CaEF7S9vNF-caAdJID5yDQ_nRyBBSnW';
+
+  // Con Supabase, todo pasa por POST con un "action" en el body — ya no
+  // hay diferencia entre llamadas de lectura y de escritura como en GAS.
+  async function llamarApi(action, params){
+    const res = await fetch(SUPABASE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(Object.assign({ action: action }, params || {}))
+    });
+    return res.json();
+  }
 
   const dni = sessionStorage.getItem('rdi_dni');
   const nombre = sessionStorage.getItem('rdi_nombre');
@@ -476,8 +493,7 @@
   async function actualizarBadgeMensajes(){
     if(rol !== 'admin' && rol !== 'profesor') return;
     try{
-      const res = await fetch(WEB_APP_URL + '?action=getBandejaAdmin');
-      const bandeja = await res.json();
+      const bandeja = await llamarApi('getBandejaAdmin');
       const totalNoLeidos = bandeja.reduce(function(sum, c){ return sum + (c.noLeidos || 0); }, 0);
       const badge = document.getElementById('navBadgeMensajes');
       if(totalNoLeidos > 0){
@@ -510,12 +526,9 @@
 
   async function init(){
     try{
-      // Antes: 2 llamadas separadas a la Web App (getCursos + getEstadoUsuario).
-      // Ahora: 1 sola llamada combinada (getInicioSesion) — cada llamada a Apps
-      // Script tiene overhead fijo propio de la plataforma, así que reducir la
-      // cantidad de llamadas es lo que más se nota en velocidad de carga.
-      const res = await fetch(WEB_APP_URL + '?action=getInicioSesion&dni=' + encodeURIComponent(dni));
-      const data = await res.json();
+      // Una sola llamada combinada (getInicioSesion) trae cursos + estado
+      // del alumno juntos, en vez de 2 llamadas separadas.
+      const data = await llamarApi('getInicioSesion', { dni: dni });
       todosLosCursos = data.cursos;
       estadoUsuario = data.estado;
 
@@ -818,11 +831,7 @@
     this.disabled = true;
 
     try{
-      const res = await fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'adminResetPassword', dni: dniInput })
-      });
-      const data = await res.json();
+      const data = await llamarApi('adminResetPassword', { dni: dniInput });
       if(data.ok){
         msg.className = 'gestion-msg ok';
         msg.textContent = 'Listo — la contraseña de ' + data.nombre + ' ahora es 0000.';
@@ -863,11 +872,7 @@
     this.disabled = true;
 
     try{
-      const res = await fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'adminEliminarAlumno', dni: dniInput })
-      });
-      const data = await res.json();
+      const data = await llamarApi('adminEliminarAlumno', { dni: dniInput });
       if(data.ok){
         msg.className = 'gestion-msg ok';
         const c = data.conteo;
@@ -1119,10 +1124,7 @@
     msg.textContent = 'Buscando certificados aprobados...';
 
     try{
-      const url = WEB_APP_URL + '?action=getCertificadosMasivo&modo=' + encodeURIComponent(modo) +
-        '&dni=' + encodeURIComponent(dniParam) + '&curso=' + encodeURIComponent(cursoParam);
-      const res = await fetch(url);
-      const lista = await res.json();
+      const lista = await llamarApi('getCertificadosMasivo', { modo: modo, dni: dniParam, curso: cursoParam });
 
       if(!lista || !lista.length){
         msg.className = 'gestion-msg error';
