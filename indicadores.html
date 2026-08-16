@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indicadores — Academia Drimer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      color: #384967;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      color: #2CADE4;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .restriccion-admin {
+      display: none;
+      background-color: #E05252;
+      color: white;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+
+    .restriccion-admin.active {
+      display: block;
+    }
+
+    .cargando {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 16px;
+      color: #384967;
+    }
+
+    .seccion {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .seccion h2 {
+      color: #2CADE4;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #DDE5ED;
+    }
+
+    .seccion h3 {
+      color: #307FE2;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 15px;
+    }
+
+    .grafico-wrapper {
+      position: relative;
+      height: 300px;
+      margin-bottom: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #DDE5ED 0%, #f0f4f8 100%);
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #307FE2;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #4C9FC8;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-valor {
+      font-size: 24px;
+      font-weight: 700;
+      color: #051C2C;
+    }
+
+    .stat-sublabel {
+      font-size: 11px;
+      color: #384967;
+      margin-top: 4px;
+    }
+
+    .stat-card.positivo {
+      border-left-color: #1A7A4A;
+      background: linear-gradient(135deg, #EBF0E3 0%, #f5f8f0 100%);
+    }
+
+    .tabla-gerencia {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .tabla-gerencia thead {
+      background-color: #051C2C;
+      color: white;
+    }
+
+    .tabla-gerencia th {
+      padding: 12px 8px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .tabla-gerencia td {
+      padding: 12px 8px;
+      border-bottom: 1px solid #DDE5ED;
+    }
+
+    .tabla-gerencia tbody tr:hover {
+      background-color: #f9fbfd;
+    }
+
+    .cursor-badge {
+      display: inline-block;
+      background-color: #2CADE4;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .cumplimiento-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar-bg {
+      flex: 1;
+      height: 8px;
+      background-color: #DDE5ED;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #307FE2, #2CADE4);
+      transition: width 0.3s ease;
+    }
+
+    .bar-pct {
+      font-weight: 600;
+      color: #051C2C;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .nota-promedio {
+      font-weight: 600;
+      color: #307FE2;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 12px;
+      }
+
+      .header h1 {
+        font-size: 18px;
+      }
+
+      .seccion {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tabla-gerencia {
+        font-size: 12px;
+      }
+
+      .tabla-gerencia th,
+      .tabla-gerencia td {
+        padding: 10px 6px;
+      }
+
+      .grafico-wrapper {
+        height: 250px;
+      }
+    }
+
+    .menu-navegacion {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .menu-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      background-color: #DDE5ED;
+      color: #384967;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .menu-btn:hover {
+      background-color: #307FE2;
+      color: white;
+    }
+
+    .menu-btn.active {
+      background-color: #2CADE4;
+      color: white;
+    }
+
+    .salir-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background-color: #E05252;
+      color: white;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .salir-btn:hover {
+      background-color: #c41e3a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="restriccion-admin active">
+      ⚠️ Esta sección solo es accesible para administradores.
+    </div>
+
+    <div class="header">
+      <h1>📊 Indicadores de Desempeño</h1>
+    </div>
+
+    <div class="menu-navegacion">
+      <a href="dashboard.html" class="menu-btn">Dashboard</a>
+      <a href="calendario.html" class="menu-btn">Calendario</a>
+      <a href="mensajes.html" class="menu-btn">Mensajes</a>
+      <a href="calificaciones.html" class="menu-btn">Calificaciones</a>
+      <a href="certificados.html" class="menu-btn">Certificados</a>
+      <a href="indicadores.html" class="menu-btn active">Indicadores</a>
+      <button class="salir-btn" onclick="salir()">Salir</button>
+    </div>
+
+    <div id="contenido" class="cargando">
+      Cargando indicadores...
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://nspiqmejykcbeptvbzib.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zcGlxbWVqeWtjYmVwdHZiemlcIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM0NDczNDUsImV4cCI6MTczODk5OTM0NX0.2Tcs-u90sj8EZGgPaQhK0FI0z7K1AECL2h3S5cBdNGo'
+
+    let usuarioActual = null
+    let datosIndicadores = null
+
+    async function llamarApi(action, params = {}) {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/api`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ action, ...params }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.mensaje || `Error ${response.status}`)
+        }
+
+        return await response.json()
+      } catch (error) {
+        console.error('Error en llamarApi:', error)
+        throw error
+      }
+    }
+
+    async function verificarSesion() {
+      const sesion = JSON.parse(localStorage.getItem('sesion') || '{}')
+      if (!sesion.dni) {
+        window.location.href = 'login.html'
+        return
+      }
+      usuarioActual = sesion
+      if (usuarioActual.rol !== 'admin') {
+        document.querySelector('.restriccion-admin').classList.add('active')
+        document.getElementById('contenido').innerHTML = '<div style="color: #E05252; padding: 40px; text-align: center;">No tienes permisos para acceder a esta sección.</div>'
+        return false
+      }
+      return true
+    }
+
+    async function cargarIndicadores() {
+      try {
+        const resultado = await llamarApi('getIndicadores')
+        if (!resultado.ok) {
+          throw new Error(resultado.mensaje)
+        }
+        datosIndicadores = resultado.indicadores
+        renderizarIndicadores()
+      } catch (error) {
+        console.error('Error cargando indicadores:', error)
+        document.getElementById('contenido').innerHTML = `<div style="color: #E05252; padding: 40px; text-align: center;">Error al cargar indicadores: ${error.message}</div>`
+      }
+    }
+
+    function renderizarIndicadores() {
+      const html = `
+        <div class="seccion">
+          <h2>Cumplimiento General de Cursos</h2>
+          <div class="stats-grid">
+            ${datosIndicadores.cursos
+              .map(
+                (curso) =>
+                  `
+              <div class="stat-card positivo">
+                <div class="stat-label">${curso.nombre}</div>
+                <div class="stat-valor">${curso.cumplimientoGeneral}%</div>
+                <div class="stat-sublabel">Promedio: ${curso.promedioGeneral.toFixed(2)}/20</div>
+              </div>
+            `
+              )
+              .join('')}
+          </div>
+          <div class="grafico-wrapper">
+            <canvas id="chartCumplimiento"></canvas>
+          </div>
+        </div>
+
+        <div class="seccion">
+          <h2>Cumplimiento por Gerencia</h2>
+          ${datosIndicadores.gerencias
+            .map(
+              (gerencia) =>
+                `
+            <div>
+              <h3>🏢 ${gerencia}</h3>
+              <table class="tabla-gerencia">
+                <thead>
+                  <tr>
+                    <th>Curso</th>
+                    <th>Total</th>
+                    <th>Aprobados</th>
+                    <th>Cumplimiento</th>
+                    <th>Promedio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${datosIndicadores.cursos
+                    .map(
+                      (curso) => {
+                        const stats = curso.porGerencia[gerencia] || { total: 0, aprobados: 0, cumplimiento: 0, promedio: 0 }
+                        return `
+                    <tr>
+                      <td><span class="cursor-badge">${curso.codigo}</span> ${curso.nombre}</td>
+                      <td>${stats.total}</td>
+                      <td>${stats.aprobados}</td>
+                      <td>
+                        <div class="cumplimiento-bar">
+                          <div class="bar-bg">
+                            <div class="bar-fill" style="width: ${stats.cumplimiento}%"></div>
+                          </div>
+                          <div class="bar-pct">${stats.cumplimiento}%</div>
+                        </div>
+                      </td>
+                      <td><span class="nota-promedio">${stats.promedio.toFixed(2)}</span></td>
+                    </tr>
+                  `
+                      }
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+
+        <div class="seccion">
+          <h2>Resumen de Promedios de Notas</h2>
+          <div class="grafico-wrapper">
+            <canvas id="chartPromedios"></canvas>
+          </div>
+        </div>
+      `
+
+      document.getElementById('contenido').innerHTML = html
+
+      // Renderizar gráficos
+      setTimeout(() => {
+        crearGraficosCumplimiento()
+        crearGraficosPromedios()
+      }, 100)
+    }
+
+    function crearGraficosCumplimiento() {
+      const ctx = document.getElementById('chartCumplimiento')?.getContext('2d')
+      if (!ctx) return
+
+      const labels = datosIndicadores.cursos.map((c) => c.codigo)
+      const data = datosIndicadores.cursos.map((c) => c.cumplimientoGeneral)
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: '% Cumplimiento',
+              data: data,
+              backgroundColor: ['#2CADE4', '#307FE2', '#4C9FC8', '#1A7A4A'],
+              borderRadius: 6,
+              borderSkipped: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function (value) {
+                  return value + '%'
+                },
+              },
+            },
+          },
+        },
+      })
+    }
+
+    function crearGraficosPromedios() {
+      const ctx = document.getElementById('chartPromedios')?.getContext('2d')
+      if (!ctx) return
+
+      const labels = datosIndicadores.cursos.map((c) => c.codigo)
+      const data = datosIndicadores.cursos.map((c) => c.promedioGeneral)
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Promedio de Notas',
+              data: data,
+              backgroundColor: '#F5C842',
+              borderRadius: 6,
+              borderSkipped: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 20,
+              ticks: {
+                callback: function (value) {
+                  return value.toFixed(1)
+                },
+              },
+            },
+          },
+        },
+      })
+    }
+
+    function salir() {
+      if (confirm('¿Deseas cerrar sesión?')) {
+        localStorage.removeItem('sesion')
+        window.location.href = 'login.html'
+      }
+    }
+
+    // Inicializar
+    (async () => {
+      if (await verificarSesion()) {
+        await cargarIndicadores()
+      }
+    })()
+  </script>
+</body>
+</html>
