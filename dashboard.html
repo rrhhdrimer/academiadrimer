@@ -269,6 +269,88 @@
   }
   .modo-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
   .gestion-campos{ max-width:360px; }
+
+  /* ---------- Indicadores ---------- */
+  .ind-head-row{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; }
+  .ind-actualizar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .ind-ultima{ font-size:11.5px; color:var(--ink-soft); }
+  .btn-actualizar{
+    display:inline-flex; align-items:center; gap:7px;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+    font-family:'Poppins', sans-serif; font-size:12.5px; font-weight:600;
+    padding:9px 15px; border-radius:9px; cursor:pointer;
+  }
+  .btn-actualizar:hover{ background:#F4F4F3; border-color:var(--gold); }
+  .btn-actualizar:disabled{ opacity:0.55; cursor:not-allowed; }
+  .btn-actualizar svg{ width:15px; height:15px; }
+  .btn-actualizar.girando svg{ animation:spin 0.8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .ind-loading{ text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 0; }
+  .ind-error{ text-align:center; color:var(--rust); font-size:13px; padding:30px 0; }
+
+  .ind-bloque{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:18px 18px 20px; margin-bottom:18px;
+  }
+  .ind-bloque h3{
+    margin:0 0 4px; font-size:15.5px; font-weight:600; color:var(--ink);
+  }
+  .ind-bloque .ind-sub{ font-size:12px; color:var(--ink-soft); margin:0 0 16px; line-height:1.5; }
+
+  /* Barras de cumplimiento general */
+  .ind-barras{ display:flex; flex-direction:column; gap:14px; }
+  .ind-barra-row{ }
+  .ind-barra-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; gap:10px; }
+  .ind-barra-nombre{ font-size:13px; font-weight:600; color:var(--ink); }
+  .ind-barra-nombre small{ color:var(--ink-soft); font-weight:500; }
+  .ind-barra-valor{ font-size:13.5px; font-weight:700; color:var(--ink); flex-shrink:0; }
+  .ind-barra-track{ background:#ECEEED; border-radius:8px; height:14px; overflow:hidden; }
+  .ind-barra-fill{
+    height:100%; border-radius:8px; background:var(--green);
+    transition:width .5s ease; min-width:2px;
+  }
+  .ind-barra-fill.bajo{ background:var(--rust); }
+  .ind-barra-fill.medio{ background:var(--gold); }
+
+  /* Chips de promedio */
+  .ind-prom-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
+  .ind-prom-card{
+    border:1px solid var(--line); border-radius:10px; padding:14px; background:#FBFBFA;
+  }
+  .ind-prom-card .curso{ font-size:11px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.02em; }
+  .ind-prom-card .nota{ font-size:26px; font-weight:600; color:var(--ink); margin-top:4px; line-height:1; }
+  .ind-prom-card .nota small{ font-size:13px; color:var(--ink-soft); font-weight:500; }
+
+  /* Tabla por gerencia */
+  .ind-ger-block{ margin-bottom:22px; }
+  .ind-ger-block:last-child{ margin-bottom:0; }
+  .ind-ger-title{
+    font-size:13.5px; font-weight:600; color:var(--ink); margin:0 0 10px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .ind-ger-title svg{ width:15px; height:15px; stroke:var(--gold); }
+  .ind-tabla-wrap{ overflow-x:auto; }
+  .ind-tabla{
+    width:100%; border-collapse:collapse; font-size:12.5px; min-width:420px;
+  }
+  .ind-tabla th{
+    text-align:left; font-weight:600; color:var(--ink-soft);
+    padding:8px 10px; border-bottom:2px solid var(--line); font-size:11px;
+    text-transform:uppercase; letter-spacing:0.02em; white-space:nowrap;
+  }
+  .ind-tabla th.num, .ind-tabla td.num{ text-align:center; }
+  .ind-tabla td{
+    padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink); vertical-align:middle;
+  }
+  .ind-tabla tr:last-child td{ border-bottom:none; }
+  .ind-mini-track{ background:#ECEEED; border-radius:6px; height:8px; overflow:hidden; width:70px; display:inline-block; vertical-align:middle; margin-right:7px; }
+  .ind-mini-fill{ height:100%; background:var(--green); border-radius:6px; }
+  .ind-mini-fill.bajo{ background:var(--rust); }
+  .ind-mini-fill.medio{ background:var(--gold); }
+  .ind-pct{ font-weight:700; }
 </style>
 </head>
 <body>
@@ -314,6 +396,10 @@
       <a class="nav-item hidden" href="#" id="navGestion">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         Gestión académica
+      </a>
+      <a class="nav-item hidden" href="#" id="navIndicadores">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>
+        Indicadores
       </a>
     </nav>
 
@@ -441,6 +527,26 @@
         </div>
 
         <canvas id="certCanvasAdmin" width="4000" height="2828" style="display:none"></canvas>
+      </div>
+
+      <div id="vistaIndicadores" class="hidden">
+        <div class="page-head ind-head-row">
+          <div>
+            <h2>Indicadores</h2>
+          </div>
+          <div class="ind-actualizar">
+            <span class="ind-ultima" id="indUltima"></span>
+            <button class="btn-actualizar" id="btnActualizarInd">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Actualizar
+            </button>
+          </div>
+        </div>
+        <p class="subtitle">Avance de cumplimiento y notas de todos los cursos.</p>
+
+        <div id="indContenido">
+          <div class="ind-loading" id="indLoading">Cargando indicadores...</div>
+        </div>
       </div>
     </main>
   </div>
@@ -769,24 +875,35 @@
   // ============================================================
   const vistaCursosEl = document.getElementById('vistaCursos');
   const vistaGestionEl = document.getElementById('vistaGestion');
+  const vistaIndicadoresEl = document.getElementById('vistaIndicadores');
   const navCursos = document.getElementById('navCursos');
   const navGestion = document.getElementById('navGestion');
+  const navIndicadores = document.getElementById('navIndicadores');
 
   if(rol === 'admin'){
     navGestion.classList.remove('hidden');
+    navIndicadores.classList.remove('hidden');
   }
 
   function mostrarVista(vista){
+    // Ocultar todas las vistas y quitar "active" de todos los ítems
+    vistaCursosEl.classList.add('hidden');
+    vistaGestionEl.classList.add('hidden');
+    vistaIndicadoresEl.classList.add('hidden');
+    navCursos.classList.remove('active');
+    navGestion.classList.remove('active');
+    navIndicadores.classList.remove('active');
+
     if(vista === 'gestion'){
-      vistaCursosEl.classList.add('hidden');
       vistaGestionEl.classList.remove('hidden');
       navGestion.classList.add('active');
-      navCursos.classList.remove('active');
+    } else if(vista === 'indicadores'){
+      vistaIndicadoresEl.classList.remove('hidden');
+      navIndicadores.classList.add('active');
+      iniciarIndicadores();
     } else {
-      vistaGestionEl.classList.add('hidden');
       vistaCursosEl.classList.remove('hidden');
       navCursos.classList.add('active');
-      navGestion.classList.remove('active');
     }
     sidebar.classList.remove('open');
     overlay.classList.remove('show');
@@ -794,12 +911,11 @@
 
   navCursos.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('cursos'); });
   navGestion.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('gestion'); });
+  navIndicadores.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('indicadores'); });
 
-  // Si se llega desde el link "Gestión académica" de otra página
-  // (dashboard.html?vista=gestion), abrir esa vista directamente.
-  if(rol === 'admin' && new URLSearchParams(window.location.search).get('vista') === 'gestion'){
-    mostrarVista('gestion');
-  }
+  // NOTA: la apertura automática por URL (?vista=gestion / ?vista=indicadores)
+  // se ejecuta al final del script (ver "abrirVistaDesdeURL"), después de que
+  // toda la lógica de indicadores esté definida.
 
   function poblarSelectsCertificado(){
     const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
@@ -1166,6 +1282,182 @@
     }
     this.disabled = false;
   });
+
+  // ============================================================
+  // INDICADORES (solo admin)
+  // ============================================================
+  let indicadoresCargados = false;
+  let indTimer = null;
+  const IND_REFRESCO_MS = 5 * 60 * 1000; // 5 minutos
+
+  // Se llama la primera vez que se entra a la vista Indicadores.
+  // Arranca la carga y programa el refresco automático cada 5 minutos.
+  function iniciarIndicadores(){
+    if(!indicadoresCargados){
+      indicadoresCargados = true;
+      cargarIndicadores();
+    }
+    // (Re)programar el refresco automático mientras la vista esté activa
+    if(indTimer) clearInterval(indTimer);
+    indTimer = setInterval(function(){
+      // Solo refresca si la vista de indicadores sigue visible
+      if(!vistaIndicadoresEl.classList.contains('hidden')){
+        cargarIndicadores(true);
+      }
+    }, IND_REFRESCO_MS);
+  }
+
+  function claseSegunPct(pct){
+    if(pct >= 75) return '';        // verde
+    if(pct >= 40) return 'medio';   // dorado
+    return 'bajo';                  // rojo
+  }
+
+  async function cargarIndicadores(silencioso){
+    const cont = document.getElementById('indContenido');
+    const btn = document.getElementById('btnActualizarInd');
+
+    btn.disabled = true;
+    btn.classList.add('girando');
+
+    if(!silencioso){
+      cont.innerHTML = '<div class="ind-loading">Cargando indicadores...</div>';
+    }
+
+    try{
+      const resp = await llamarApi('getIndicadores');
+      if(!resp || !resp.ok){
+        throw new Error((resp && resp.mensaje) || 'Error');
+      }
+      renderIndicadores(resp.indicadores);
+      marcarUltimaActualizacion();
+    } catch(err){
+      cont.innerHTML = '<div class="ind-error">No pudimos cargar los indicadores. Usa el botón Actualizar para reintentar.</div>';
+    }
+
+    btn.disabled = false;
+    btn.classList.remove('girando');
+  }
+
+  function marcarUltimaActualizacion(){
+    const ahora = new Date();
+    const hh = ahora.getHours();
+    const mm = String(ahora.getMinutes()).padStart(2, '0');
+    const ampm = hh >= 12 ? 'p.m.' : 'a.m.';
+    const h12 = hh % 12 === 0 ? 12 : hh % 12;
+    document.getElementById('indUltima').textContent =
+      'Última actualización: ' + h12 + ':' + mm + ' ' + ampm;
+  }
+
+  function renderIndicadores(data){
+    const cursos = data.cursos || [];
+    const gerencias = data.gerencias || [];
+
+    if(!cursos.length){
+      document.getElementById('indContenido').innerHTML =
+        '<div class="ind-error">Todavía no hay cursos activos para mostrar.</div>';
+      return;
+    }
+
+    let html = '';
+
+    // ---- BLOQUE 1: Cumplimiento general por curso ----
+    html += '<div class="ind-bloque">';
+    html += '<h3>Cumplimiento por curso</h3>';
+    html += '<p class="ind-sub">% de personas que aprobaron el examen final, sobre quienes ya lo rindieron.</p>';
+    html += '<div class="ind-barras">';
+    cursos.forEach(function(c){
+      const pct = c.cumplimientoGeneral || 0;
+      html +=
+        '<div class="ind-barra-row">' +
+          '<div class="ind-barra-top">' +
+            '<span class="ind-barra-nombre">' + c.codigo + ' <small>· ' + escapeHtml(c.nombre) + '</small></span>' +
+            '<span class="ind-barra-valor">' + pct + '%</span>' +
+          '</div>' +
+          '<div class="ind-barra-track">' +
+            '<div class="ind-barra-fill ' + claseSegunPct(pct) + '" style="width:' + pct + '%"></div>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+
+    // ---- BLOQUE 2: Nota promedio general por curso ----
+    html += '<div class="ind-bloque">';
+    html += '<h3>Nota promedio por curso</h3>';
+    html += '<p class="ind-sub">Promedio de la mejor nota de cada persona, sobre 20.</p>';
+    html += '<div class="ind-prom-grid">';
+    cursos.forEach(function(c){
+      html +=
+        '<div class="ind-prom-card">' +
+          '<div class="curso">' + c.codigo + '</div>' +
+          '<div class="nota">' + (c.promedioGeneral != null ? c.promedioGeneral.toFixed(1) : '0.0') + ' <small>/ 20</small></div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+
+    // ---- BLOQUE 3: Cumplimiento por gerencia (una tabla por gerencia) ----
+    html += '<div class="ind-bloque">';
+    html += '<h3>Cumplimiento por gerencia</h3>';
+    html += '<p class="ind-sub">Avance de cada curso dentro de cada gerencia: cuántos aprobaron y con qué nota promedio.</p>';
+
+    if(!gerencias.length){
+      html += '<p class="ind-sub" style="margin:0;">No hay gerencias registradas en los colaboradores.</p>';
+    } else {
+      gerencias.forEach(function(g){
+        html += '<div class="ind-ger-block">';
+        html += '<div class="ind-ger-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/></svg>' + escapeHtml(g) + '</div>';
+        html += '<div class="ind-tabla-wrap"><table class="ind-tabla"><thead><tr>' +
+                  '<th>Curso</th>' +
+                  '<th class="num">Terminaron</th>' +
+                  '<th class="num">Aprobados</th>' +
+                  '<th>Cumplimiento</th>' +
+                  '<th class="num">Promedio</th>' +
+                '</tr></thead><tbody>';
+        cursos.forEach(function(c){
+          const st = (c.porGerencia && c.porGerencia[g]) || { total:0, aprobados:0, cumplimiento:0, promedio:0 };
+          const pct = st.cumplimiento || 0;
+          html +=
+            '<tr>' +
+              '<td><strong>' + c.codigo + '</strong></td>' +
+              '<td class="num">' + (st.total || 0) + '</td>' +
+              '<td class="num">' + (st.aprobados || 0) + '</td>' +
+              '<td>' +
+                '<span class="ind-mini-track"><span class="ind-mini-fill ' + claseSegunPct(pct) + '" style="width:' + pct + '%"></span></span>' +
+                '<span class="ind-pct">' + pct + '%</span>' +
+              '</td>' +
+              '<td class="num">' + (st.promedio != null ? st.promedio.toFixed(1) : '0.0') + '</td>' +
+            '</tr>';
+        });
+        html += '</tbody></table></div></div>';
+      });
+    }
+    html += '</div>';
+
+    document.getElementById('indContenido').innerHTML = html;
+  }
+
+  function escapeHtml(str){
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  document.getElementById('btnActualizarInd').addEventListener('click', function(){
+    cargarIndicadores();
+  });
+
+  // Si se llega desde el link de otra página (dashboard.html?vista=gestion
+  // o dashboard.html?vista=indicadores), abrir esa vista directamente.
+  // Se ejecuta aquí, al final, para que iniciarIndicadores() y sus variables
+  // ya estén definidas cuando se llame.
+  if(rol === 'admin'){
+    const vistaParam = new URLSearchParams(window.location.search).get('vista');
+    if(vistaParam === 'gestion'){
+      mostrarVista('gestion');
+    } else if(vistaParam === 'indicadores'){
+      mostrarVista('indicadores');
+    }
+  }
 
   init();
 </script>
