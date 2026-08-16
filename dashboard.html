@@ -272,9 +272,7 @@
 
   /* ---------- Indicadores ---------- */
   .ind-head-row{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; }
-  .ind-actualizar{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-  }
+  .ind-actualizar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .ind-ultima{ font-size:11.5px; color:var(--ink-soft); }
   .btn-actualizar{
     display:inline-flex; align-items:center; gap:7px;
@@ -288,69 +286,87 @@
   .btn-actualizar.girando svg{ animation:spin 0.8s linear infinite; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 
+  /* Selector de ruta/curso */
+  .ind-selector{
+    display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; margin-bottom:18px;
+  }
+  .ind-sel-group{ display:flex; flex-direction:column; gap:6px; }
+  .ind-sel-label{ font-size:11px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.02em; }
+  .ind-modo-toggle{ display:flex; gap:8px; }
+  .ind-modo-btn{
+    border:1px solid var(--line); background:#FBFBFA; color:var(--ink-soft);
+    font-size:12.5px; font-weight:600; padding:9px 15px; border-radius:20px; cursor:pointer;
+    font-family:'Poppins', sans-serif;
+  }
+  .ind-modo-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .ind-select{
+    border:1px solid var(--line); background:#FBFBFA; color:var(--ink);
+    font-family:'Poppins', sans-serif; font-size:13.5px; font-weight:500;
+    padding:9px 13px; border-radius:9px; min-width:230px; cursor:pointer;
+  }
+  .ind-select:focus{ outline:none; border-color:var(--gold); background:#fff; }
+
   .ind-loading{ text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 0; }
   .ind-error{ text-align:center; color:var(--rust); font-size:13px; padding:30px 0; }
 
   .ind-bloque{
     background:var(--card); border:1px solid var(--line); border-radius:12px;
-    padding:18px 18px 20px; margin-bottom:18px;
+    padding:18px 18px 22px; margin-bottom:18px;
   }
-  .ind-bloque h3{
-    margin:0 0 4px; font-size:15.5px; font-weight:600; color:var(--ink);
-  }
-  .ind-bloque .ind-sub{ font-size:12px; color:var(--ink-soft); margin:0 0 16px; line-height:1.5; }
+  .ind-bloque h3{ margin:0 0 4px; font-size:15.5px; font-weight:600; color:var(--ink); }
+  .ind-bloque .ind-sub{ font-size:12px; color:var(--ink-soft); margin:0 0 18px; line-height:1.5; }
 
-  /* Barras de cumplimiento general */
-  .ind-barras{ display:flex; flex-direction:column; gap:14px; }
-  .ind-barra-row{ }
-  .ind-barra-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; gap:10px; }
-  .ind-barra-nombre{ font-size:13px; font-weight:600; color:var(--ink); }
-  .ind-barra-nombre small{ color:var(--ink-soft); font-weight:500; }
-  .ind-barra-valor{ font-size:13.5px; font-weight:700; color:var(--ink); flex-shrink:0; }
-  .ind-barra-track{ background:#ECEEED; border-radius:8px; height:14px; overflow:hidden; }
-  .ind-barra-fill{
-    height:100%; border-radius:8px; background:var(--green);
-    transition:width .5s ease; min-width:2px;
+  /* Destacado grande (aprobó todos / cumplimiento de un curso) */
+  .ind-hero{
+    display:flex; flex-wrap:wrap; gap:22px; align-items:center;
+    background:linear-gradient(135deg, #14203A 0%, #24344f 100%);
+    border:none; border-radius:12px; padding:22px 24px; margin-bottom:18px;
   }
-  .ind-barra-fill.bajo{ background:var(--rust); }
-  .ind-barra-fill.medio{ background:var(--gold); }
+  .ind-hero .hero-num{ font-size:52px; font-weight:600; color:#fff; line-height:1; }
+  .ind-hero .hero-num small{ font-size:22px; color:var(--gold-soft); }
+  .ind-hero .hero-info{ flex:1; min-width:200px; }
+  .ind-hero .hero-title{ font-size:15px; font-weight:600; color:#fff; margin:0 0 4px; }
+  .ind-hero .hero-desc{ font-size:12px; color:rgba(255,255,255,0.7); margin:0; line-height:1.5; }
+  .ind-hero .hero-frac{ font-size:13px; color:var(--gold-soft); font-weight:600; margin-top:6px; }
 
-  /* Chips de promedio */
-  .ind-prom-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
+  /* ---------- Gráfico de barras verticales (SVG) ---------- */
+  .ind-chart{ width:100%; }
+  .ind-chart svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .ind-bar-rect{ transition:height .5s ease, y .5s ease; }
+  .ind-chart-legend{
+    display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; font-size:11.5px; color:var(--ink-soft);
+  }
+  .ind-chart-legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .ind-legend-dot{ width:11px; height:11px; border-radius:3px; display:inline-block; }
+
+  /* Tarjetas de promedio con color */
+  .ind-prom-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px; }
   .ind-prom-card{
-    border:1px solid var(--line); border-radius:10px; padding:14px; background:#FBFBFA;
+    border-radius:12px; padding:16px 16px 18px; color:#fff; position:relative; overflow:hidden;
+    min-height:112px; display:flex; flex-direction:column; justify-content:space-between;
   }
-  .ind-prom-card .curso{ font-size:11px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.02em; }
-  .ind-prom-card .nota{ font-size:26px; font-weight:600; color:var(--ink); margin-top:4px; line-height:1; }
-  .ind-prom-card .nota small{ font-size:13px; color:var(--ink-soft); font-weight:500; }
+  .ind-prom-card .curso-nom{ font-size:12.5px; font-weight:600; line-height:1.35; z-index:1; }
+  .ind-prom-card .curso-cod{ font-size:10.5px; font-weight:600; opacity:0.8; text-transform:uppercase; letter-spacing:0.03em; }
+  .ind-prom-card .nota-big{ font-size:34px; font-weight:700; line-height:1; z-index:1; }
+  .ind-prom-card .nota-big small{ font-size:14px; font-weight:500; opacity:0.85; }
+  .ind-prom-card.nivel-alto{ background:linear-gradient(135deg, #3E6957 0%, #4d8069 100%); }
+  .ind-prom-card.nivel-medio{ background:linear-gradient(135deg, #B8933F 0%, #cba556 100%); }
+  .ind-prom-card.nivel-bajo{ background:linear-gradient(135deg, #9C4A38 0%, #b85a45 100%); }
 
-  /* Tabla por gerencia */
-  .ind-ger-block{ margin-bottom:22px; }
-  .ind-ger-block:last-child{ margin-bottom:0; }
-  .ind-ger-title{
-    font-size:13.5px; font-weight:600; color:var(--ink); margin:0 0 10px;
+  /* Bloques por gerencia con su gráfico */
+  .ind-ger-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:920px){ .ind-ger-grid{ grid-template-columns:1fr 1fr; } }
+  .ind-ger-card{
+    border:1px solid var(--line); border-radius:12px; padding:16px 16px 18px; background:#FBFBFA;
+  }
+  .ind-ger-card h4{
+    margin:0 0 3px; font-size:14px; font-weight:600; color:var(--ink);
     display:flex; align-items:center; gap:7px;
   }
-  .ind-ger-title svg{ width:15px; height:15px; stroke:var(--gold); }
-  .ind-tabla-wrap{ overflow-x:auto; }
-  .ind-tabla{
-    width:100%; border-collapse:collapse; font-size:12.5px; min-width:420px;
-  }
-  .ind-tabla th{
-    text-align:left; font-weight:600; color:var(--ink-soft);
-    padding:8px 10px; border-bottom:2px solid var(--line); font-size:11px;
-    text-transform:uppercase; letter-spacing:0.02em; white-space:nowrap;
-  }
-  .ind-tabla th.num, .ind-tabla td.num{ text-align:center; }
-  .ind-tabla td{
-    padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink); vertical-align:middle;
-  }
-  .ind-tabla tr:last-child td{ border-bottom:none; }
-  .ind-mini-track{ background:#ECEEED; border-radius:6px; height:8px; overflow:hidden; width:70px; display:inline-block; vertical-align:middle; margin-right:7px; }
-  .ind-mini-fill{ height:100%; background:var(--green); border-radius:6px; }
-  .ind-mini-fill.bajo{ background:var(--rust); }
-  .ind-mini-fill.medio{ background:var(--gold); }
-  .ind-pct{ font-weight:700; }
+  .ind-ger-card h4 svg{ width:15px; height:15px; stroke:var(--gold); flex-shrink:0; }
+  .ind-ger-card .ger-meta{ font-size:11px; color:var(--ink-soft); margin:0 0 14px; }
 </style>
 </head>
 <body>
@@ -542,7 +558,27 @@
             </button>
           </div>
         </div>
-        <p class="subtitle">Avance de cumplimiento y notas de todos los cursos.</p>
+        <p class="subtitle">Avance de cumplimiento y notas.</p>
+
+        <div class="ind-selector">
+          <div class="ind-sel-group">
+            <label class="ind-sel-label">Ver por</label>
+            <div class="ind-modo-toggle">
+              <button type="button" class="ind-modo-btn active" data-modo="ruta">Ruta / Programa</button>
+              <button type="button" class="ind-modo-btn" data-modo="curso">Curso individual</button>
+            </div>
+          </div>
+
+          <div class="ind-sel-group" id="grupoSelectRuta">
+            <label class="ind-sel-label" for="selectRutaInd">Ruta</label>
+            <select id="selectRutaInd" class="ind-select"></select>
+          </div>
+
+          <div class="ind-sel-group hidden" id="grupoSelectCurso">
+            <label class="ind-sel-label" for="selectCursoInd">Curso</label>
+            <select id="selectCursoInd" class="ind-select"></select>
+          </div>
+        </div>
 
         <div id="indContenido">
           <div class="ind-loading" id="indLoading">Cargando indicadores...</div>
@@ -1288,29 +1324,40 @@
   // ============================================================
   let indicadoresCargados = false;
   let indTimer = null;
+  let indModo = 'ruta';        // 'ruta' | 'curso'
+  let indRuta = '';            // ruta seleccionada
+  let indCurso = '';           // curso seleccionado
+  let indSelectoresListos = false;
   const IND_REFRESCO_MS = 5 * 60 * 1000; // 5 minutos
 
+  // Colores de las barras según nivel de cumplimiento (paleta del proyecto)
+  const COLOR_ALTO  = '#3E6957'; // verde
+  const COLOR_MEDIO = '#B8933F'; // dorado
+  const COLOR_BAJO  = '#9C4A38'; // rust
+
+  function colorSegunPct(pct){
+    if(pct >= 75) return COLOR_ALTO;
+    if(pct >= 40) return COLOR_MEDIO;
+    return COLOR_BAJO;
+  }
+  function nivelSegunNota(nota){
+    if(nota >= 15) return 'nivel-alto';
+    if(nota >= 13) return 'nivel-medio';
+    return 'nivel-bajo';
+  }
+
   // Se llama la primera vez que se entra a la vista Indicadores.
-  // Arranca la carga y programa el refresco automático cada 5 minutos.
   function iniciarIndicadores(){
     if(!indicadoresCargados){
       indicadoresCargados = true;
       cargarIndicadores();
     }
-    // (Re)programar el refresco automático mientras la vista esté activa
     if(indTimer) clearInterval(indTimer);
     indTimer = setInterval(function(){
-      // Solo refresca si la vista de indicadores sigue visible
       if(!vistaIndicadoresEl.classList.contains('hidden')){
         cargarIndicadores(true);
       }
     }, IND_REFRESCO_MS);
-  }
-
-  function claseSegunPct(pct){
-    if(pct >= 75) return '';        // verde
-    if(pct >= 40) return 'medio';   // dorado
-    return 'bajo';                  // rojo
   }
 
   async function cargarIndicadores(silencioso){
@@ -1325,10 +1372,11 @@
     }
 
     try{
-      const resp = await llamarApi('getIndicadores');
+      const resp = await llamarApi('getIndicadores', { modo: indModo, ruta: indRuta, curso: indCurso });
       if(!resp || !resp.ok){
         throw new Error((resp && resp.mensaje) || 'Error');
       }
+      poblarSelectoresIndicadores(resp.indicadores);
       renderIndicadores(resp.indicadores);
       marcarUltimaActualizacion();
     } catch(err){
@@ -1337,6 +1385,53 @@
 
     btn.disabled = false;
     btn.classList.remove('girando');
+  }
+
+  // Llena los <select> de ruta y curso la primera vez (y ajusta el estado).
+  function poblarSelectoresIndicadores(data){
+    const selRuta = document.getElementById('selectRutaInd');
+    const selCurso = document.getElementById('selectCursoInd');
+
+    if(!indSelectoresListos){
+      // Rutas
+      selRuta.innerHTML = '';
+      (data.rutas || []).forEach(function(r){
+        const opt = document.createElement('option');
+        opt.value = r; opt.textContent = r;
+        selRuta.appendChild(opt);
+      });
+      if(!data.rutas || !data.rutas.length){
+        const opt = document.createElement('option');
+        opt.value = ''; opt.textContent = '(sin rutas)';
+        selRuta.appendChild(opt);
+      }
+
+      // Cursos
+      selCurso.innerHTML = '';
+      (data.listaCursos || []).forEach(function(c){
+        const opt = document.createElement('option');
+        opt.value = c.codigo;
+        opt.textContent = c.nombre + (c.ruta ? '' : ' (suelto)');
+        selCurso.appendChild(opt);
+      });
+
+      indSelectoresListos = true;
+    }
+
+    // Reflejar la selección efectiva que devolvió el backend
+    if(data.modo === 'ruta' && data.rutaSeleccionada){
+      indRuta = data.rutaSeleccionada;
+      selRuta.value = data.rutaSeleccionada;
+    }
+    if(data.modo === 'curso' && data.cursoSeleccionado){
+      indCurso = data.cursoSeleccionado;
+      selCurso.value = data.cursoSeleccionado;
+    }
+    // Si aún no hay curso elegido pero estamos en modo curso, tomar el primero
+    if(indModo === 'curso' && !indCurso && selCurso.options.length){
+      indCurso = selCurso.options[0].value;
+      selCurso.value = indCurso;
+    }
   }
 
   function marcarUltimaActualizacion(){
@@ -1349,91 +1444,183 @@
       'Última actualización: ' + h12 + ':' + mm + ' ' + ampm;
   }
 
+  // ---- Generador de gráfico de barras verticales en SVG ----
+  // items: [{ label, pct, aprobados, total }]
+  function barChartSVG(items, opts){
+    opts = opts || {};
+    const n = items.length;
+    if(!n) return '';
+
+    const W = opts.width || 620;
+    const H = opts.height || 260;
+    const padTop = 22;
+    const padBottom = opts.labelLines === 2 ? 54 : 40;
+    const padLeft = 34;
+    const padRight = 10;
+    const chartW = W - padLeft - padRight;
+    const chartH = H - padTop - padBottom;
+    const slot = chartW / n;
+    const barW = Math.min(opts.maxBarW || 70, slot * 0.6);
+
+    let svg = '<div class="ind-chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
+
+    // Líneas guía horizontales (0/25/50/75/100) + etiquetas del eje
+    [0,25,50,75,100].forEach(function(v){
+      const y = padTop + chartH * (1 - v/100);
+      svg += '<line x1="' + padLeft + '" y1="' + y + '" x2="' + (W - padRight) + '" y2="' + y +
+             '" stroke="#E5E7E6" stroke-width="1"/>';
+      svg += '<text x="' + (padLeft - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="9" fill="#9AA0A6" font-family="Poppins">' + v + '</text>';
+    });
+
+    items.forEach(function(it, i){
+      const cx = padLeft + slot * i + slot/2;
+      const x = cx - barW/2;
+      const pct = Math.max(0, Math.min(100, it.pct || 0));
+      const barH = chartH * (pct/100);
+      const y = padTop + chartH - barH;
+      const color = colorSegunPct(pct);
+
+      // Barra
+      svg += '<rect class="ind-bar-rect" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) +
+             '" width="' + barW.toFixed(1) + '" height="' + Math.max(0.5, barH).toFixed(1) +
+             '" rx="5" fill="' + color + '"/>';
+
+      // % encima de la barra
+      svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 6).toFixed(1) +
+             '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#14203A" font-family="Poppins">' + pct + '%</text>';
+
+      // Números que hacen el % (aprobados/total) dentro o bajo el %
+      if(it.aprobados != null && it.total != null){
+        svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 20).toFixed(1) +
+               '" text-anchor="middle" font-size="9.5" font-weight="600" fill="#6B7280" font-family="Poppins">' +
+               it.aprobados + '/' + it.total + '</text>';
+      }
+
+      // Etiqueta debajo (puede ser 2 líneas)
+      const label = it.label || '';
+      if(opts.labelLines === 2 && label.indexOf('|') >= 0){
+        const parts = label.split('|');
+        svg += '<text x="' + cx.toFixed(1) + '" y="' + (padTop + chartH + 16) +
+               '" text-anchor="middle" font-size="10.5" font-weight="700" fill="#14203A" font-family="Poppins">' + escapeHtml(parts[0]) + '</text>';
+        svg += '<text x="' + cx.toFixed(1) + '" y="' + (padTop + chartH + 30) +
+               '" text-anchor="middle" font-size="9" fill="#6B7280" font-family="Poppins">' + escapeHtml(cortar(parts[1], 16)) + '</text>';
+      } else {
+        svg += '<text x="' + cx.toFixed(1) + '" y="' + (padTop + chartH + 18) +
+               '" text-anchor="middle" font-size="11" font-weight="600" fill="#14203A" font-family="Poppins">' + escapeHtml(label) + '</text>';
+      }
+    });
+
+    svg += '</svg></div>';
+    return svg;
+  }
+
+  function cortar(str, max){
+    str = String(str || '').trim();
+    return str.length > max ? str.slice(0, max - 1) + '…' : str;
+  }
+
   function renderIndicadores(data){
     const cursos = data.cursos || [];
     const gerencias = data.gerencias || [];
+    const cont = document.getElementById('indContenido');
 
     if(!cursos.length){
-      document.getElementById('indContenido').innerHTML =
-        '<div class="ind-error">Todavía no hay cursos activos para mostrar.</div>';
+      cont.innerHTML = '<div class="ind-error">No hay cursos para esta selección.</div>';
       return;
     }
 
+    const esRuta = data.modo === 'ruta';
     let html = '';
 
-    // ---- BLOQUE 1: Cumplimiento general por curso ----
+    // ============ HERO: cumplimiento global ============
+    if(esRuta && data.cumplimientoTodos){
+      const ct = data.cumplimientoTodos;
+      html +=
+        '<div class="ind-hero">' +
+          '<div class="hero-num">' + ct.cumplimiento + '<small>%</small></div>' +
+          '<div class="hero-info">' +
+            '<p class="hero-title">Completaron toda la ruta</p>' +
+            '<p class="hero-desc">% de estudiantes que aprobaron los ' + ct.cantidadCursos + ' cursos de la ruta, sobre el total de estudiantes matriculados.</p>' +
+            '<p class="hero-frac">' + ct.aprobados + ' de ' + ct.total + ' estudiantes</p>' +
+          '</div>' +
+        '</div>';
+    }
+
+    // ============ BLOQUE 1: Cumplimiento por curso (barras verticales) ============
     html += '<div class="ind-bloque">';
     html += '<h3>Cumplimiento por curso</h3>';
-    html += '<p class="ind-sub">% de personas que aprobaron el examen final, sobre quienes ya lo rindieron.</p>';
-    html += '<div class="ind-barras">';
-    cursos.forEach(function(c){
-      const pct = c.cumplimientoGeneral || 0;
-      html +=
-        '<div class="ind-barra-row">' +
-          '<div class="ind-barra-top">' +
-            '<span class="ind-barra-nombre">' + c.codigo + ' <small>· ' + escapeHtml(c.nombre) + '</small></span>' +
-            '<span class="ind-barra-valor">' + pct + '%</span>' +
-          '</div>' +
-          '<div class="ind-barra-track">' +
-            '<div class="ind-barra-fill ' + claseSegunPct(pct) + '" style="width:' + pct + '%"></div>' +
-          '</div>' +
-        '</div>';
+    html += '<p class="ind-sub">% de estudiantes que aprobaron el examen final, sobre el total de estudiantes matriculados. El número sobre cada barra muestra aprobados/matriculados.</p>';
+    const itemsCurso = cursos.map(function(c){
+      return { label: c.codigo, pct: c.cumplimientoGeneral || 0, aprobados: c.aprobados, total: c.total };
     });
-    html += '</div></div>';
+    html += barChartSVG(itemsCurso, { height: cursos.length > 3 ? 270 : 250 });
+    // Leyenda de qué curso es cada código
+    html += '<div class="ind-chart-legend">';
+    cursos.forEach(function(c){
+      html += '<span><span class="ind-legend-dot" style="background:' + colorSegunPct(c.cumplimientoGeneral||0) + '"></span><strong>' + c.codigo + '</strong> · ' + escapeHtml(c.nombre) + '</span>';
+    });
+    html += '</div>';
+    html += '</div>';
 
-    // ---- BLOQUE 2: Nota promedio general por curso ----
+    // ============ BLOQUE 2: Nota promedio por curso (tarjetas de color) ============
     html += '<div class="ind-bloque">';
     html += '<h3>Nota promedio por curso</h3>';
-    html += '<p class="ind-sub">Promedio de la mejor nota de cada persona, sobre 20.</p>';
+    html += '<p class="ind-sub">Promedio de la mejor nota de cada estudiante que rindió, sobre 20.</p>';
     html += '<div class="ind-prom-grid">';
     cursos.forEach(function(c){
+      const nota = c.promedioGeneral != null ? c.promedioGeneral : 0;
       html +=
-        '<div class="ind-prom-card">' +
-          '<div class="curso">' + c.codigo + '</div>' +
-          '<div class="nota">' + (c.promedioGeneral != null ? c.promedioGeneral.toFixed(1) : '0.0') + ' <small>/ 20</small></div>' +
+        '<div class="ind-prom-card ' + nivelSegunNota(nota) + '">' +
+          '<div><div class="curso-cod">' + c.codigo + '</div>' +
+          '<div class="curso-nom">' + escapeHtml(c.nombre) + '</div></div>' +
+          '<div class="nota-big">' + nota.toFixed(1) + ' <small>/ 20</small></div>' +
         '</div>';
     });
     html += '</div></div>';
 
-    // ---- BLOQUE 3: Cumplimiento por gerencia (una tabla por gerencia) ----
+    // ============ BLOQUE 3: Cumplimiento por gerencia (un gráfico por gerencia) ============
     html += '<div class="ind-bloque">';
     html += '<h3>Cumplimiento por gerencia</h3>';
-    html += '<p class="ind-sub">Avance de cada curso dentro de cada gerencia: cuántos aprobaron y con qué nota promedio.</p>';
+    html += '<p class="ind-sub">Mismo indicador, desglosado por gerencia. Cada barra es un curso; el número muestra aprobados/matriculados de esa gerencia.</p>';
 
     if(!gerencias.length){
-      html += '<p class="ind-sub" style="margin:0;">No hay gerencias registradas en los colaboradores.</p>';
+      html += '<p class="ind-sub" style="margin:0;">No hay gerencias registradas en los estudiantes.</p>';
     } else {
+      html += '<div class="ind-ger-grid">';
       gerencias.forEach(function(g){
-        html += '<div class="ind-ger-block">';
-        html += '<div class="ind-ger-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/></svg>' + escapeHtml(g) + '</div>';
-        html += '<div class="ind-tabla-wrap"><table class="ind-tabla"><thead><tr>' +
-                  '<th>Curso</th>' +
-                  '<th class="num">Terminaron</th>' +
-                  '<th class="num">Aprobados</th>' +
-                  '<th>Cumplimiento</th>' +
-                  '<th class="num">Promedio</th>' +
-                '</tr></thead><tbody>';
-        cursos.forEach(function(c){
-          const st = (c.porGerencia && c.porGerencia[g]) || { total:0, aprobados:0, cumplimiento:0, promedio:0 };
-          const pct = st.cumplimiento || 0;
-          html +=
-            '<tr>' +
-              '<td><strong>' + c.codigo + '</strong></td>' +
-              '<td class="num">' + (st.total || 0) + '</td>' +
-              '<td class="num">' + (st.aprobados || 0) + '</td>' +
-              '<td>' +
-                '<span class="ind-mini-track"><span class="ind-mini-fill ' + claseSegunPct(pct) + '" style="width:' + pct + '%"></span></span>' +
-                '<span class="ind-pct">' + pct + '%</span>' +
-              '</td>' +
-              '<td class="num">' + (st.promedio != null ? st.promedio.toFixed(1) : '0.0') + '</td>' +
-            '</tr>';
+        // Total de estudiantes de la gerencia (lo tomamos del primer curso)
+        const totalG = cursos[0] && cursos[0].porGerencia[g] ? cursos[0].porGerencia[g].total : 0;
+
+        html += '<div class="ind-ger-card">';
+        html += '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/></svg>' + escapeHtml(g) + '</h4>';
+        html += '<p class="ger-meta">' + totalG + ' estudiante' + (totalG === 1 ? '' : 's') + ' matriculado' + (totalG === 1 ? '' : 's') + '</p>';
+
+        const itemsG = cursos.map(function(c){
+          const st = c.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
+          return { label: c.codigo, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
         });
-        html += '</tbody></table></div></div>';
+        html += barChartSVG(itemsG, { height: 220, width: 500 });
+        html += '</div>';
       });
+      html += '</div>';
     }
     html += '</div>';
 
-    document.getElementById('indContenido').innerHTML = html;
+    // ============ BLOQUE 4: "Aprobó toda la ruta" por gerencia (barras) ============
+    if(esRuta && data.cumplimientoTodos){
+      const ct = data.cumplimientoTodos;
+      html += '<div class="ind-bloque">';
+      html += '<h3>Completaron toda la ruta, por gerencia</h3>';
+      html += '<p class="ind-sub">% de estudiantes que aprobaron los ' + ct.cantidadCursos + ' cursos de la ruta, por gerencia. El número muestra cuántos completaron sobre el total de la gerencia.</p>';
+      const itemsTodos = gerencias.map(function(g){
+        const st = ct.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
+        return { label: g, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
+      });
+      html += barChartSVG(itemsTodos, { height: 250, labelLines: 1, maxBarW: 60 });
+      html += '</div>';
+    }
+
+    cont.innerHTML = html;
   }
 
   function escapeHtml(str){
@@ -1445,6 +1632,34 @@
   document.getElementById('btnActualizarInd').addEventListener('click', function(){
     cargarIndicadores();
   });
+
+  // Toggle Ruta / Curso
+  document.querySelectorAll('.ind-modo-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const modo = btn.dataset.modo;
+      if(modo === indModo) return;
+      indModo = modo;
+      document.querySelectorAll('.ind-modo-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      // Mostrar el selector correspondiente
+      document.getElementById('grupoSelectRuta').classList.toggle('hidden', modo !== 'ruta');
+      document.getElementById('grupoSelectCurso').classList.toggle('hidden', modo !== 'curso');
+      cargarIndicadores();
+    });
+  });
+
+  // Cambio de ruta
+  document.getElementById('selectRutaInd').addEventListener('change', function(){
+    indRuta = this.value;
+    cargarIndicadores();
+  });
+
+  // Cambio de curso
+  document.getElementById('selectCursoInd').addEventListener('change', function(){
+    indCurso = this.value;
+    cargarIndicadores();
+  });
+
 
   // Si se llega desde el link de otra página (dashboard.html?vista=gestion
   // o dashboard.html?vista=indicadores), abrir esa vista directamente.
