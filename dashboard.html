@@ -1446,21 +1446,68 @@
 
   // ---- Generador de gráfico de barras verticales en SVG ----
   // items: [{ label, pct, aprobados, total }]
+  // Las etiquetas (nombre completo) se parten automáticamente en varias líneas.
   function barChartSVG(items, opts){
     opts = opts || {};
     const n = items.length;
     if(!n) return '';
 
     const W = opts.width || 620;
-    const H = opts.height || 260;
-    const padTop = 22;
-    const padBottom = opts.labelLines === 2 ? 54 : 40;
+    const padTop = 26;
     const padLeft = 34;
     const padRight = 10;
     const chartW = W - padLeft - padRight;
-    const chartH = H - padTop - padBottom;
     const slot = chartW / n;
-    const barW = Math.min(opts.maxBarW || 70, slot * 0.6);
+    const barW = Math.min(opts.maxBarW || 70, slot * 0.62);
+
+    // --- Partir cada etiqueta en líneas según el ancho disponible por barra ---
+    // Estimamos ~5px por carácter a font-size 9.5. maxChars por línea según el slot.
+    const fontLabel = 9.5;
+    const charW = fontLabel * 0.55;
+    const maxChars = Math.max(8, Math.floor((slot - 4) / charW));
+    const maxLineas = 3;
+
+    function partirEtiqueta(texto){
+      const palabras = String(texto || '').trim().split(/\s+/);
+      const lineas = [];
+      let actual = '';
+      palabras.forEach(function(p){
+        // Si una sola palabra es larguísima, la cortamos con guion
+        if(p.length > maxChars){
+          if(actual){ lineas.push(actual); actual = ''; }
+          while(p.length > maxChars){
+            lineas.push(p.slice(0, maxChars - 1) + '-');
+            p = p.slice(maxChars - 1);
+          }
+          actual = p;
+          return;
+        }
+        const prueba = actual ? actual + ' ' + p : p;
+        if(prueba.length > maxChars){
+          if(actual) lineas.push(actual);
+          actual = p;
+        } else {
+          actual = prueba;
+        }
+      });
+      if(actual) lineas.push(actual);
+      // Limitar a maxLineas; si sobra, meter "…" en la última
+      if(lineas.length > maxLineas){
+        const cortadas = lineas.slice(0, maxLineas);
+        cortadas[maxLineas - 1] = cortadas[maxLineas - 1].replace(/.$/, '') + '…';
+        return cortadas;
+      }
+      return lineas;
+    }
+
+    // Precalcular las líneas de cada etiqueta y cuántas líneas usa la más alta
+    const lineasPorItem = items.map(function(it){ return partirEtiqueta(it.label); });
+    const maxLineasUsadas = lineasPorItem.reduce(function(m, l){ return Math.max(m, l.length); }, 1);
+
+    const lineH = 11;                              // alto de cada línea de etiqueta
+    const padBottom = 16 + maxLineasUsadas * lineH; // espacio dinámico para el nombre
+    const H = (opts.height || 260);
+    const chartH = H - padTop - padBottom;
 
     let svg = '<div class="ind-chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
 
@@ -1489,34 +1536,25 @@
       svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 6).toFixed(1) +
              '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#14203A" font-family="Poppins">' + pct + '%</text>';
 
-      // Números que hacen el % (aprobados/total) dentro o bajo el %
+      // Números que hacen el % (aprobados/total)
       if(it.aprobados != null && it.total != null){
         svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 20).toFixed(1) +
                '" text-anchor="middle" font-size="9.5" font-weight="600" fill="#6B7280" font-family="Poppins">' +
                it.aprobados + '/' + it.total + '</text>';
       }
 
-      // Etiqueta debajo (puede ser 2 líneas)
-      const label = it.label || '';
-      if(opts.labelLines === 2 && label.indexOf('|') >= 0){
-        const parts = label.split('|');
-        svg += '<text x="' + cx.toFixed(1) + '" y="' + (padTop + chartH + 16) +
-               '" text-anchor="middle" font-size="10.5" font-weight="700" fill="#14203A" font-family="Poppins">' + escapeHtml(parts[0]) + '</text>';
-        svg += '<text x="' + cx.toFixed(1) + '" y="' + (padTop + chartH + 30) +
-               '" text-anchor="middle" font-size="9" fill="#6B7280" font-family="Poppins">' + escapeHtml(cortar(parts[1], 16)) + '</text>';
-      } else {
-        svg += '<text x="' + cx.toFixed(1) + '" y="' + (padTop + chartH + 18) +
-               '" text-anchor="middle" font-size="11" font-weight="600" fill="#14203A" font-family="Poppins">' + escapeHtml(label) + '</text>';
-      }
+      // Etiqueta (nombre completo) partida en varias líneas, debajo del eje
+      const lineas = lineasPorItem[i];
+      const baseY = padTop + chartH + 14;
+      lineas.forEach(function(linea, li){
+        svg += '<text x="' + cx.toFixed(1) + '" y="' + (baseY + li * lineH).toFixed(1) +
+               '" text-anchor="middle" font-size="' + fontLabel + '" font-weight="600" fill="#14203A" font-family="Poppins">' +
+               escapeHtml(linea) + '</text>';
+      });
     });
 
     svg += '</svg></div>';
     return svg;
-  }
-
-  function cortar(str, max){
-    str = String(str || '').trim();
-    return str.length > max ? str.slice(0, max - 1) + '…' : str;
   }
 
   function renderIndicadores(data){
@@ -1551,15 +1589,9 @@
     html += '<h3>Cumplimiento por curso</h3>';
     html += '<p class="ind-sub">% de estudiantes que aprobaron el examen final, sobre el total de estudiantes matriculados. El número sobre cada barra muestra aprobados/matriculados.</p>';
     const itemsCurso = cursos.map(function(c){
-      return { label: c.codigo, pct: c.cumplimientoGeneral || 0, aprobados: c.aprobados, total: c.total };
+      return { label: c.nombre, pct: c.cumplimientoGeneral || 0, aprobados: c.aprobados, total: c.total };
     });
-    html += barChartSVG(itemsCurso, { height: cursos.length > 3 ? 270 : 250 });
-    // Leyenda de qué curso es cada código
-    html += '<div class="ind-chart-legend">';
-    cursos.forEach(function(c){
-      html += '<span><span class="ind-legend-dot" style="background:' + colorSegunPct(c.cumplimientoGeneral||0) + '"></span><strong>' + c.codigo + '</strong> · ' + escapeHtml(c.nombre) + '</span>';
-    });
-    html += '</div>';
+    html += barChartSVG(itemsCurso, { height: 300 });
     html += '</div>';
 
     // ============ BLOQUE 2: Nota promedio por curso (tarjetas de color) ============
@@ -1597,9 +1629,9 @@
 
         const itemsG = cursos.map(function(c){
           const st = c.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
-          return { label: c.codigo, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
+          return { label: c.nombre, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
         });
-        html += barChartSVG(itemsG, { height: 220, width: 500 });
+        html += barChartSVG(itemsG, { height: 260, width: 500 });
         html += '</div>';
       });
       html += '</div>';
@@ -1616,7 +1648,7 @@
         const st = ct.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
         return { label: g, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
       });
-      html += barChartSVG(itemsTodos, { height: 250, labelLines: 1, maxBarW: 60 });
+      html += barChartSVG(itemsTodos, { height: 300, maxBarW: 60 });
       html += '</div>';
     }
 
