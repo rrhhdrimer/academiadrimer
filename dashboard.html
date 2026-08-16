@@ -1460,9 +1460,13 @@
     const slot = chartW / n;
     const barW = Math.min(opts.maxBarW || 70, slot * 0.62);
 
+    // Factor de escala de las letras del gráfico (1 = normal).
+    // Permite achicar % , fracción y nombres sin tocar el resto.
+    const escala = opts.escalaTexto != null ? opts.escalaTexto : 1;
+
     // --- Partir cada etiqueta en líneas según el ancho disponible por barra ---
     // Estimamos ~5px por carácter a font-size 9.5. maxChars por línea según el slot.
-    const fontLabel = 9.5;
+    const fontLabel = 9.5 * escala;
     const charW = fontLabel * 0.55;
     const maxChars = Math.max(8, Math.floor((slot - 4) / charW));
     const maxLineas = 3;
@@ -1504,7 +1508,7 @@
     const lineasPorItem = items.map(function(it){ return partirEtiqueta(it.label); });
     const maxLineasUsadas = lineasPorItem.reduce(function(m, l){ return Math.max(m, l.length); }, 1);
 
-    const lineH = 11;                              // alto de cada línea de etiqueta
+    const lineH = 11 * escala;                     // alto de cada línea de etiqueta
     const padBottom = 16 + maxLineasUsadas * lineH; // espacio dinámico para el nombre
     const H = (opts.height || 260);
     const chartH = H - padTop - padBottom;
@@ -1534,12 +1538,12 @@
 
       // % encima de la barra
       svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 6).toFixed(1) +
-             '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#14203A" font-family="Poppins">' + pct + '%</text>';
+             '" text-anchor="middle" font-size="' + (12.5 * escala).toFixed(1) + '" font-weight="700" fill="#14203A" font-family="Poppins">' + pct + '%</text>';
 
       // Números que hacen el % (aprobados/total)
       if(it.aprobados != null && it.total != null){
-        svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 20).toFixed(1) +
-               '" text-anchor="middle" font-size="9.5" font-weight="600" fill="#6B7280" font-family="Poppins">' +
+        svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 20 * escala).toFixed(1) +
+               '" text-anchor="middle" font-size="' + (9.5 * escala).toFixed(1) + '" font-weight="600" fill="#6B7280" font-family="Poppins">' +
                it.aprobados + '/' + it.total + '</text>';
       }
 
@@ -1591,7 +1595,7 @@
     const itemsCurso = cursos.map(function(c){
       return { label: c.nombre, pct: c.cumplimientoGeneral || 0, aprobados: c.aprobados, total: c.total };
     });
-    html += barChartSVG(itemsCurso, { height: 300 });
+    html += barChartSVG(itemsCurso, { height: 300, escalaTexto: 0.8 });
     html += '</div>';
 
     // ============ BLOQUE 2: Nota promedio por curso (tarjetas de color) ============
@@ -1648,7 +1652,7 @@
         const st = ct.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
         return { label: g, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
       });
-      html += barChartSVG(itemsTodos, { height: 300, maxBarW: 60 });
+      html += barChartSVG(itemsTodos, { height: 300, maxBarW: 60, escalaTexto: 0.7 });
       html += '</div>';
     }
 
