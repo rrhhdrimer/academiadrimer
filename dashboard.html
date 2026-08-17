@@ -939,32 +939,22 @@
     }
   }
 
+  let datosIndicadoresActuales = null;
+
   function renderizarIndicadores(datos){
+    datosIndicadoresActuales = datos;
     const cont = document.getElementById('indicadoresContenido');
 
     const statsHtml = datos.cursos.map(function(curso){
       return '<div class="ind-stat-card">' +
         '<div class="ind-stat-label">' + curso.nombre + '</div>' +
         '<div class="ind-stat-valor">' + curso.cumplimientoGeneral + '%</div>' +
-        '<div class="ind-stat-sublabel">Promedio: ' + curso.promedioGeneral.toFixed(2) + '/20</div>' +
+        '<div class="ind-stat-sublabel">Promedio: <span class="ind-nota">' + curso.promedioGeneral.toFixed(2) + '</span> / 20</div>' +
         '</div>';
     }).join('');
 
-    const gerenciasHtml = datos.gerencias.map(function(gerencia){
-      const filas = datos.cursos.map(function(curso){
-        const stats = curso.porGerencia[gerencia] || { total:0, aprobados:0, cumplimiento:0, promedio:0 };
-        return '<tr>' +
-          '<td><span class="ind-curso-badge">' + curso.codigo + '</span> ' + curso.nombre + '</td>' +
-          '<td>' + stats.total + '</td>' +
-          '<td>' + stats.aprobados + '</td>' +
-          '<td><div class="ind-bar-row"><div class="ind-bar-bg"><div class="ind-bar-fill" style="width:' + stats.cumplimiento + '%"></div></div><div class="ind-bar-pct">' + stats.cumplimiento + '%</div></div></td>' +
-          '<td><span class="ind-nota">' + stats.promedio.toFixed(2) + '</span></td>' +
-          '</tr>';
-      }).join('');
-
-      return '<h4>' + gerencia + '</h4>' +
-        '<table class="ind-tabla"><thead><tr><th>Curso</th><th>Total</th><th>Aprobados</th><th>Cumplimiento</th><th>Promedio</th></tr></thead>' +
-        '<tbody>' + filas + '</tbody></table>';
+    const opcionesSelect = datos.cursos.map(function(c){
+      return '<option value="' + c.codigo + '">' + c.nombre + '</option>';
     }).join('');
 
     cont.innerHTML =
@@ -975,17 +965,48 @@
       '</div>' +
       '<div class="ind-seccion">' +
         '<h3>Cumplimiento por gerencia</h3>' +
-        gerenciasHtml +
+        '<label class="gestion-label" for="selectIndCurso">Curso</label>' +
+        '<select id="selectIndCurso" class="gestion-input" style="max-width:360px;">' + opcionesSelect + '</select>' +
+        '<div id="tablaGerenciaWrap"></div>' +
       '</div>' +
       '<div class="ind-seccion">' +
-        '<h3>Resumen de promedios de notas</h3>' +
-        '<div class="ind-grafico-wrap"><canvas id="chartPromedios"></canvas></div>' +
+        '<h3>% de colaboradores que completaron toda la Ruta Drimer Íntegro, por gerencia</h3>' +
+        '<div class="ind-grafico-wrap"><canvas id="chartRutaCompleta"></canvas></div>' +
       '</div>';
+
+    document.getElementById('selectIndCurso').addEventListener('change', function(){
+      renderTablaGerencia(this.value);
+    });
+    renderTablaGerencia(datos.cursos[0] ? datos.cursos[0].codigo : null);
 
     setTimeout(function(){
       crearGraficoCumplimiento(datos);
-      crearGraficoPromedios(datos);
+      crearGraficoRutaCompleta(datos);
     }, 50);
+  }
+
+  function renderTablaGerencia(codigoCurso){
+    const datos = datosIndicadoresActuales;
+    const wrap = document.getElementById('tablaGerenciaWrap');
+    if(!datos || !codigoCurso){ wrap.innerHTML = ''; return; }
+
+    const curso = datos.cursos.find(c => c.codigo === codigoCurso);
+    if(!curso){ wrap.innerHTML = ''; return; }
+
+    const filas = datos.gerencias.map(function(gerencia){
+      const stats = curso.porGerencia[gerencia] || { total:0, aprobados:0, cumplimiento:0, promedio:0 };
+      return '<tr>' +
+        '<td>' + gerencia + '</td>' +
+        '<td>' + stats.total + '</td>' +
+        '<td>' + stats.aprobados + '</td>' +
+        '<td><div class="ind-bar-row"><div class="ind-bar-bg"><div class="ind-bar-fill" style="width:' + stats.cumplimiento + '%"></div></div><div class="ind-bar-pct">' + stats.cumplimiento + '%</div></div></td>' +
+        '<td><span class="ind-nota">' + stats.promedio.toFixed(2) + '</span></td>' +
+        '</tr>';
+    }).join('');
+
+    wrap.innerHTML =
+      '<table class="ind-tabla"><thead><tr><th>Gerencia</th><th>Total</th><th>Aprobados</th><th>Cumplimiento</th><th>Promedio</th></tr></thead>' +
+      '<tbody>' + filas + '</tbody></table>';
   }
 
   function crearGraficoCumplimiento(datos){
@@ -995,7 +1016,7 @@
     graficoCumplimiento = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: datos.cursos.map(c => c.codigo),
+        labels: datos.cursos.map(c => c.nombre),
         datasets: [{
           label: '% Cumplimiento',
           data: datos.cursos.map(c => c.cumplimientoGeneral),
@@ -1007,36 +1028,44 @@
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+        scales: {
+          x: { ticks: { autoSkip: false, maxRotation: 0, font: { size: 10.5 } } },
+          y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
+        }
       }
     });
   }
 
-  function crearGraficoPromedios(datos){
-    const ctx = document.getElementById('chartPromedios');
+  function crearGraficoRutaCompleta(datos){
+    const ctx = document.getElementById('chartRutaCompleta');
     if(!ctx) return;
     if(graficoPromedios) graficoPromedios.destroy();
     graficoPromedios = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: datos.cursos.map(c => c.codigo),
+        labels: datos.rutaCompletaPorGerencia.map(g => g.gerencia),
         datasets: [{
-          label: 'Promedio de notas',
-          data: datos.cursos.map(c => c.promedioGeneral),
-          backgroundColor: '#B8933F',
+          label: '% Ruta completa',
+          data: datos.rutaCompletaPorGerencia.map(g => g.porcentaje),
+          backgroundColor: '#3E6957',
           borderRadius: 6,
           borderSkipped: false
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
+        indexAxis: 'x',
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, max: 20, ticks: { callback: v => v.toFixed(1) } } }
+        scales: {
+          x: { ticks: { autoSkip: false, maxRotation: 0, font: { size: 10.5 } } },
+          y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
+        }
       }
     });
   }
 
   document.getElementById('btnRefrescarIndicadores').addEventListener('click', cargarIndicadores);
+
 
   function poblarSelectsCertificado(){
     const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
