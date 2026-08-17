@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="assets/js/jspdf.umd.min.js"></script>
 <script src="assets/js/jszip.min.js"></script>
+<script src="assets/js/exceljs.min.js"></script>
 <style>
   :root{
     --paper: #EEF0EF;
@@ -509,7 +510,7 @@
             <div id="eliminarMsg" class="gestion-msg"></div>
           </div>
 
-          <div class="gestion-card gestion-card-wide">
+          <div class="gestion-card">
             <h3>Descargar certificados</h3>
             <p class="gestion-desc">Genera los certificados en PDF de los alumnos aprobados y los descarga en un solo archivo .zip.</p>
 
@@ -538,6 +539,29 @@
 
             <button id="btnDescargarCert" class="gestion-btn">Generar y descargar</button>
             <div id="certMsg" class="gestion-msg"></div>
+          </div>
+
+          <div class="gestion-card">
+            <h3>Descargar reporte de notas</h3>
+            <p class="gestion-desc">Genera el reporte de notas en Excel (.xlsx) con las mejores notas de cada curso.</p>
+
+            <div class="modo-toggle">
+              <button type="button" class="rep-modo-btn modo-btn active" data-modo="curso">Reporte por curso</button>
+              <button type="button" class="rep-modo-btn modo-btn" data-modo="dni">Reporte por DNI</button>
+            </div>
+
+            <div id="camposRepCurso" class="gestion-campos">
+              <label class="gestion-label" for="selectRepCurso">Curso</label>
+              <select id="selectRepCurso" class="gestion-input"></select>
+            </div>
+
+            <div id="camposRepDni" class="gestion-campos hidden">
+              <label class="gestion-label" for="inputRepDni">DNI del trabajador</label>
+              <input type="text" id="inputRepDni" class="gestion-input" placeholder="Ej. 45394036">
+            </div>
+
+            <button id="btnDescargarReporte" class="gestion-btn">Generar y descargar</button>
+            <div id="reporteMsg" class="gestion-msg"></div>
           </div>
 
         </div>
@@ -954,7 +978,7 @@
   // toda la lógica de indicadores esté definida.
 
   function poblarSelectsCertificado(){
-    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
+    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2'), document.getElementById('selectRepCurso')];
     selects.forEach(function(sel){
       if(!sel) return;
       sel.innerHTML = '';
@@ -1318,6 +1342,177 @@
     }
     this.disabled = false;
   });
+
+  // ============================================================
+  // REPORTE DE NOTAS (Excel) — solo admin
+  // ============================================================
+  let repModo = 'curso';
+
+  // Toggle Reporte por curso / por DNI
+  document.querySelectorAll('.rep-modo-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      repModo = btn.dataset.modo;
+      document.querySelectorAll('.rep-modo-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('camposRepCurso').classList.toggle('hidden', repModo !== 'curso');
+      document.getElementById('camposRepDni').classList.toggle('hidden', repModo !== 'dni');
+    });
+  });
+
+  // Fecha de hoy en formato dd.mm.aa para el título del reporte
+  function fechaHoyCorta(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const aa = String(d.getFullYear()).slice(-2);
+    return dd + '.' + mm + '.' + aa;
+  }
+
+  document.getElementById('btnDescargarReporte').addEventListener('click', async function(){
+    const msg = document.getElementById('reporteMsg');
+    const cursoParam = document.getElementById('selectRepCurso').value;
+    const dniParam = document.getElementById('inputRepDni').value.trim();
+
+    if(repModo === 'dni' && !dniParam){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Ingresa el DNI del trabajador.';
+      return;
+    }
+
+    this.disabled = true;
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Generando reporte...';
+
+    try{
+      const resp = await llamarApi('getReporteNotas', { modo: repModo, curso: cursoParam, dni: dniParam });
+      if(!resp || !resp.ok){
+        throw new Error((resp && resp.mensaje) || 'Error');
+      }
+      const rep = resp.reporte;
+
+      if(!rep.filas.length){
+        msg.className = 'gestion-msg error';
+        msg.textContent = 'No hay datos para generar el reporte.';
+        this.disabled = false;
+        return;
+      }
+
+      construirExcelReporte(rep).then(function(){
+        msg.className = 'gestion-msg ok';
+        msg.textContent = 'Listo — se descargó el reporte (' + rep.filas.length + ' trabajador' + (rep.filas.length === 1 ? '' : 'es') + ').';
+      }).catch(function(){
+        msg.className = 'gestion-msg error';
+        msg.textContent = 'Ocurrió un error al armar el Excel.';
+      });
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = (err && err.message) ? err.message : 'Ocurrió un error generando el reporte.';
+    }
+    this.disabled = false;
+  });
+
+  // Arma el .xlsx con el formato del modelo (ExcelJS) y dispara la descarga
+  async function construirExcelReporte(rep){
+    const fecha = fechaHoyCorta();
+    const tituloReporte = 'Reporte de Notas al ' + fecha;
+    const rutaTexto = rep.tituloRuta || '';
+    const rutaMayus = rutaTexto.toUpperCase();
+
+    const encabezadosFijos = ['TRABAJADOR','APELLIDO_PATERNO','APELLIDO_MATERNO','NOMBRE','PUESTO_TRABAJADOR','AREA','GERENCIA'];
+    const nColsFijas = encabezadosFijos.length;
+    const nCursos = rep.cursos.length;
+    const totalCols = nColsFijas + nCursos;
+
+    const NAVY = 'FF002060';
+    const WHITE = 'FFFFFFFF';
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('BD');
+
+    // Los datos arrancan en la columna B (col 2); la A queda como margen.
+    const COL0 = 2; // primera columna con contenido (B)
+
+    // Fila 2: título
+    const cTit = ws.getCell(2, COL0);
+    cTit.value = tituloReporte;
+    cTit.font = { name:'Calibri', size:18, bold:true };
+
+    // Fila 3: subtítulo (ruta)
+    const cSub = ws.getCell(3, COL0);
+    cSub.value = rutaTexto;
+    cSub.font = { name:'Calibri', size:16 };
+
+    // Fila 4: banda con la ruta en mayúsculas sobre las columnas de curso
+    const colCurso1 = COL0 + nColsFijas;          // primera columna de curso
+    const colCursoN = COL0 + nColsFijas + nCursos - 1;
+    if(nCursos >= 1){
+      const cBanda = ws.getCell(4, colCurso1);
+      cBanda.value = rutaMayus;
+      cBanda.font = { name:'Calibri', size:11, bold:true };
+      cBanda.alignment = { horizontal:'center' };
+      if(nCursos >= 2){
+        ws.mergeCells(4, colCurso1, 4, colCursoN);
+      }
+    }
+
+    // Fila 5: encabezados
+    const encabezados = encabezadosFijos.concat(rep.cursos);
+    encabezados.forEach(function(txt, i){
+      const cell = ws.getCell(5, COL0 + i);
+      cell.value = txt;
+      cell.font = { name:'Calibri', size:10, bold:true, color:{ argb:WHITE } };
+      cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:NAVY } };
+      cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
+    });
+
+    // Filas 6+: datos
+    rep.filas.forEach(function(f, idx){
+      const r = 6 + idx;
+      const valores = [f.dni, f.apellidoPaterno, f.apellidoMaterno, f.nombre, f.puesto, f.area, f.gerencia].concat(f.notas);
+      valores.forEach(function(v, i){
+        const cell = ws.getCell(r, COL0 + i);
+        cell.value = v;
+        cell.font = { name:'Calibri', size:10 };
+        // DNI como texto (para no perder ceros a la izquierda); notas centradas
+        if(i === 0){
+          cell.numFmt = '@';
+        }
+        if(i >= nColsFijas){
+          cell.alignment = { horizontal:'center' };
+        }
+      });
+    });
+
+    // Anchos de columna (col A margen + fijas + cursos)
+    ws.getColumn(1).width = 2;      // A
+    ws.getColumn(COL0 + 0).width = 12;   // TRABAJADOR
+    ws.getColumn(COL0 + 1).width = 16;   // AP PATERNO
+    ws.getColumn(COL0 + 2).width = 16;   // AP MATERNO
+    ws.getColumn(COL0 + 3).width = 17;   // NOMBRE
+    ws.getColumn(COL0 + 4).width = 34;   // PUESTO
+    ws.getColumn(COL0 + 5).width = 18;   // AREA
+    ws.getColumn(COL0 + 6).width = 26;   // GERENCIA
+    for(let k = 0; k < nCursos; k++){
+      ws.getColumn(colCurso1 + k).width = 16;
+    }
+
+    // Alto de la fila de encabezados
+    ws.getRow(5).height = 42;
+
+    // Generar y descargar
+    const buf = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = rep.modo === 'dni'
+      ? 'Reporte_de_Notas_' + (rep.filas[0] ? rep.filas[0].dni : 'trabajador') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx'
+      : 'Reporte_de_Notas_' + (rep.cursos[0] || 'curso').replace(/[^\wáéíóúñ]+/gi,'_') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
 
   // ============================================================
   // INDICADORES (solo admin)
