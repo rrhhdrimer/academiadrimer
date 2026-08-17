@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="assets/js/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="assets/js/jszip.min.js"></script>
 <style>
   :root{
@@ -284,9 +285,9 @@
     background:var(--green-bg); border-left:4px solid var(--green);
     padding:14px; border-radius:8px;
   }
-  .ind-stat-label{ font-size:11px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; margin-bottom:6px; }
-  .ind-stat-valor{ font-size:22px; font-weight:700; color:var(--ink); }
-  .ind-stat-sublabel{ font-size:11px; color:var(--ink-soft); margin-top:4px; }
+  .ind-stat-label{ font-size:14px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; margin-bottom:6px; }
+  .ind-stat-valor{ font-size:29px; font-weight:700; color:var(--ink); }
+  .ind-stat-sublabel{ font-size:14px; color:var(--ink-soft); margin-top:4px; }
   .ind-grafico-wrap{ position:relative; height:280px; margin-bottom:6px; }
   .ind-tabla{ width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:18px; }
   .ind-tabla thead{ background:var(--ink); color:#fff; }
@@ -1009,6 +1010,30 @@
       '<tbody>' + filas + '</tbody></table>';
   }
 
+  // Parte un nombre largo (curso o gerencia) en varias líneas para el eje
+  // del gráfico, para que no se amontone con la etiqueta de al lado.
+  // Ej: "COMERCIAL - CANAL TERCEROS" -> ["COMERCIAL", "CANAL TERCEROS"]
+  function partirEtiqueta(texto, maxCharsPorLinea){
+    maxCharsPorLinea = maxCharsPorLinea || 14;
+    const partes = String(texto).split(' - ');
+    const lineas = [];
+    partes.forEach(function(parte){
+      const palabras = parte.split(' ');
+      let lineaActual = '';
+      palabras.forEach(function(palabra){
+        const candidato = lineaActual ? lineaActual + ' ' + palabra : palabra;
+        if(candidato.length > maxCharsPorLinea && lineaActual){
+          lineas.push(lineaActual);
+          lineaActual = palabra;
+        } else {
+          lineaActual = candidato;
+        }
+      });
+      if(lineaActual) lineas.push(lineaActual);
+    });
+    return lineas;
+  }
+
   function crearGraficoCumplimiento(datos){
     const ctx = document.getElementById('chartCumplimiento');
     if(!ctx) return;
@@ -1016,7 +1041,7 @@
     graficoCumplimiento = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: datos.cursos.map(c => c.nombre),
+        labels: datos.cursos.map(c => partirEtiqueta(c.nombre, 16)),
         datasets: [{
           label: '% Cumplimiento',
           data: datos.cursos.map(c => c.cumplimientoGeneral),
@@ -1025,9 +1050,18 @@
           borderSkipped: false
         }]
       },
+      plugins: [ChartDataLabels],
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        layout: { padding: { top: 22 } },
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end', align: 'top', offset: 2,
+            color: '#14203A', font: { weight: '700', size: 12 },
+            formatter: v => v + '%'
+          }
+        },
         scales: {
           x: { ticks: { autoSkip: false, maxRotation: 0, font: { size: 10.5 } } },
           y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
@@ -1043,7 +1077,7 @@
     graficoPromedios = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: datos.rutaCompletaPorGerencia.map(g => g.gerencia),
+        labels: datos.rutaCompletaPorGerencia.map(g => partirEtiqueta(g.gerencia, 14)),
         datasets: [{
           label: '% Ruta completa',
           data: datos.rutaCompletaPorGerencia.map(g => g.porcentaje),
@@ -1052,10 +1086,19 @@
           borderSkipped: false
         }]
       },
+      plugins: [ChartDataLabels],
       options: {
         responsive: true, maintainAspectRatio: false,
         indexAxis: 'x',
-        plugins: { legend: { display: false } },
+        layout: { padding: { top: 22 } },
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end', align: 'top', offset: 2,
+            color: '#14203A', font: { weight: '700', size: 12 },
+            formatter: v => v + '%'
+          }
+        },
         scales: {
           x: { ticks: { autoSkip: false, maxRotation: 0, font: { size: 10.5 } } },
           y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
