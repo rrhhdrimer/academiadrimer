@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="assets/js/jspdf.umd.min.js"></script>
 <script src="assets/js/jszip.min.js"></script>
-<script src="assets/js/exceljs.min.js"></script>
 <style>
   :root{
     --paper: #EEF0EF;
@@ -270,104 +269,6 @@
   }
   .modo-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
   .gestion-campos{ max-width:360px; }
-
-  /* ---------- Indicadores ---------- */
-  .ind-head-row{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; }
-  .ind-actualizar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .ind-ultima{ font-size:11.5px; color:var(--ink-soft); }
-  .btn-actualizar{
-    display:inline-flex; align-items:center; gap:7px;
-    border:1px solid var(--line); background:#fff; color:var(--ink);
-    font-family:'Poppins', sans-serif; font-size:12.5px; font-weight:600;
-    padding:9px 15px; border-radius:9px; cursor:pointer;
-  }
-  .btn-actualizar:hover{ background:#F4F4F3; border-color:var(--gold); }
-  .btn-actualizar:disabled{ opacity:0.55; cursor:not-allowed; }
-  .btn-actualizar svg{ width:15px; height:15px; }
-  .btn-actualizar.girando svg{ animation:spin 0.8s linear infinite; }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-
-  /* Selector de ruta/curso */
-  .ind-selector{
-    display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;
-    background:var(--card); border:1px solid var(--line); border-radius:12px;
-    padding:16px 18px; margin-bottom:18px;
-  }
-  .ind-sel-group{ display:flex; flex-direction:column; gap:6px; }
-  .ind-sel-label{ font-size:11px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.02em; }
-  .ind-modo-toggle{ display:flex; gap:8px; }
-  .ind-modo-btn{
-    border:1px solid var(--line); background:#FBFBFA; color:var(--ink-soft);
-    font-size:12.5px; font-weight:600; padding:9px 15px; border-radius:20px; cursor:pointer;
-    font-family:'Poppins', sans-serif;
-  }
-  .ind-modo-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
-  .ind-select{
-    border:1px solid var(--line); background:#FBFBFA; color:var(--ink);
-    font-family:'Poppins', sans-serif; font-size:13.5px; font-weight:500;
-    padding:9px 13px; border-radius:9px; min-width:230px; cursor:pointer;
-  }
-  .ind-select:focus{ outline:none; border-color:var(--gold); background:#fff; }
-
-  .ind-loading{ text-align:center; color:var(--ink-soft); font-size:13px; padding:40px 0; }
-  .ind-error{ text-align:center; color:var(--rust); font-size:13px; padding:30px 0; }
-
-  .ind-bloque{
-    background:var(--card); border:1px solid var(--line); border-radius:12px;
-    padding:18px 18px 22px; margin-bottom:18px;
-  }
-  .ind-bloque h3{ margin:0 0 4px; font-size:15.5px; font-weight:600; color:var(--ink); }
-  .ind-bloque .ind-sub{ font-size:12px; color:var(--ink-soft); margin:0 0 18px; line-height:1.5; }
-
-  /* Destacado grande (aprobó todos / cumplimiento de un curso) */
-  .ind-hero{
-    display:flex; flex-wrap:wrap; gap:22px; align-items:center;
-    background:linear-gradient(135deg, #14203A 0%, #24344f 100%);
-    border:none; border-radius:12px; padding:22px 24px; margin-bottom:18px;
-  }
-  .ind-hero .hero-num{ font-size:52px; font-weight:600; color:#fff; line-height:1; }
-  .ind-hero .hero-num small{ font-size:22px; color:var(--gold-soft); }
-  .ind-hero .hero-info{ flex:1; min-width:200px; }
-  .ind-hero .hero-title{ font-size:15px; font-weight:600; color:#fff; margin:0 0 4px; }
-  .ind-hero .hero-desc{ font-size:12px; color:rgba(255,255,255,0.7); margin:0; line-height:1.5; }
-  .ind-hero .hero-frac{ font-size:13px; color:var(--gold-soft); font-weight:600; margin-top:6px; }
-
-  /* ---------- Gráfico de barras verticales (SVG) ---------- */
-  .ind-chart{ width:100%; }
-  .ind-chart svg{ width:100%; height:auto; display:block; overflow:visible; }
-  .ind-bar-rect{ transition:height .5s ease, y .5s ease; }
-  .ind-chart-legend{
-    display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; font-size:11.5px; color:var(--ink-soft);
-  }
-  .ind-chart-legend span{ display:inline-flex; align-items:center; gap:6px; }
-  .ind-legend-dot{ width:11px; height:11px; border-radius:3px; display:inline-block; }
-
-  /* Tarjetas de promedio con color */
-  .ind-prom-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px; }
-  .ind-prom-card{
-    border-radius:12px; padding:16px 16px 18px; color:#fff; position:relative; overflow:hidden;
-    min-height:112px; display:flex; flex-direction:column; justify-content:space-between;
-  }
-  .ind-prom-card .curso-nom{ font-size:12.5px; font-weight:600; line-height:1.35; z-index:1; }
-  .ind-prom-card .curso-cod{ font-size:10.5px; font-weight:600; opacity:0.8; text-transform:uppercase; letter-spacing:0.03em; }
-  .ind-prom-card .nota-big{ font-size:34px; font-weight:700; line-height:1; z-index:1; }
-  .ind-prom-card .nota-big small{ font-size:14px; font-weight:500; opacity:0.85; }
-  .ind-prom-card.nivel-alto{ background:linear-gradient(135deg, #3E6957 0%, #4d8069 100%); }
-  .ind-prom-card.nivel-medio{ background:linear-gradient(135deg, #B8933F 0%, #cba556 100%); }
-  .ind-prom-card.nivel-bajo{ background:linear-gradient(135deg, #9C4A38 0%, #b85a45 100%); }
-
-  /* Bloques por gerencia con su gráfico */
-  .ind-ger-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
-  @media (min-width:920px){ .ind-ger-grid{ grid-template-columns:1fr 1fr; } }
-  .ind-ger-card{
-    border:1px solid var(--line); border-radius:12px; padding:16px 16px 18px; background:#FBFBFA;
-  }
-  .ind-ger-card h4{
-    margin:0 0 3px; font-size:14px; font-weight:600; color:var(--ink);
-    display:flex; align-items:center; gap:7px;
-  }
-  .ind-ger-card h4 svg{ width:15px; height:15px; stroke:var(--gold); flex-shrink:0; }
-  .ind-ger-card .ger-meta{ font-size:11px; color:var(--ink-soft); margin:0 0 14px; }
 </style>
 </head>
 <body>
@@ -413,10 +314,6 @@
       <a class="nav-item hidden" href="#" id="navGestion">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         Gestión académica
-      </a>
-      <a class="nav-item hidden" href="#" id="navIndicadores">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>
-        Indicadores
       </a>
     </nav>
 
@@ -490,6 +387,41 @@
 
         <div class="gestion-grid">
 
+          <div class="gestion-card gestion-card-wide">
+            <h3>Crear alumno</h3>
+            <p class="gestion-desc">Da de alta a un colaborador nuevo. Queda como estudiante, con la contraseña que definas aquí, y la fecha de alta de hoy.</p>
+
+            <label class="gestion-label" for="crearDni">DNI *</label>
+            <input type="text" id="crearDni" class="gestion-input" placeholder="Ej. 45394036">
+
+            <label class="gestion-label" for="crearNombres">Nombres *</label>
+            <input type="text" id="crearNombres" class="gestion-input" placeholder="Ej. JUAN CARLOS">
+
+            <label class="gestion-label" for="crearApePat">Apellido paterno *</label>
+            <input type="text" id="crearApePat" class="gestion-input" placeholder="Ej. PEREZ">
+
+            <label class="gestion-label" for="crearApeMat">Apellido materno</label>
+            <input type="text" id="crearApeMat" class="gestion-input" placeholder="Ej. GOMEZ">
+
+            <label class="gestion-label" for="crearPuesto">Puesto</label>
+            <input type="text" id="crearPuesto" class="gestion-input" placeholder="Ej. VENDEDOR">
+
+            <label class="gestion-label" for="crearArea">Área</label>
+            <input type="text" id="crearArea" class="gestion-input" placeholder="Ej. VENTAS">
+
+            <label class="gestion-label" for="crearGerencia">Gerencia</label>
+            <input type="text" id="crearGerencia" class="gestion-input" placeholder="Ej. COMERCIAL">
+
+            <label class="gestion-label" for="crearCorreo">Correo</label>
+            <input type="email" id="crearCorreo" class="gestion-input" placeholder="Ej. jperez@drimer.com.pe">
+
+            <label class="gestion-label" for="crearPassword">Contraseña inicial *</label>
+            <input type="text" id="crearPassword" class="gestion-input" placeholder="Ej. Drimer2026">
+
+            <button id="btnCrearAlumno" class="gestion-btn">Crear alumno</button>
+            <div id="crearMsg" class="gestion-msg"></div>
+          </div>
+
           <div class="gestion-card">
             <h3>Resetear contraseña</h3>
             <p class="gestion-desc">Cambia la contraseña de un alumno a <strong>0000</strong>.</p>
@@ -510,7 +442,7 @@
             <div id="eliminarMsg" class="gestion-msg"></div>
           </div>
 
-          <div class="gestion-card">
+          <div class="gestion-card gestion-card-wide">
             <h3>Descargar certificados</h3>
             <p class="gestion-desc">Genera los certificados en PDF de los alumnos aprobados y los descarga en un solo archivo .zip.</p>
 
@@ -541,78 +473,9 @@
             <div id="certMsg" class="gestion-msg"></div>
           </div>
 
-          <div class="gestion-card">
-            <h3>Descargar reporte de notas</h3>
-            <p class="gestion-desc">Genera el reporte de notas en Excel (.xlsx) con las mejores notas de cada curso.</p>
-
-            <div class="modo-toggle">
-              <button type="button" class="rep-modo-btn modo-btn active" data-modo="ruta">Reporte por ruta</button>
-              <button type="button" class="rep-modo-btn modo-btn" data-modo="curso">Reporte por curso</button>
-              <button type="button" class="rep-modo-btn modo-btn" data-modo="dni">Reporte por DNI</button>
-            </div>
-
-            <div id="camposRepRuta" class="gestion-campos">
-              <label class="gestion-label" for="selectRepRuta">Ruta / Programa</label>
-              <select id="selectRepRuta" class="gestion-input"></select>
-            </div>
-
-            <div id="camposRepCurso" class="gestion-campos hidden">
-              <label class="gestion-label" for="selectRepCurso">Curso</label>
-              <select id="selectRepCurso" class="gestion-input"></select>
-            </div>
-
-            <div id="camposRepDni" class="gestion-campos hidden">
-              <label class="gestion-label" for="inputRepDni">DNI del trabajador</label>
-              <input type="text" id="inputRepDni" class="gestion-input" placeholder="Ej. 45394036">
-            </div>
-
-            <button id="btnDescargarReporte" class="gestion-btn">Generar y descargar</button>
-            <div id="reporteMsg" class="gestion-msg"></div>
-          </div>
-
         </div>
 
         <canvas id="certCanvasAdmin" width="4000" height="2828" style="display:none"></canvas>
-      </div>
-
-      <div id="vistaIndicadores" class="hidden">
-        <div class="page-head ind-head-row">
-          <div>
-            <h2>Indicadores</h2>
-          </div>
-          <div class="ind-actualizar">
-            <span class="ind-ultima" id="indUltima"></span>
-            <button class="btn-actualizar" id="btnActualizarInd">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-              Actualizar
-            </button>
-          </div>
-        </div>
-        <p class="subtitle">Avance de cumplimiento y notas.</p>
-
-        <div class="ind-selector">
-          <div class="ind-sel-group">
-            <label class="ind-sel-label">Ver por</label>
-            <div class="ind-modo-toggle">
-              <button type="button" class="ind-modo-btn active" data-modo="ruta">Ruta / Programa</button>
-              <button type="button" class="ind-modo-btn" data-modo="curso">Curso individual</button>
-            </div>
-          </div>
-
-          <div class="ind-sel-group" id="grupoSelectRuta">
-            <label class="ind-sel-label" for="selectRutaInd">Ruta</label>
-            <select id="selectRutaInd" class="ind-select"></select>
-          </div>
-
-          <div class="ind-sel-group hidden" id="grupoSelectCurso">
-            <label class="ind-sel-label" for="selectCursoInd">Curso</label>
-            <select id="selectCursoInd" class="ind-select"></select>
-          </div>
-        </div>
-
-        <div id="indContenido">
-          <div class="ind-loading" id="indLoading">Cargando indicadores...</div>
-        </div>
       </div>
     </main>
   </div>
@@ -941,35 +804,24 @@
   // ============================================================
   const vistaCursosEl = document.getElementById('vistaCursos');
   const vistaGestionEl = document.getElementById('vistaGestion');
-  const vistaIndicadoresEl = document.getElementById('vistaIndicadores');
   const navCursos = document.getElementById('navCursos');
   const navGestion = document.getElementById('navGestion');
-  const navIndicadores = document.getElementById('navIndicadores');
 
   if(rol === 'admin'){
     navGestion.classList.remove('hidden');
-    navIndicadores.classList.remove('hidden');
   }
 
   function mostrarVista(vista){
-    // Ocultar todas las vistas y quitar "active" de todos los ítems
-    vistaCursosEl.classList.add('hidden');
-    vistaGestionEl.classList.add('hidden');
-    vistaIndicadoresEl.classList.add('hidden');
-    navCursos.classList.remove('active');
-    navGestion.classList.remove('active');
-    navIndicadores.classList.remove('active');
-
     if(vista === 'gestion'){
+      vistaCursosEl.classList.add('hidden');
       vistaGestionEl.classList.remove('hidden');
       navGestion.classList.add('active');
-    } else if(vista === 'indicadores'){
-      vistaIndicadoresEl.classList.remove('hidden');
-      navIndicadores.classList.add('active');
-      iniciarIndicadores();
+      navCursos.classList.remove('active');
     } else {
+      vistaGestionEl.classList.add('hidden');
       vistaCursosEl.classList.remove('hidden');
       navCursos.classList.add('active');
+      navGestion.classList.remove('active');
     }
     sidebar.classList.remove('open');
     overlay.classList.remove('show');
@@ -977,14 +829,15 @@
 
   navCursos.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('cursos'); });
   navGestion.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('gestion'); });
-  navIndicadores.addEventListener('click', function(e){ e.preventDefault(); mostrarVista('indicadores'); });
 
-  // NOTA: la apertura automática por URL (?vista=gestion / ?vista=indicadores)
-  // se ejecuta al final del script (ver "abrirVistaDesdeURL"), después de que
-  // toda la lógica de indicadores esté definida.
+  // Si se llega desde el link "Gestión académica" de otra página
+  // (dashboard.html?vista=gestion), abrir esa vista directamente.
+  if(rol === 'admin' && new URLSearchParams(window.location.search).get('vista') === 'gestion'){
+    mostrarVista('gestion');
+  }
 
   function poblarSelectsCertificado(){
-    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2'), document.getElementById('selectRepCurso')];
+    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
     selects.forEach(function(sel){
       if(!sel) return;
       sel.innerHTML = '';
@@ -995,31 +848,51 @@
         sel.appendChild(opt);
       });
     });
-
-    // Selector de rutas del reporte (rutas únicas de los cursos)
-    const selRuta = document.getElementById('selectRepRuta');
-    if(selRuta){
-      selRuta.innerHTML = '';
-      const rutas = [];
-      todosLosCursos.forEach(function(c){
-        const r = (c.ruta || '').trim();
-        if(r && rutas.indexOf(r) === -1) rutas.push(r);
-      });
-      rutas.sort();
-      rutas.forEach(function(r){
-        const opt = document.createElement('option');
-        opt.value = r;
-        opt.textContent = r;
-        selRuta.appendChild(opt);
-      });
-      if(!rutas.length){
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = '(sin rutas)';
-        selRuta.appendChild(opt);
-      }
-    }
   }
+
+  // ---------- Crear alumno ----------
+  document.getElementById('btnCrearAlumno').addEventListener('click', async function(){
+    const dni = document.getElementById('crearDni').value.trim();
+    const nombres = document.getElementById('crearNombres').value.trim();
+    const apePat = document.getElementById('crearApePat').value.trim();
+    const apeMat = document.getElementById('crearApeMat').value.trim();
+    const puesto = document.getElementById('crearPuesto').value.trim();
+    const area = document.getElementById('crearArea').value.trim();
+    const gerencia = document.getElementById('crearGerencia').value.trim();
+    const correo = document.getElementById('crearCorreo').value.trim();
+    const password = document.getElementById('crearPassword').value.trim();
+    const msg = document.getElementById('crearMsg');
+
+    if(!dni || !nombres || !apePat || !password){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'DNI, nombres, apellido paterno y contraseña son obligatorios.';
+      return;
+    }
+
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Procesando...';
+    this.disabled = true;
+
+    try{
+      const data = await llamarApi('adminCrearUsuario', {
+        dni: dni, nombres: nombres, apellidoPaterno: apePat, apellidoMaterno: apeMat,
+        puesto: puesto, area: area, gerencia: gerencia, correo: correo, password: password
+      });
+      if(data.ok){
+        msg.className = 'gestion-msg ok';
+        msg.textContent = 'Listo — se creó la cuenta de ' + data.nombre + '.';
+        ['crearDni','crearNombres','crearApePat','crearApeMat','crearPuesto','crearArea','crearGerencia','crearCorreo','crearPassword']
+          .forEach(function(id){ document.getElementById(id).value = ''; });
+      } else {
+        msg.className = 'gestion-msg error';
+        msg.textContent = data.mensaje || 'No se pudo crear el alumno.';
+      }
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+    this.disabled = false;
+  });
 
   // ---------- Resetear contraseña ----------
   document.getElementById('btnResetPassword').addEventListener('click', async function(){
@@ -1372,577 +1245,6 @@
     }
     this.disabled = false;
   });
-
-  // ============================================================
-  // REPORTE DE NOTAS (Excel) — solo admin
-  // ============================================================
-  let repModo = 'ruta';
-
-  // Toggle Reporte por ruta / por curso / por DNI
-  document.querySelectorAll('.rep-modo-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      repModo = btn.dataset.modo;
-      document.querySelectorAll('.rep-modo-btn').forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      document.getElementById('camposRepRuta').classList.toggle('hidden', repModo !== 'ruta');
-      document.getElementById('camposRepCurso').classList.toggle('hidden', repModo !== 'curso');
-      document.getElementById('camposRepDni').classList.toggle('hidden', repModo !== 'dni');
-    });
-  });
-
-  // Fecha de hoy en formato dd.mm.aa para el título del reporte
-  function fechaHoyCorta(){
-    const d = new Date();
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const aa = String(d.getFullYear()).slice(-2);
-    return dd + '.' + mm + '.' + aa;
-  }
-
-  document.getElementById('btnDescargarReporte').addEventListener('click', async function(){
-    const msg = document.getElementById('reporteMsg');
-    const cursoParam = document.getElementById('selectRepCurso').value;
-    const dniParam = document.getElementById('inputRepDni').value.trim();
-    const rutaParam = document.getElementById('selectRepRuta').value;
-
-    if(repModo === 'dni' && !dniParam){
-      msg.className = 'gestion-msg error';
-      msg.textContent = 'Ingresa el DNI del trabajador.';
-      return;
-    }
-    if(repModo === 'ruta' && !rutaParam){
-      msg.className = 'gestion-msg error';
-      msg.textContent = 'Selecciona una ruta.';
-      return;
-    }
-
-    this.disabled = true;
-    msg.className = 'gestion-msg progreso';
-    msg.textContent = 'Generando reporte...';
-
-    try{
-      const resp = await llamarApi('getReporteNotas', { modo: repModo, curso: cursoParam, dni: dniParam, ruta: rutaParam });
-      if(!resp || !resp.ok){
-        throw new Error((resp && resp.mensaje) || 'Error');
-      }
-      const rep = resp.reporte;
-
-      if(!rep.filas.length){
-        msg.className = 'gestion-msg error';
-        msg.textContent = 'No hay datos para generar el reporte.';
-        this.disabled = false;
-        return;
-      }
-
-      construirExcelReporte(rep).then(function(){
-        msg.className = 'gestion-msg ok';
-        msg.textContent = 'Listo — se descargó el reporte (' + rep.filas.length + ' trabajador' + (rep.filas.length === 1 ? '' : 'es') + ').';
-      }).catch(function(){
-        msg.className = 'gestion-msg error';
-        msg.textContent = 'Ocurrió un error al armar el Excel.';
-      });
-    } catch(err){
-      msg.className = 'gestion-msg error';
-      msg.textContent = (err && err.message) ? err.message : 'Ocurrió un error generando el reporte.';
-    }
-    this.disabled = false;
-  });
-
-  // Arma el .xlsx con el formato del modelo (ExcelJS) y dispara la descarga
-  async function construirExcelReporte(rep){
-    const fecha = fechaHoyCorta();
-    const tituloReporte = 'Reporte de Notas al ' + fecha;
-    const rutaTexto = rep.tituloRuta || '';
-    const rutaMayus = rutaTexto.toUpperCase();
-
-    const encabezadosFijos = ['TRABAJADOR','APELLIDO_PATERNO','APELLIDO_MATERNO','NOMBRE','PUESTO_TRABAJADOR','AREA','GERENCIA'];
-    const nColsFijas = encabezadosFijos.length;
-    const nCursos = rep.cursos.length;
-    const totalCols = nColsFijas + nCursos;
-
-    const NAVY = 'FF002060';
-    const WHITE = 'FFFFFFFF';
-
-    const wb = new ExcelJS.Workbook();
-    const ws = wb.addWorksheet('BD');
-
-    // Los datos arrancan en la columna B (col 2); la A queda como margen.
-    const COL0 = 2; // primera columna con contenido (B)
-
-    // Fila 2: título
-    const cTit = ws.getCell(2, COL0);
-    cTit.value = tituloReporte;
-    cTit.font = { name:'Calibri', size:18, bold:true };
-
-    // Fila 3: subtítulo (ruta)
-    const cSub = ws.getCell(3, COL0);
-    cSub.value = rutaTexto;
-    cSub.font = { name:'Calibri', size:16 };
-
-    // Fila 4: banda con la ruta en mayúsculas sobre las columnas de curso
-    const colCurso1 = COL0 + nColsFijas;          // primera columna de curso
-    const colCursoN = COL0 + nColsFijas + nCursos - 1;
-    if(nCursos >= 1){
-      const cBanda = ws.getCell(4, colCurso1);
-      cBanda.value = rutaMayus;
-      cBanda.font = { name:'Calibri', size:11, bold:true };
-      cBanda.alignment = { horizontal:'center' };
-      if(nCursos >= 2){
-        ws.mergeCells(4, colCurso1, 4, colCursoN);
-      }
-    }
-
-    // Fila 5: encabezados
-    const encabezados = encabezadosFijos.concat(rep.cursos);
-    encabezados.forEach(function(txt, i){
-      const cell = ws.getCell(5, COL0 + i);
-      cell.value = txt;
-      cell.font = { name:'Calibri', size:10, bold:true, color:{ argb:WHITE } };
-      cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:NAVY } };
-      cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
-    });
-
-    // Filas 6+: datos
-    rep.filas.forEach(function(f, idx){
-      const r = 6 + idx;
-      const valores = [f.dni, f.apellidoPaterno, f.apellidoMaterno, f.nombre, f.puesto, f.area, f.gerencia].concat(f.notas);
-      valores.forEach(function(v, i){
-        const cell = ws.getCell(r, COL0 + i);
-        cell.value = v;
-        cell.font = { name:'Calibri', size:10 };
-        // DNI como texto (para no perder ceros a la izquierda); notas centradas
-        if(i === 0){
-          cell.numFmt = '@';
-        }
-        if(i >= nColsFijas){
-          cell.alignment = { horizontal:'center' };
-        }
-      });
-    });
-
-    // Anchos de columna (col A margen + fijas + cursos)
-    ws.getColumn(1).width = 2;      // A
-    ws.getColumn(COL0 + 0).width = 12;   // TRABAJADOR
-    ws.getColumn(COL0 + 1).width = 16;   // AP PATERNO
-    ws.getColumn(COL0 + 2).width = 16;   // AP MATERNO
-    ws.getColumn(COL0 + 3).width = 17;   // NOMBRE
-    ws.getColumn(COL0 + 4).width = 34;   // PUESTO
-    ws.getColumn(COL0 + 5).width = 18;   // AREA
-    ws.getColumn(COL0 + 6).width = 26;   // GERENCIA
-    for(let k = 0; k < nCursos; k++){
-      ws.getColumn(colCurso1 + k).width = 16;
-    }
-
-    // Alto de la fila de encabezados
-    ws.getRow(5).height = 42;
-
-    // Generar y descargar
-    const buf = await wb.xlsx.writeBuffer();
-    const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = rep.modo === 'dni'
-      ? 'Reporte_de_Notas_' + (rep.filas[0] ? rep.filas[0].dni : 'trabajador') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx'
-      : (rep.modo === 'ruta'
-          ? 'Reporte_de_Notas_' + (rep.tituloRuta || 'ruta').replace(/[^\wáéíóúñ]+/gi,'_') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx'
-          : 'Reporte_de_Notas_' + (rep.cursos[0] || 'curso').replace(/[^\wáéíóúñ]+/gi,'_') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx');
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  // ============================================================
-  // INDICADORES (solo admin)
-  // ============================================================
-  let indicadoresCargados = false;
-  let indTimer = null;
-  let indModo = 'ruta';        // 'ruta' | 'curso'
-  let indRuta = '';            // ruta seleccionada
-  let indCurso = '';           // curso seleccionado
-  let indSelectoresListos = false;
-  const IND_REFRESCO_MS = 5 * 60 * 1000; // 5 minutos
-
-  // Colores de las barras según nivel de cumplimiento (paleta del proyecto)
-  const COLOR_ALTO  = '#3E6957'; // verde
-  const COLOR_MEDIO = '#B8933F'; // dorado
-  const COLOR_BAJO  = '#9C4A38'; // rust
-
-  function colorSegunPct(pct){
-    if(pct >= 75) return COLOR_ALTO;
-    if(pct >= 40) return COLOR_MEDIO;
-    return COLOR_BAJO;
-  }
-  function nivelSegunNota(nota){
-    if(nota >= 15) return 'nivel-alto';
-    if(nota >= 13) return 'nivel-medio';
-    return 'nivel-bajo';
-  }
-
-  // Se llama la primera vez que se entra a la vista Indicadores.
-  function iniciarIndicadores(){
-    if(!indicadoresCargados){
-      indicadoresCargados = true;
-      cargarIndicadores();
-    }
-    if(indTimer) clearInterval(indTimer);
-    indTimer = setInterval(function(){
-      if(!vistaIndicadoresEl.classList.contains('hidden')){
-        cargarIndicadores(true);
-      }
-    }, IND_REFRESCO_MS);
-  }
-
-  async function cargarIndicadores(silencioso){
-    const cont = document.getElementById('indContenido');
-    const btn = document.getElementById('btnActualizarInd');
-
-    btn.disabled = true;
-    btn.classList.add('girando');
-
-    if(!silencioso){
-      cont.innerHTML = '<div class="ind-loading">Cargando indicadores...</div>';
-    }
-
-    try{
-      const resp = await llamarApi('getIndicadores', { modo: indModo, ruta: indRuta, curso: indCurso });
-      if(!resp || !resp.ok){
-        throw new Error((resp && resp.mensaje) || 'Error');
-      }
-      poblarSelectoresIndicadores(resp.indicadores);
-      renderIndicadores(resp.indicadores);
-      marcarUltimaActualizacion();
-    } catch(err){
-      cont.innerHTML = '<div class="ind-error">No pudimos cargar los indicadores. Usa el botón Actualizar para reintentar.</div>';
-    }
-
-    btn.disabled = false;
-    btn.classList.remove('girando');
-  }
-
-  // Llena los <select> de ruta y curso la primera vez (y ajusta el estado).
-  function poblarSelectoresIndicadores(data){
-    const selRuta = document.getElementById('selectRutaInd');
-    const selCurso = document.getElementById('selectCursoInd');
-
-    if(!indSelectoresListos){
-      // Rutas
-      selRuta.innerHTML = '';
-      (data.rutas || []).forEach(function(r){
-        const opt = document.createElement('option');
-        opt.value = r; opt.textContent = r;
-        selRuta.appendChild(opt);
-      });
-      if(!data.rutas || !data.rutas.length){
-        const opt = document.createElement('option');
-        opt.value = ''; opt.textContent = '(sin rutas)';
-        selRuta.appendChild(opt);
-      }
-
-      // Cursos
-      selCurso.innerHTML = '';
-      (data.listaCursos || []).forEach(function(c){
-        const opt = document.createElement('option');
-        opt.value = c.codigo;
-        opt.textContent = c.nombre + (c.ruta ? '' : ' (suelto)');
-        selCurso.appendChild(opt);
-      });
-
-      indSelectoresListos = true;
-    }
-
-    // Reflejar la selección efectiva que devolvió el backend
-    if(data.modo === 'ruta' && data.rutaSeleccionada){
-      indRuta = data.rutaSeleccionada;
-      selRuta.value = data.rutaSeleccionada;
-    }
-    if(data.modo === 'curso' && data.cursoSeleccionado){
-      indCurso = data.cursoSeleccionado;
-      selCurso.value = data.cursoSeleccionado;
-    }
-    // Si aún no hay curso elegido pero estamos en modo curso, tomar el primero
-    if(indModo === 'curso' && !indCurso && selCurso.options.length){
-      indCurso = selCurso.options[0].value;
-      selCurso.value = indCurso;
-    }
-  }
-
-  function marcarUltimaActualizacion(){
-    const ahora = new Date();
-    const hh = ahora.getHours();
-    const mm = String(ahora.getMinutes()).padStart(2, '0');
-    const ampm = hh >= 12 ? 'p.m.' : 'a.m.';
-    const h12 = hh % 12 === 0 ? 12 : hh % 12;
-    document.getElementById('indUltima').textContent =
-      'Última actualización: ' + h12 + ':' + mm + ' ' + ampm;
-  }
-
-  // ---- Generador de gráfico de barras verticales en SVG ----
-  // items: [{ label, pct, aprobados, total }]
-  // Las etiquetas (nombre completo) se parten automáticamente en varias líneas.
-  function barChartSVG(items, opts){
-    opts = opts || {};
-    const n = items.length;
-    if(!n) return '';
-
-    const W = opts.width || 620;
-    const padTop = 26;
-    const padLeft = 34;
-    const padRight = 10;
-    const chartW = W - padLeft - padRight;
-    const slot = chartW / n;
-    const barW = Math.min(opts.maxBarW || 70, slot * 0.62);
-
-    // Factor de escala de las letras del gráfico (1 = normal).
-    // Permite achicar % , fracción y nombres sin tocar el resto.
-    const escala = opts.escalaTexto != null ? opts.escalaTexto : 1;
-
-    // --- Partir cada etiqueta en líneas según el ancho disponible por barra ---
-    // Estimamos ~5px por carácter a font-size 9.5. maxChars por línea según el slot.
-    const fontLabel = 9.5 * escala;
-    const charW = fontLabel * 0.55;
-    const maxChars = Math.max(8, Math.floor((slot - 4) / charW));
-    const maxLineas = 3;
-
-    function partirEtiqueta(texto){
-      const palabras = String(texto || '').trim().split(/\s+/);
-      const lineas = [];
-      let actual = '';
-      palabras.forEach(function(p){
-        // Si una sola palabra es larguísima, la cortamos con guion
-        if(p.length > maxChars){
-          if(actual){ lineas.push(actual); actual = ''; }
-          while(p.length > maxChars){
-            lineas.push(p.slice(0, maxChars - 1) + '-');
-            p = p.slice(maxChars - 1);
-          }
-          actual = p;
-          return;
-        }
-        const prueba = actual ? actual + ' ' + p : p;
-        if(prueba.length > maxChars){
-          if(actual) lineas.push(actual);
-          actual = p;
-        } else {
-          actual = prueba;
-        }
-      });
-      if(actual) lineas.push(actual);
-      // Limitar a maxLineas; si sobra, meter "…" en la última
-      if(lineas.length > maxLineas){
-        const cortadas = lineas.slice(0, maxLineas);
-        cortadas[maxLineas - 1] = cortadas[maxLineas - 1].replace(/.$/, '') + '…';
-        return cortadas;
-      }
-      return lineas;
-    }
-
-    // Precalcular las líneas de cada etiqueta y cuántas líneas usa la más alta
-    const lineasPorItem = items.map(function(it){ return partirEtiqueta(it.label); });
-    const maxLineasUsadas = lineasPorItem.reduce(function(m, l){ return Math.max(m, l.length); }, 1);
-
-    const lineH = 11 * escala;                     // alto de cada línea de etiqueta
-    const padBottom = 16 + maxLineasUsadas * lineH; // espacio dinámico para el nombre
-    const H = (opts.height || 260);
-    const chartH = H - padTop - padBottom;
-
-    let svg = '<div class="ind-chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
-
-    // Líneas guía horizontales (0/25/50/75/100) + etiquetas del eje
-    [0,25,50,75,100].forEach(function(v){
-      const y = padTop + chartH * (1 - v/100);
-      svg += '<line x1="' + padLeft + '" y1="' + y + '" x2="' + (W - padRight) + '" y2="' + y +
-             '" stroke="#E5E7E6" stroke-width="1"/>';
-      svg += '<text x="' + (padLeft - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="9" fill="#9AA0A6" font-family="Poppins">' + v + '</text>';
-    });
-
-    items.forEach(function(it, i){
-      const cx = padLeft + slot * i + slot/2;
-      const x = cx - barW/2;
-      const pct = Math.max(0, Math.min(100, it.pct || 0));
-      const barH = chartH * (pct/100);
-      const y = padTop + chartH - barH;
-      const color = colorSegunPct(pct);
-
-      // Barra
-      svg += '<rect class="ind-bar-rect" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) +
-             '" width="' + barW.toFixed(1) + '" height="' + Math.max(0.5, barH).toFixed(1) +
-             '" rx="5" fill="' + color + '"/>';
-
-      // % encima de la barra
-      svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 6).toFixed(1) +
-             '" text-anchor="middle" font-size="' + (12.5 * escala).toFixed(1) + '" font-weight="700" fill="#14203A" font-family="Poppins">' + pct + '%</text>';
-
-      // Números que hacen el % (aprobados/total)
-      if(it.aprobados != null && it.total != null){
-        svg += '<text x="' + cx.toFixed(1) + '" y="' + (y - 20 * escala).toFixed(1) +
-               '" text-anchor="middle" font-size="' + (9.5 * escala).toFixed(1) + '" font-weight="600" fill="#6B7280" font-family="Poppins">' +
-               it.aprobados + '/' + it.total + '</text>';
-      }
-
-      // Etiqueta (nombre completo) partida en varias líneas, debajo del eje
-      const lineas = lineasPorItem[i];
-      const baseY = padTop + chartH + 14;
-      lineas.forEach(function(linea, li){
-        svg += '<text x="' + cx.toFixed(1) + '" y="' + (baseY + li * lineH).toFixed(1) +
-               '" text-anchor="middle" font-size="' + fontLabel + '" font-weight="600" fill="#14203A" font-family="Poppins">' +
-               escapeHtml(linea) + '</text>';
-      });
-    });
-
-    svg += '</svg></div>';
-    return svg;
-  }
-
-  function renderIndicadores(data){
-    const cursos = data.cursos || [];
-    const gerencias = data.gerencias || [];
-    const cont = document.getElementById('indContenido');
-
-    if(!cursos.length){
-      cont.innerHTML = '<div class="ind-error">No hay cursos para esta selección.</div>';
-      return;
-    }
-
-    const esRuta = data.modo === 'ruta';
-    let html = '';
-
-    // ============ HERO: cumplimiento global ============
-    if(esRuta && data.cumplimientoTodos){
-      const ct = data.cumplimientoTodos;
-      html +=
-        '<div class="ind-hero">' +
-          '<div class="hero-num">' + ct.cumplimiento + '<small>%</small></div>' +
-          '<div class="hero-info">' +
-            '<p class="hero-title">Completaron toda la ruta</p>' +
-            '<p class="hero-desc">% de estudiantes que aprobaron los ' + ct.cantidadCursos + ' cursos de la ruta, sobre el total de estudiantes matriculados.</p>' +
-            '<p class="hero-frac">' + ct.aprobados + ' de ' + ct.total + ' estudiantes</p>' +
-          '</div>' +
-        '</div>';
-    }
-
-    // ============ BLOQUE 1: Cumplimiento por curso (barras verticales) ============
-    html += '<div class="ind-bloque">';
-    html += '<h3>Cumplimiento por curso</h3>';
-    html += '<p class="ind-sub">% de estudiantes que aprobaron el examen final, sobre el total de estudiantes matriculados. El número sobre cada barra muestra aprobados/matriculados.</p>';
-    const itemsCurso = cursos.map(function(c){
-      return { label: c.nombre, pct: c.cumplimientoGeneral || 0, aprobados: c.aprobados, total: c.total };
-    });
-    html += barChartSVG(itemsCurso, { height: 300, escalaTexto: 0.8 });
-    html += '</div>';
-
-    // ============ BLOQUE 2: Nota promedio por curso (tarjetas de color) ============
-    html += '<div class="ind-bloque">';
-    html += '<h3>Nota promedio por curso</h3>';
-    html += '<p class="ind-sub">Promedio de la mejor nota de cada estudiante que rindió, sobre 20.</p>';
-    html += '<div class="ind-prom-grid">';
-    cursos.forEach(function(c){
-      const nota = c.promedioGeneral != null ? c.promedioGeneral : 0;
-      html +=
-        '<div class="ind-prom-card ' + nivelSegunNota(nota) + '">' +
-          '<div><div class="curso-cod">' + c.codigo + '</div>' +
-          '<div class="curso-nom">' + escapeHtml(c.nombre) + '</div></div>' +
-          '<div class="nota-big">' + nota.toFixed(1) + ' <small>/ 20</small></div>' +
-        '</div>';
-    });
-    html += '</div></div>';
-
-    // ============ BLOQUE 3: Cumplimiento por gerencia (un gráfico por gerencia) ============
-    html += '<div class="ind-bloque">';
-    html += '<h3>Cumplimiento por gerencia</h3>';
-    html += '<p class="ind-sub">Mismo indicador, desglosado por gerencia. Cada barra es un curso; el número muestra aprobados/matriculados de esa gerencia.</p>';
-
-    if(!gerencias.length){
-      html += '<p class="ind-sub" style="margin:0;">No hay gerencias registradas en los estudiantes.</p>';
-    } else {
-      html += '<div class="ind-ger-grid">';
-      gerencias.forEach(function(g){
-        // Total de estudiantes de la gerencia (lo tomamos del primer curso)
-        const totalG = cursos[0] && cursos[0].porGerencia[g] ? cursos[0].porGerencia[g].total : 0;
-
-        html += '<div class="ind-ger-card">';
-        html += '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/></svg>' + escapeHtml(g) + '</h4>';
-        html += '<p class="ger-meta">' + totalG + ' estudiante' + (totalG === 1 ? '' : 's') + ' matriculado' + (totalG === 1 ? '' : 's') + '</p>';
-
-        const itemsG = cursos.map(function(c){
-          const st = c.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
-          return { label: c.nombre, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
-        });
-        html += barChartSVG(itemsG, { height: 260, width: 500 });
-        html += '</div>';
-      });
-      html += '</div>';
-    }
-    html += '</div>';
-
-    // ============ BLOQUE 4: "Aprobó toda la ruta" por gerencia (barras) ============
-    if(esRuta && data.cumplimientoTodos){
-      const ct = data.cumplimientoTodos;
-      html += '<div class="ind-bloque">';
-      html += '<h3>Completaron toda la ruta, por gerencia</h3>';
-      html += '<p class="ind-sub">% de estudiantes que aprobaron los ' + ct.cantidadCursos + ' cursos de la ruta, por gerencia. El número muestra cuántos completaron sobre el total de la gerencia.</p>';
-      const itemsTodos = gerencias.map(function(g){
-        const st = ct.porGerencia[g] || { cumplimiento:0, aprobados:0, total:0 };
-        return { label: g, pct: st.cumplimiento || 0, aprobados: st.aprobados, total: st.total };
-      });
-      html += barChartSVG(itemsTodos, { height: 300, maxBarW: 60, escalaTexto: 0.7 });
-      html += '</div>';
-    }
-
-    cont.innerHTML = html;
-  }
-
-  function escapeHtml(str){
-    return String(str == null ? '' : str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-
-  document.getElementById('btnActualizarInd').addEventListener('click', function(){
-    cargarIndicadores();
-  });
-
-  // Toggle Ruta / Curso
-  document.querySelectorAll('.ind-modo-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      const modo = btn.dataset.modo;
-      if(modo === indModo) return;
-      indModo = modo;
-      document.querySelectorAll('.ind-modo-btn').forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      // Mostrar el selector correspondiente
-      document.getElementById('grupoSelectRuta').classList.toggle('hidden', modo !== 'ruta');
-      document.getElementById('grupoSelectCurso').classList.toggle('hidden', modo !== 'curso');
-      cargarIndicadores();
-    });
-  });
-
-  // Cambio de ruta
-  document.getElementById('selectRutaInd').addEventListener('change', function(){
-    indRuta = this.value;
-    cargarIndicadores();
-  });
-
-  // Cambio de curso
-  document.getElementById('selectCursoInd').addEventListener('change', function(){
-    indCurso = this.value;
-    cargarIndicadores();
-  });
-
-
-  // Si se llega desde el link de otra página (dashboard.html?vista=gestion
-  // o dashboard.html?vista=indicadores), abrir esa vista directamente.
-  // Se ejecuta aquí, al final, para que iniciarIndicadores() y sus variables
-  // ya estén definidas cuando se llame.
-  if(rol === 'admin'){
-    const vistaParam = new URLSearchParams(window.location.search).get('vista');
-    if(vistaParam === 'gestion'){
-      mostrarVista('gestion');
-    } else if(vistaParam === 'indicadores'){
-      mostrarVista('indicadores');
-    }
-  }
 
   init();
 </script>
