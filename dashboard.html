@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="assets/js/jspdf.umd.min.js"></script>
+<script src="assets/js/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="assets/js/jszip.min.js"></script>
@@ -468,6 +469,14 @@
             <label class="gestion-label" for="crearPassword">Contraseña inicial *</label>
             <input type="text" id="crearPassword" class="gestion-input" placeholder="Ej. Drimer2026">
 
+            <label class="gestion-label" for="crearRol">Rol</label>
+            <select id="crearRol" class="gestion-input">
+              <option value="estudiante" selected>Estudiante</option>
+              <option value="admin">Admin</option>
+              <option value="profesor">Profesor</option>
+            </select>
+            <p class="gestion-desc" style="margin-top:4px;">La fecha de alta se guarda sola, con la fecha de hoy.</p>
+
             <button id="btnCrearAlumno" class="gestion-btn">Crear alumno</button>
             <div id="crearMsg" class="gestion-msg"></div>
           </div>
@@ -496,7 +505,7 @@
             <h3>Descargar certificados</h3>
             <p class="gestion-desc">Genera los certificados en PDF de los alumnos aprobados y los descarga en un solo archivo .zip.</p>
 
-            <div class="modo-toggle">
+            <div class="modo-toggle" id="certModoToggle">
               <button type="button" class="modo-btn active" data-modo="curso">Masivo por curso</button>
               <button type="button" class="modo-btn" data-modo="dniCurso">DNI + curso específico</button>
               <button type="button" class="modo-btn" data-modo="dniTodos">DNI, todos sus certificados</button>
@@ -521,6 +530,30 @@
 
             <button id="btnDescargarCert" class="gestion-btn">Generar y descargar</button>
             <div id="certMsg" class="gestion-msg"></div>
+          </div>
+
+          <div class="gestion-card gestion-card-wide">
+            <h3>Descargar reporte de notas</h3>
+            <p class="gestion-desc">Genera el reporte de notas en Excel — una columna por curso.</p>
+
+            <div class="modo-toggle" id="reporteModoToggle">
+              <button type="button" class="modo-btn active" data-modo="ruta">Por ruta (todos los cursos)</button>
+              <button type="button" class="modo-btn" data-modo="curso">Por curso</button>
+              <button type="button" class="modo-btn" data-modo="usuario">Por usuario (DNI)</button>
+            </div>
+
+            <div id="camposReporteCurso" class="gestion-campos hidden">
+              <label class="gestion-label" for="selectReporteCurso">Curso</label>
+              <select id="selectReporteCurso" class="gestion-input"></select>
+            </div>
+
+            <div id="camposReporteUsuario" class="gestion-campos hidden">
+              <label class="gestion-label" for="inputReporteDni">DNI del alumno</label>
+              <input type="text" id="inputReporteDni" class="gestion-input" placeholder="Ej. 45394036">
+            </div>
+
+            <button id="btnDescargarReporte" class="gestion-btn">Generar y descargar</button>
+            <div id="reporteMsg" class="gestion-msg"></div>
           </div>
 
         </div>
@@ -1111,7 +1144,7 @@
 
 
   function poblarSelectsCertificado(){
-    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2')];
+    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2'), document.getElementById('selectReporteCurso')];
     selects.forEach(function(sel){
       if(!sel) return;
       sel.innerHTML = '';
@@ -1135,6 +1168,7 @@
     const gerencia = document.getElementById('crearGerencia').value.trim();
     const correo = document.getElementById('crearCorreo').value.trim();
     const password = document.getElementById('crearPassword').value.trim();
+    const rol = document.getElementById('crearRol').value;
     const msg = document.getElementById('crearMsg');
 
     if(!dni || !nombres || !apePat || !password){
@@ -1150,13 +1184,14 @@
     try{
       const data = await llamarApi('adminCrearUsuario', {
         dni: dni, nombres: nombres, apellidoPaterno: apePat, apellidoMaterno: apeMat,
-        puesto: puesto, area: area, gerencia: gerencia, correo: correo, password: password
+        puesto: puesto, area: area, gerencia: gerencia, correo: correo, password: password, rol: rol
       });
       if(data.ok){
         msg.className = 'gestion-msg ok';
         msg.textContent = 'Listo — se creó la cuenta de ' + data.nombre + '.';
         ['crearDni','crearNombres','crearApePat','crearApeMat','crearPuesto','crearArea','crearGerencia','crearCorreo','crearPassword']
           .forEach(function(id){ document.getElementById(id).value = ''; });
+        document.getElementById('crearRol').value = 'estudiante';
       } else {
         msg.className = 'gestion-msg error';
         msg.textContent = data.mensaje || 'No se pudo crear el alumno.';
@@ -1246,14 +1281,26 @@
 
   // ---------- Descargar certificados (masivo) ----------
   let modoCertActual = 'curso';
-  document.querySelectorAll('.modo-btn').forEach(function(btn){
+  document.querySelectorAll('#certModoToggle .modo-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.modo-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('#certModoToggle .modo-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       modoCertActual = btn.dataset.modo;
       document.getElementById('camposCertCurso').classList.toggle('hidden', modoCertActual !== 'curso');
       document.getElementById('camposCertDniCurso').classList.toggle('hidden', modoCertActual !== 'dniCurso');
       document.getElementById('camposCertDniTodos').classList.toggle('hidden', modoCertActual !== 'dniTodos');
+    });
+  });
+
+  // ---------- Reporte de notas: toggle de modo (independiente del de certificados) ----------
+  let modoReporteActual = 'ruta';
+  document.querySelectorAll('#reporteModoToggle .modo-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#reporteModoToggle .modo-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      modoReporteActual = btn.dataset.modo;
+      document.getElementById('camposReporteCurso').classList.toggle('hidden', modoReporteActual !== 'curso');
+      document.getElementById('camposReporteUsuario').classList.toggle('hidden', modoReporteActual !== 'usuario');
     });
   });
 
@@ -1516,6 +1563,137 @@
     } catch(err){
       msg.className = 'gestion-msg error';
       msg.textContent = 'Ocurrió un error generando los certificados. Intenta de nuevo.';
+    }
+    this.disabled = false;
+  });
+
+  // ---------- Reporte de notas (Excel) ----------
+  // Formato calcado del reporte de referencia: título + subtítulo arriba,
+  // banner "RUTA DRIMER" en navy sobre las columnas de curso, encabezados
+  // blancos sobre fondo #002060, DNI como texto (nunca pierde ceros a la
+  // izquierda), "-" cuando el alumno no tiene nota en ese curso todavía.
+  function fechaCorta(d){
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yy = String(d.getFullYear()).slice(-2);
+    return dd + '.' + mm + '.' + yy;
+  }
+
+  async function construirExcelReporte(datos, modo){
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('BD');
+
+    const fechaTexto = fechaCorta(new Date());
+
+    ws.getColumn(1).width = 1.3;
+    ws.getColumn(2).width = 12;   // DNI
+    ws.getColumn(3).width = 17;   // Nombre
+    ws.getColumn(4).width = 17;   // Apellido paterno
+    ws.getColumn(5).width = 17;   // Apellido materno
+    ws.getColumn(6).width = 36;   // Puesto
+    ws.getColumn(7).width = 18;   // Área
+    ws.getColumn(8).width = 26;   // Gerencia
+    ws.getColumn(9).width = 32;   // Email
+    datos.cursos.forEach(function(c, i){ ws.getColumn(10+i).width = 19; });
+
+    ws.getCell('B2').value = 'Reporte de Notas al ' + fechaTexto;
+    ws.getCell('B2').font = { name:'Calibri', bold:true, size:20 };
+
+    let subtitulo = '';
+    if(modo === 'ruta'){
+      subtitulo = 'Ruta: ' + (datos.ruta || 'Drimer Íntegro');
+    } else if(modo === 'curso'){
+      subtitulo = 'Curso: ' + (datos.cursos[0] ? datos.cursos[0].nombre : '');
+    } else {
+      const al = datos.alumnos[0];
+      subtitulo = 'Alumno: ' + (al ? (al.nombres + ' ' + al.apellidoPaterno + ' (DNI ' + al.dni + ')') : '');
+    }
+    ws.getCell('B3').value = subtitulo;
+    ws.getCell('B3').font = { name:'Calibri', italic:true, size:18 };
+
+    const PRIMERA_COL_CURSO = 10; // J
+    if(datos.cursos.length > 0){
+      const ultimaColCurso = 9 + datos.cursos.length;
+      ws.mergeCells(4, PRIMERA_COL_CURSO, 4, ultimaColCurso);
+      const banner = ws.getCell(4, PRIMERA_COL_CURSO);
+      banner.value = 'RUTA DRIMER';
+      banner.font = { name:'Calibri', bold:true, size:14, color:{ argb:'FFFFFFFF' } };
+      banner.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF002060' } };
+      banner.alignment = { horizontal:'center', vertical:'center' };
+    }
+
+    const headers = ['DNI','NOMBRE','APELLIDO_PATERNO','APELLIDO_MATERNO','PUESTO_TRABAJADOR','AREA','GERENCIA','EMAIL']
+      .concat(datos.cursos.map(function(c){ return c.nombre; }));
+
+    headers.forEach(function(h, i){
+      const cell = ws.getCell(5, 2 + i);
+      cell.value = h;
+      cell.font = { name:'Calibri', bold:true, size:10, color:{ argb:'FFFFFFFF' } };
+      cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF002060' } };
+      cell.alignment = { horizontal:'center', vertical:'center', wrapText:true };
+      cell.border = {
+        top:{style:'thin'}, bottom:{style:'thin'}, left:{style:'thin'}, right:{style:'thin'}
+      };
+    });
+
+    datos.alumnos.forEach(function(al, idx){
+      const filaNum = 6 + idx;
+      const valores = [al.dni, al.nombres, al.apellidoPaterno, al.apellidoMaterno, al.puesto, al.area, al.gerencia, al.correo]
+        .concat(al.notas.map(function(n){ return (n === null || n === undefined) ? '-' : n; }));
+
+      valores.forEach(function(v, i){
+        const cell = ws.getCell(filaNum, 2 + i);
+        cell.value = v;
+        cell.font = { name:'Calibri', size:10 };
+        if(i === 0) cell.numFmt = '@'; // DNI como texto — nunca pierde ceros a la izquierda
+      });
+    });
+
+    const buffer = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Reporte_de_Notas_' + modo + '_' + fechaTexto.replace(/\./g,'-') + '.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('btnDescargarReporte').addEventListener('click', async function(){
+    const msg = document.getElementById('reporteMsg');
+    const modo = modoReporteActual;
+    let cursoParam = '', dniParam = '';
+
+    if(modo === 'curso'){
+      cursoParam = document.getElementById('selectReporteCurso').value;
+      if(!cursoParam){ msg.className = 'gestion-msg error'; msg.textContent = 'Elige un curso.'; return; }
+    } else if(modo === 'usuario'){
+      dniParam = document.getElementById('inputReporteDni').value.trim();
+      if(!dniParam){ msg.className = 'gestion-msg error'; msg.textContent = 'Ingresa un DNI.'; return; }
+    }
+
+    this.disabled = true;
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Generando reporte...';
+
+    try{
+      const datos = await llamarApi('getReporteNotas', { modo: modo, curso: cursoParam, dni: dniParam });
+      if(!datos.ok){
+        msg.className = 'gestion-msg error';
+        msg.textContent = datos.mensaje || 'No se pudo generar el reporte.';
+        this.disabled = false;
+        return;
+      }
+
+      await construirExcelReporte(datos, modo);
+
+      msg.className = 'gestion-msg ok';
+      msg.textContent = 'Listo — se descargó el reporte de ' + datos.alumnos.length + ' alumno(s).';
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Ocurrió un error generando el reporte. Intenta de nuevo.';
     }
     this.disabled = false;
   });
