@@ -546,11 +546,17 @@
             <p class="gestion-desc">Genera el reporte de notas en Excel (.xlsx) con las mejores notas de cada curso.</p>
 
             <div class="modo-toggle">
-              <button type="button" class="rep-modo-btn modo-btn active" data-modo="curso">Reporte por curso</button>
+              <button type="button" class="rep-modo-btn modo-btn active" data-modo="ruta">Reporte por ruta</button>
+              <button type="button" class="rep-modo-btn modo-btn" data-modo="curso">Reporte por curso</button>
               <button type="button" class="rep-modo-btn modo-btn" data-modo="dni">Reporte por DNI</button>
             </div>
 
-            <div id="camposRepCurso" class="gestion-campos">
+            <div id="camposRepRuta" class="gestion-campos">
+              <label class="gestion-label" for="selectRepRuta">Ruta / Programa</label>
+              <select id="selectRepRuta" class="gestion-input"></select>
+            </div>
+
+            <div id="camposRepCurso" class="gestion-campos hidden">
               <label class="gestion-label" for="selectRepCurso">Curso</label>
               <select id="selectRepCurso" class="gestion-input"></select>
             </div>
@@ -989,6 +995,30 @@
         sel.appendChild(opt);
       });
     });
+
+    // Selector de rutas del reporte (rutas únicas de los cursos)
+    const selRuta = document.getElementById('selectRepRuta');
+    if(selRuta){
+      selRuta.innerHTML = '';
+      const rutas = [];
+      todosLosCursos.forEach(function(c){
+        const r = (c.ruta || '').trim();
+        if(r && rutas.indexOf(r) === -1) rutas.push(r);
+      });
+      rutas.sort();
+      rutas.forEach(function(r){
+        const opt = document.createElement('option');
+        opt.value = r;
+        opt.textContent = r;
+        selRuta.appendChild(opt);
+      });
+      if(!rutas.length){
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '(sin rutas)';
+        selRuta.appendChild(opt);
+      }
+    }
   }
 
   // ---------- Resetear contraseña ----------
@@ -1346,14 +1376,15 @@
   // ============================================================
   // REPORTE DE NOTAS (Excel) — solo admin
   // ============================================================
-  let repModo = 'curso';
+  let repModo = 'ruta';
 
-  // Toggle Reporte por curso / por DNI
+  // Toggle Reporte por ruta / por curso / por DNI
   document.querySelectorAll('.rep-modo-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       repModo = btn.dataset.modo;
       document.querySelectorAll('.rep-modo-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
+      document.getElementById('camposRepRuta').classList.toggle('hidden', repModo !== 'ruta');
       document.getElementById('camposRepCurso').classList.toggle('hidden', repModo !== 'curso');
       document.getElementById('camposRepDni').classList.toggle('hidden', repModo !== 'dni');
     });
@@ -1372,10 +1403,16 @@
     const msg = document.getElementById('reporteMsg');
     const cursoParam = document.getElementById('selectRepCurso').value;
     const dniParam = document.getElementById('inputRepDni').value.trim();
+    const rutaParam = document.getElementById('selectRepRuta').value;
 
     if(repModo === 'dni' && !dniParam){
       msg.className = 'gestion-msg error';
       msg.textContent = 'Ingresa el DNI del trabajador.';
+      return;
+    }
+    if(repModo === 'ruta' && !rutaParam){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Selecciona una ruta.';
       return;
     }
 
@@ -1384,7 +1421,7 @@
     msg.textContent = 'Generando reporte...';
 
     try{
-      const resp = await llamarApi('getReporteNotas', { modo: repModo, curso: cursoParam, dni: dniParam });
+      const resp = await llamarApi('getReporteNotas', { modo: repModo, curso: cursoParam, dni: dniParam, ruta: rutaParam });
       if(!resp || !resp.ok){
         throw new Error((resp && resp.mensaje) || 'Error');
       }
@@ -1507,7 +1544,9 @@
     a.href = url;
     a.download = rep.modo === 'dni'
       ? 'Reporte_de_Notas_' + (rep.filas[0] ? rep.filas[0].dni : 'trabajador') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx'
-      : 'Reporte_de_Notas_' + (rep.cursos[0] || 'curso').replace(/[^\wáéíóúñ]+/gi,'_') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx';
+      : (rep.modo === 'ruta'
+          ? 'Reporte_de_Notas_' + (rep.tituloRuta || 'ruta').replace(/[^\wáéíóúñ]+/gi,'_') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx'
+          : 'Reporte_de_Notas_' + (rep.cursos[0] || 'curso').replace(/[^\wáéíóúñ]+/gi,'_') + '_al_' + fecha.replace(/\./g,'_') + '.xlsx');
     document.body.appendChild(a);
     a.click();
     a.remove();
