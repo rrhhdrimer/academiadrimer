@@ -1568,29 +1568,64 @@
 
       const canvas = document.getElementById('certCanvasAdmin');
       const ctx = canvas.getContext('2d');
-      const zip = new JSZip();
+      const LOTE_SIZE = 50;
       const MAX_PARALELOS = 10;
 
       // Función para generar un certificado
       async function generarUnoCert(item, indice){
-        msg.textContent = 'Generando ' + (indice+1) + ' de ' + lista.length + ': ' + item.nombre + '...';
         const fechaTexto = certFormatearFechaLarga(item.fecha);
         const blob = await certGenerarPdfBlob(canvas, ctx, { nombre: item.nombre, curso: item.nombreCurso, fechaTexto: fechaTexto });
         const nombreArchivo = 'Certificado_' + item.codigoCurso + '_' + item.nombre.replace(/\s+/g,'_') + '.pdf';
         return { nombreArchivo: nombreArchivo, blob: blob };
       }
 
-      // Generar en lotes paralelos
-      for(let i = 0; i < lista.length; i += MAX_PARALELOS){
-        const lote = lista.slice(i, i + MAX_PARALELOS);
-        const promesas = lote.map(function(item, idx){ 
-          return generarUnoCert(item, i + idx); 
-        });
+      // Procesar por lotes
+      const totalLotes = Math.ceil(lista.length / LOTE_SIZE);
+      
+      for(let loteNum = 0; loteNum < totalLotes; loteNum++){
+        const inicio = loteNum * LOTE_SIZE;
+        const fin = Math.min(inicio + LOTE_SIZE, lista.length);
+        const lote = lista.slice(inicio, fin);
         
-        const resultados = await Promise.all(promesas);
+        msg.textContent = 'Lote ' + (loteNum + 1) + ' de ' + totalLotes + ': Generando ' + lote.length + ' certificados...';
         
+        // Generar en paralelo (máximo 10 a la vez)
+        const resultados = [];
+        for(let i = 0; i < lote.length; i += MAX_PARALELOS){
+          const sublote = lote.slice(i, i + MAX_PARALELOS);
+          const promesas = sublote.map(function(item, idx){ 
+            msg.textContent = 'Lote ' + (loteNum + 1) + ' de ' + totalLotes + ': Generando ' + (inicio + i + idx + 1) + ' de ' + lista.length + '...';
+            return generarUnoCert(item, inicio + i + idx); 
+          });
+          
+          const parciales = await Promise.all(promesas);
+          resultados.push(...parciales);
+        }
+        
+        // Crear ZIP para este lote
+        msg.textContent = 'Lote ' + (loteNum + 1) + ' de ' + totalLotes + ': Empaquetando...';
+        const zip = new JSZip();
         for(const resultado of resultados){
           zip.file(resultado.nombreArchivo, resultado.blob);
+        }
+        
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        
+        // Descargar este lote
+        msg.textContent = 'Lote ' + (loteNum + 1) + ' de ' + totalLotes + ': Descargando (' + inicio + '-' + fin + ')...';
+        const urlDescarga = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = urlDescarga;
+        a.download = 'Certificados_' + modo + (cursoParam ? '_' + cursoParam : '') + '_lote' + (loteNum + 1) + '_' + inicio + '-' + fin + '.zip';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(urlDescarga);
+        
+        // Pausa antes del siguiente lote (para que el SO procese la descarga)
+        if(loteNum < totalLotes - 1){
+          msg.textContent = 'Esperando... Próximo lote en breve...';
+          await new Promise(function(resolve){ setTimeout(resolve, 1500); });
         }
       }
 
@@ -1607,7 +1642,7 @@
       URL.revokeObjectURL(urlDescarga);
 
       msg.className = 'gestion-msg ok';
-      msg.textContent = 'Listo — se descargaron ' + lista.length + ' certificado(s).';
+      msg.textContent = 'Listo — se descargaron ' + lista.length + ' certificado(s) en ' + totalLotes + ' lote(s).';
     } catch(err){
       msg.className = 'gestion-msg error';
       msg.textContent = 'Ocurrió un error generando los certificados. Intenta de nuevo.';
