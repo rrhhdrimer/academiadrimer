@@ -1569,14 +1569,27 @@
       const canvas = document.getElementById('certCanvasAdmin');
       const ctx = canvas.getContext('2d');
       const zip = new JSZip();
+      const LOTE_SIZE = 50;
 
-      for(let i = 0; i < lista.length; i++){
-        const item = lista[i];
-        msg.textContent = 'Generando ' + (i+1) + ' de ' + lista.length + ': ' + item.nombre + '...';
-        const fechaTexto = certFormatearFechaLarga(item.fecha);
-        const blob = await certGenerarPdfBlob(canvas, ctx, { nombre: item.nombre, curso: item.nombreCurso, fechaTexto: fechaTexto });
-        const nombreArchivo = 'Certificado_' + item.codigoCurso + '_' + item.nombre.replace(/\s+/g,'_') + '.pdf';
-        zip.file(nombreArchivo, blob);
+      // Generar en lotes para no sobrecargar el navegador
+      for(let loteNum = 0; loteNum < Math.ceil(lista.length / LOTE_SIZE); loteNum++){
+        const inicio = loteNum * LOTE_SIZE;
+        const fin = Math.min(inicio + LOTE_SIZE, lista.length);
+        
+        for(let i = inicio; i < fin; i++){
+          const item = lista[i];
+          msg.textContent = 'Generando ' + (i+1) + ' de ' + lista.length + ': ' + item.nombre + '...';
+          const fechaTexto = certFormatearFechaLarga(item.fecha);
+          const blob = await certGenerarPdfBlob(canvas, ctx, { nombre: item.nombre, curso: item.nombreCurso, fechaTexto: fechaTexto });
+          const nombreArchivo = 'Certificado_' + item.codigoCurso + '_' + item.nombre.replace(/\s+/g,'_') + '.pdf';
+          zip.file(nombreArchivo, blob);
+        }
+        
+        // Pausa entre lotes para descargar la memoria
+        if(loteNum < Math.ceil(lista.length / LOTE_SIZE) - 1){
+          msg.textContent = 'Descansando... ' + fin + ' de ' + lista.length + ' completados...';
+          await new Promise(function(resolve){ setTimeout(resolve, 2000); });
+        }
       }
 
       msg.textContent = 'Empaquetando ' + lista.length + ' certificado(s)...';
