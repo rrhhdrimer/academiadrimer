@@ -481,6 +481,35 @@
             <div id="crearMsg" class="gestion-msg"></div>
           </div>
 
+          <div class="gestion-card gestion-card-wide">
+            <h3>Calificación masiva</h3>
+            <p class="gestion-desc">Califica a múltiples estudiantes del mismo curso. Solo se guardan las notas que modifiques.</p>
+
+            <label class="gestion-label" for="selectCalifCurso">Curso</label>
+            <select id="selectCalifCurso" class="gestion-input"></select>
+
+            <div id="califTablaContenedor" style="display:none; margin-top:16px;">
+              <div style="overflow-x:auto; margin-bottom:12px;">
+                <table id="califTabla" style="width:100%; border-collapse:collapse; font-size:13px;">
+                  <thead>
+                    <tr style="background:var(--ink); color:#fff;">
+                      <th style="padding:8px; text-align:left; border:1px solid var(--line);">DNI</th>
+                      <th style="padding:8px; text-align:left; border:1px solid var(--line);">Nombre</th>
+                      <th style="padding:8px; text-align:left; border:1px solid var(--line);">Cargo</th>
+                      <th style="padding:8px; text-align:left; border:1px solid var(--line);">Gerencia</th>
+                      <th style="padding:8px; text-align:center; border:1px solid var(--line);">Nota</th>
+                    </tr>
+                  </thead>
+                  <tbody id="califTablaBody">
+                  </tbody>
+                </table>
+              </div>
+              <button id="btnGuardarCalif" class="gestion-btn">Guardar cambios</button>
+            </div>
+
+            <div id="califMsg" class="gestion-msg"></div>
+          </div>
+
           <div class="gestion-card">
             <h3>Resetear contraseña</h3>
             <p class="gestion-desc">Cambia la contraseña de un alumno a <strong>0000</strong>.</p>
@@ -1144,10 +1173,14 @@
 
 
   function poblarSelectsCertificado(){
-    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2'), document.getElementById('selectReporteCurso')];
+    const selects = [document.getElementById('selectCertCurso1'), document.getElementById('selectCertCurso2'), document.getElementById('selectReporteCurso'), document.getElementById('selectCalifCurso')];
     selects.forEach(function(sel){
       if(!sel) return;
       sel.innerHTML = '';
+      const optVacia = document.createElement('option');
+      optVacia.value = '';
+      optVacia.textContent = '— Elige un curso —';
+      sel.appendChild(optVacia);
       todosLosCursos.forEach(function(c){
         const opt = document.createElement('option');
         opt.value = c.codigo;
@@ -1694,6 +1727,195 @@
     } catch(err){
       msg.className = 'gestion-msg error';
       msg.textContent = 'Ocurrió un error generando el reporte. Intenta de nuevo.';
+    }
+    this.disabled = false;
+  });
+
+  // ---------- Calificación masiva ----------
+  // State para rastrear valores iniciales y cambios
+  let califEstudiantes = [];
+  let califValoresOriginales = {};
+
+  document.getElementById('selectCalifCurso').addEventListener('change', async function(){
+    const cursoSeleccionado = this.value;
+    const msg = document.getElementById('califMsg');
+    const contenedor = document.getElementById('califTablaContenedor');
+
+    if(!cursoSeleccionado){
+      contenedor.style.display = 'none';
+      msg.className = '';
+      msg.textContent = '';
+      return;
+    }
+
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Cargando estudiantes...';
+
+    try{
+      const datos = await llamarApi('getEstudiantesCurso', { curso: cursoSeleccionado });
+      if(!datos.ok){
+        msg.className = 'gestion-msg error';
+        msg.textContent = datos.mensaje || 'No se pudo cargar los estudiantes.';
+        contenedor.style.display = 'none';
+        return;
+      }
+
+      califEstudiantes = datos.data || [];
+      califValoresOriginales = {};
+
+      const tbody = document.getElementById('califTablaBody');
+      tbody.innerHTML = '';
+
+      for(let i = 0; i < califEstudiantes.length; i++){
+        const est = califEstudiantes[i];
+        const tr = document.createElement('tr');
+        tr.style.backgroundColor = i % 2 === 0 ? '#FBFBFA' : '#fff';
+
+        const tdDni = document.createElement('td');
+        tdDni.textContent = est.dni;
+        tdDni.style.padding = '8px';
+        tdDni.style.border = '1px solid var(--line)';
+        tdDni.style.fontWeight = '500';
+
+        const tdNombre = document.createElement('td');
+        tdNombre.textContent = est.nombre;
+        tdNombre.style.padding = '8px';
+        tdNombre.style.border = '1px solid var(--line)';
+
+        const tdCargo = document.createElement('td');
+        tdCargo.textContent = est.puesto;
+        tdCargo.style.padding = '8px';
+        tdCargo.style.border = '1px solid var(--line)';
+        tdCargo.style.fontSize = '12px';
+        tdCargo.style.color = 'var(--ink-soft)';
+
+        const tdGerencia = document.createElement('td');
+        tdGerencia.textContent = est.gerencia;
+        tdGerencia.style.padding = '8px';
+        tdGerencia.style.border = '1px solid var(--line)';
+        tdGerencia.style.fontSize = '12px';
+        tdGerencia.style.color = 'var(--ink-soft)';
+
+        const tdNota = document.createElement('td');
+        tdNota.style.padding = '8px';
+        tdNota.style.border = '1px solid var(--line)';
+        tdNota.style.textAlign = 'center';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.max = '20';
+        input.step = '0.01';
+        input.className = 'calif-input';
+        input.dataset.dni = est.dni;
+        input.placeholder = est.notaActual !== null ? '(' + est.notaActual + ')' : 'Sin nota';
+        if(est.notaActual !== null){
+          input.value = est.notaActual;
+          califValoresOriginales[est.dni] = est.notaActual;
+        } else {
+          califValoresOriginales[est.dni] = null;
+        }
+
+        input.style.width = '70px';
+        input.style.padding = '6px';
+        input.style.border = '1px solid var(--line)';
+        input.style.borderRadius = '4px';
+        input.style.fontFamily = 'Poppins, sans-serif';
+        input.style.fontSize = '12px';
+        input.style.textAlign = 'center';
+
+        tdNota.appendChild(input);
+
+        tr.appendChild(tdDni);
+        tr.appendChild(tdNombre);
+        tr.appendChild(tdCargo);
+        tr.appendChild(tdGerencia);
+        tr.appendChild(tdNota);
+
+        tbody.appendChild(tr);
+      }
+
+      contenedor.style.display = 'block';
+      msg.className = 'gestion-msg ok';
+      msg.textContent = 'Se cargaron ' + califEstudiantes.length + ' estudiante(s).';
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Ocurrió un error cargando los estudiantes. Intenta de nuevo.';
+      contenedor.style.display = 'none';
+    }
+  });
+
+  document.getElementById('btnGuardarCalif').addEventListener('click', async function(){
+    const msg = document.getElementById('califMsg');
+    const cursoSeleccionado = document.getElementById('selectCalifCurso').value;
+
+    if(!cursoSeleccionado){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Por favor elige un curso.';
+      return;
+    }
+
+    // Detectar cambios: qué notas fueron modificadas o se rellenaron desde vacío
+    const aGuardar = [];
+    const inputs = document.querySelectorAll('.calif-input');
+
+    for(let inp of inputs){
+      const dni = inp.dataset.dni;
+      const valorNuevo = inp.value.trim();
+      const valorOriginal = califValoresOriginales[dni];
+
+      // Guardar si:
+      // 1. Estaba vacío y ahora tiene valor
+      // 2. Tenía valor y ahora está vacío
+      // 3. Cambió de valor
+
+      if(valorNuevo === '' && valorOriginal === null){
+        // Sin cambio, ambos vacíos
+        continue;
+      } else if(valorNuevo === ''){
+        // Se buscaba borrar pero no hace nada (podría limpiar a null si quisieras)
+        continue;
+      } else {
+        const notaNum = parseFloat(valorNuevo);
+        if(isNaN(notaNum)){
+          continue;
+        }
+        // Si es distinto del original, guardarlo
+        if(valorOriginal === null || notaNum !== valorOriginal){
+          aGuardar.push({ dni: dni, nota: notaNum });
+        }
+      }
+    }
+
+    if(aGuardar.length === 0){
+      msg.className = 'gestion-msg';
+      msg.textContent = 'No hay cambios que guardar.';
+      return;
+    }
+
+    this.disabled = true;
+    msg.className = 'gestion-msg progreso';
+    msg.textContent = 'Guardando ' + aGuardar.length + ' calificación(es)...';
+
+    try{
+      const resultado = await llamarApi('bulkGradeSave', { curso: cursoSeleccionado, calificaciones: aGuardar });
+      if(!resultado.ok){
+        msg.className = 'gestion-msg error';
+        msg.textContent = resultado.mensaje || 'No se pudieron guardar las calificaciones.';
+        this.disabled = false;
+        return;
+      }
+
+      // Actualizar los valores originales con los nuevos
+      for(let item of aGuardar){
+        califValoresOriginales[item.dni] = item.nota;
+      }
+
+      msg.className = 'gestion-msg ok';
+      msg.textContent = resultado.mensaje || 'Calificaciones guardadas correctamente.';
+    } catch(err){
+      msg.className = 'gestion-msg error';
+      msg.textContent = 'Ocurrió un error guardando las calificaciones. Intenta de nuevo.';
     }
     this.disabled = false;
   });
