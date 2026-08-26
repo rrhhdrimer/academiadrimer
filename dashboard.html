@@ -1569,26 +1569,28 @@
       const canvas = document.getElementById('certCanvasAdmin');
       const ctx = canvas.getContext('2d');
       const zip = new JSZip();
-      const LOTE_SIZE = 50;
+      const MAX_PARALELOS = 10;
 
-      // Generar en lotes para no sobrecargar el navegador
-      for(let loteNum = 0; loteNum < Math.ceil(lista.length / LOTE_SIZE); loteNum++){
-        const inicio = loteNum * LOTE_SIZE;
-        const fin = Math.min(inicio + LOTE_SIZE, lista.length);
+      // Función para generar un certificado
+      async function generarUnoCert(item, indice){
+        msg.textContent = 'Generando ' + (indice+1) + ' de ' + lista.length + ': ' + item.nombre + '...';
+        const fechaTexto = certFormatearFechaLarga(item.fecha);
+        const blob = await certGenerarPdfBlob(canvas, ctx, { nombre: item.nombre, curso: item.nombreCurso, fechaTexto: fechaTexto });
+        const nombreArchivo = 'Certificado_' + item.codigoCurso + '_' + item.nombre.replace(/\s+/g,'_') + '.pdf';
+        return { nombreArchivo: nombreArchivo, blob: blob };
+      }
+
+      // Generar en lotes paralelos
+      for(let i = 0; i < lista.length; i += MAX_PARALELOS){
+        const lote = lista.slice(i, i + MAX_PARALELOS);
+        const promesas = lote.map(function(item, idx){ 
+          return generarUnoCert(item, i + idx); 
+        });
         
-        for(let i = inicio; i < fin; i++){
-          const item = lista[i];
-          msg.textContent = 'Generando ' + (i+1) + ' de ' + lista.length + ': ' + item.nombre + '...';
-          const fechaTexto = certFormatearFechaLarga(item.fecha);
-          const blob = await certGenerarPdfBlob(canvas, ctx, { nombre: item.nombre, curso: item.nombreCurso, fechaTexto: fechaTexto });
-          const nombreArchivo = 'Certificado_' + item.codigoCurso + '_' + item.nombre.replace(/\s+/g,'_') + '.pdf';
-          zip.file(nombreArchivo, blob);
-        }
+        const resultados = await Promise.all(promesas);
         
-        // Pausa entre lotes para descargar la memoria
-        if(loteNum < Math.ceil(lista.length / LOTE_SIZE) - 1){
-          msg.textContent = 'Descansando... ' + fin + ' de ' + lista.length + ' completados...';
-          await new Promise(function(resolve){ setTimeout(resolve, 2000); });
+        for(const resultado of resultados){
+          zip.file(resultado.nombreArchivo, resultado.blob);
         }
       }
 
