@@ -52,6 +52,11 @@
     src:url('assets/fonts/Poppins-Bold.woff2') format('woff2');
     font-weight:700; font-style:normal; font-display:block;
   }
+  @font-face{
+    font-family:'Clear Sans';
+    src:url('assets/fonts/clear-sans_bold.ttf') format('truetype');
+    font-weight:700; font-style:normal; font-display:block;
+  }
 
   *{ box-sizing:border-box; }
   body{
@@ -1445,7 +1450,7 @@
         .logo-small {font-size:11px;color:#666;margin-top:3px;}
         
         /* Contenido principal */
-        .content {position:relative;z-index:2;padding:80px 100px;text-align:center;height:100%;}
+        .content {position:relative;z-index:2;padding:70px 90px;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
         
         .title {font-size:96px;font-weight:700;color:#002060;letter-spacing:12px;margin-bottom:5px;line-height:1;}
         .subtitle {font-size:36px;font-weight:600;color:#002060;letter-spacing:6px;margin-bottom:20px;}
@@ -1455,7 +1460,7 @@
         
         .label {font-size:20px;color:#555;margin:20px 0;letter-spacing:3px;}
         
-        .nombre {font-family:'Brush Script MT', cursive;font-size:80px;color:#002060;margin:30px 0;font-style:italic;letter-spacing:2px;min-height:100px;display:flex;align-items:center;justify-content:center;}
+        .nombre {font-family:'Clear Sans', sans-serif;font-size:61px;color:#002060;margin:30px 0;font-weight:700;letter-spacing:1px;min-height:80px;display:flex;align-items:center;justify-content:center;}
         
         .line {height:3px;background:linear-gradient(90deg, transparent, #d4a574, transparent);margin:20px 0 40px 0;}
         
@@ -1476,8 +1481,7 @@
         <div class="wave"></div>
         
         <div class="logo">
-          Academia<br>Drimer
-          <div class="logo-small">ACADÉMICA</div>
+          <img src="assets/LOGO_Academia_Drimer.png" alt="Academia Drimer" style="height:120px; width:auto; display:block; margin:0 auto;">
         </div>
         
         <div class="content">
@@ -1498,13 +1502,11 @@
           
           <div class="signatures">
             <div class="signature">
-              <div class="sig-line"></div>
-              <div class="sig-name">Víctor Salardi</div>
-              <div class="sig-title">Gerente General</div>
+              <img src="assets/Firma_Vico.png" alt="Firma Víctor Salardi" style="height:100px; width:auto; display:block; margin:0 auto;">
             </div>
           </div>
           
-          <div class="fecha">${dia} DE ${mes} DEL ${anio}</div>
+          <div class="fecha" style="margin-top:15px;">${dia} DE ${mes} DEL ${anio}</div>
         </div>
       </div>
       </body></html>
