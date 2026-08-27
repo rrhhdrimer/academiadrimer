@@ -8,9 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="assets/js/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js.map"></script>
-<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.min.js"></script>
 <script src="assets/js/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -1373,15 +1370,15 @@
 
               msgElement.textContent = `${codigoCurso}: Generando ${i + j + 1} de ${aprobados.length}...`;
 
-              // Generar PDF desde plantilla en el navegador
-              const pdfBlob = await generarCertificadoConPlantilla(nombre, nombreCurso, fecha);
+              // Generar PDF desde HTML con html2canvas + jsPDF
+              const pdfBlob = await generarPDFDesdeHTML(nombre, nombreCurso, fecha);
               const pdfBase64 = await new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result);
                 reader.readAsDataURL(pdfBlob);
               });
 
-              console.log(`[DASHBOARD] PDF generado desde plantilla para ${nombre}, tamaño: ${pdfBlob.size} bytes`);
+              console.log(`[DASHBOARD] PDF generado para ${nombre}, tamaño: ${pdfBlob.size} bytes`);
 
               // Guardar en Storage via Edge Function
               const saveRes = await llamarApi('saveCertificadoToStorage', {
@@ -1420,129 +1417,98 @@
     }
   }
 
-  async function generarCertificadoConPlantilla(nombre, nombreCurso, fecha) {
+  async function generarPDFDesdeHTML(nombre, curso, fecha) {
+    const fechaFormato = new Date(fecha);
+    const dia = fechaFormato.getDate();
+    const mes = fechaFormato.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
+    const anio = fechaFormato.getFullYear();
+
+    const htmlString = `
+      <!DOCTYPE html><html><head><meta charset="UTF-8">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+      <style>
+        body {width:1000px;height:707px;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+        .certificado {width:1000px;height:707px;position:relative;background:white;}
+        .top-right {position:absolute;top:0;right:0;width:300px;height:150px;background:linear-gradient(135deg,#002060,#003399);clip-path:polygon(100% 0,100% 100%,0 0);}
+        .left {position:absolute;left:0;top:50%;transform:translateY(-50%);width:30px;height:400px;background:linear-gradient(90deg,transparent,#a8d5ba,transparent);}
+        .onda {position:absolute;bottom:0;width:100%;height:80px;background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 80"><path d="M0,40 Q250,20 500,40 T1000,40 L1000,80 L0,80 Z" fill="%23e8f4f8" opacity="0.6"/></svg>');background-size:500px 80px;}
+        .contenido {position:relative;z-index:2;padding:60px 80px;height:100%;display:flex;flex-direction:column;justify-content:space-between;text-align:center;}
+        .logo {position:absolute;top:30px;left:40px;font-size:24px;font-weight:700;color:#002060;z-index:3;line-height:1.2;}
+        .titulo {font-size:72px;font-weight:700;color:#002060;letter-spacing:8px;margin-bottom:10px;}
+        .subtitulo {font-size:28px;color:#002060;letter-spacing:4px;margin-bottom:5px;}
+        .deco {display:flex;align-items:center;justify-content:center;gap:20px;margin:15px 0 25px 0;color:#d4a574;}
+        .deco::before,.deco::after {content:'';width:40px;height:3px;background:#d4a574;}
+        .otorgado {font-size:18px;color:#333;margin-bottom:20px;letter-spacing:2px;}
+        .nombre {font-family:'Pinyon Script',cursive;font-size:60px;color:#002060;margin:20px 0;font-style:italic;}
+        .linea {height:2px;background:linear-gradient(90deg,transparent,#d4a574,transparent);margin:15px 0 30px 0;}
+        .desc {font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;max-width:800px;margin-left:auto;margin-right:auto;}
+        .curso {font-weight:700;color:#002060;}
+        .firma-sec {display:flex;justify-content:center;gap:80px;margin:20px 0 10px 0;}
+        .firma {text-align:center;}
+        .firma-linea {width:150px;height:2px;background:#333;margin-bottom:8px;}
+        .firma-nombre {font-size:14px;font-weight:600;color:#333;}
+        .firma-cargo {font-size:13px;color:#666;margin-top:4px;}
+        .fecha {font-size:16px;color:#333;font-weight:600;letter-spacing:2px;}
+      </style></head><body>
+      <div class="certificado">
+        <div class="top-right"></div><div class="left"></div>
+        <div class="contenido">
+          <div>
+            <div class="logo">Academia<br>Drimer</div>
+            <h1 class="titulo">CERTIFICADO</h1>
+            <h2 class="subtitulo">DE APROBACIÓN</h2>
+            <div class="deco"></div>
+            <p class="otorgado">otorgado a</p>
+            <div class="nombre">${nombre}</div>
+            <div class="linea"></div>
+            <p class="desc">Por haber completado satisfactoriamente el curso <span class="curso">${curso}</span> como parte de la Ruta Drimer Íntegro 2026, acreditando el cumplimiento de los contenidos y la evaluación correspondiente.</p>
+          </div>
+          <div>
+            <div class="firma-sec">
+              <div class="firma">
+                <div class="firma-linea"></div>
+                <div class="firma-nombre">Víctor Salardi</div>
+                <div class="firma-cargo">Gerente General</div>
+              </div>
+            </div>
+            <p class="fecha">${dia} DE ${mes} DEL ${anio}</p>
+          </div>
+        </div>
+        <div class="onda"></div>
+      </div>
+      </body></html>
+    `;
+
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.top = '-9999px';
+    tempDiv.innerHTML = htmlString;
+    document.body.appendChild(tempDiv);
+
     try {
-      console.log(`[GENERADOR] Iniciando para: ${nombre}`);
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Verificar que pdf-lib esté disponible
-      if (!window.PDFLib) {
-        throw new Error('pdf-lib no está cargada');
-      }
-
-      const { PDFDocument, rgb } = window.PDFLib;
-
-      // URLs públicas directas a Storage (bucket debe estar configurado como PÚBLICO)
-      const baseUrl = 'https://bvhpteltogflpyriplpz.supabase.co/storage/v1/object/public/plantillas';
-      
-      // Descargar plantilla PDF desde Storage
-      console.log('[GENERADOR] Descargando plantilla...');
-      const plantillaRes = await fetch(`${baseUrl}/Certificado_Academia_Drimer.pdf`);
-      if (!plantillaRes.ok) {
-        throw new Error(`Error descargando plantilla: ${plantillaRes.status}`);
-      }
-      const plantillaBytes = await plantillaRes.arrayBuffer();
-      console.log(`[GENERADOR] Plantilla descargada: ${plantillaBytes.byteLength} bytes`);
-
-      // Descargar fuentes
-      console.log('[GENERADOR] Descargando fuentes...');
-      const [eyesomeRes, clearBoldRes, clearLightRes] = await Promise.all([
-        fetch(`${baseUrl}/Eyesome-Script.otf`),
-        fetch(`${baseUrl}/clear-sans.bold.ttf`),
-        fetch(`${baseUrl}/clear-sans.light.ttf`),
-      ]);
-
-      if (!eyesomeRes.ok || !clearBoldRes.ok || !clearLightRes.ok) {
-        throw new Error(`Error descargando fuentes: ${!eyesomeRes.ok ? 'Eyesome' : !clearBoldRes.ok ? 'Bold' : 'Light'}`);
-      }
-
-      const eyesomeBytes = await eyesomeRes.arrayBuffer();
-      const clearBoldBytes = await clearBoldRes.arrayBuffer();
-      const clearLightBytes = await clearLightRes.arrayBuffer();
-      console.log('[GENERADOR] Fuentes descargadas');
-
-      // Cargar plantilla
-      const pdfDoc = await PDFDocument.load(new Uint8Array(plantillaBytes));
-      const pages = pdfDoc.getPages();
-      const firstPage = pages[0];
-      const { width, height } = firstPage.getSize();
-      console.log(`[GENERADOR] PDF tamaño: ${width}x${height}`);
-
-      // Esperar a que fontkit esté disponible
-      console.log('[GENERADOR] Esperando fontkit...');
-      let fontkit = window.fontkit;
-      let attempts = 0;
-      while (!fontkit && attempts < 50) {
-        await new Promise(r => setTimeout(r, 100));
-        fontkit = window.fontkit;
-        attempts++;
-      }
-
-      if (!fontkit) {
-        throw new Error('Fontkit no cargó después de 5 segundos');
-      }
-
-      // Registrar fontkit
-      PDFDocument.registerFontkit(fontkit);
-      console.log('[GENERADOR] Fontkit registrado');
-
-      // Registrar fuentes
-      const fontEyesome = await pdfDoc.embedFont(new Uint8Array(eyesomeBytes));
-      const fontClearBold = await pdfDoc.embedFont(new Uint8Array(clearBoldBytes));
-      const fontClearLight = await pdfDoc.embedFont(new Uint8Array(clearLightBytes));
-      console.log('[GENERADOR] Fuentes registradas');
-
-      // Formatear fecha
-      const fechaObj = new Date(fecha);
-      const dia = fechaObj.getDate();
-      const meses = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
-      const mes = meses[fechaObj.getMonth()];
-      const anio = fechaObj.getFullYear();
-      const fechaFormato = `${dia} DE ${mes} DEL ${anio}`;
-
-      // Agregar NOMBRE (Eyesome Script, 61px)
-      const nombreWidth = nombre.length * 30;
-      const nombreX = (width - nombreWidth) / 2;
-      firstPage.drawText(nombre, {
-        x: nombreX,
-        y: 410,
-        size: 61,
-        font: fontEyesome,
-        color: rgb(0, 32, 96),
+      const canvas = await html2canvas(tempDiv, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
       });
-      console.log('[GENERADOR] Nombre agregado');
 
-      // Agregar CURSO (Clear Sans Bold, 15.7px)
-      firstPage.drawText(nombreCurso, {
-        x: 325,
-        y: 273,
-        size: 15.7,
-        font: fontClearBold,
-        color: rgb(0, 32, 96),
+      const jsPDFConstructor = window.jspdf.jsPDF;
+      const pdf = new jsPDFConstructor({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [297, 210],
       });
-      console.log('[GENERADOR] Curso agregado');
 
-      // Agregar FECHA (Clear Sans Light, 11px)
-      const fechaWidth = fechaFormato.length * 6;
-      const fechaX = (width - fechaWidth) / 2;
-      firstPage.drawText(fechaFormato, {
-        x: fechaX,
-        y: 145,
-        size: 11,
-        font: fontClearLight,
-        color: rgb(0, 0, 0),
-      });
-      console.log('[GENERADOR] Fecha agregada');
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, 297, 210);
 
-      // Guardar PDF
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      console.log(`[GENERADOR] PDF generado: ${blob.size} bytes`);
+      return pdf.output('blob');
 
-      return blob;
-
-    } catch (err) {
-      console.error('[GENERADOR ERROR]', err);
-      throw err;
+    } finally {
+      document.body.removeChild(tempDiv);
     }
   }
 
