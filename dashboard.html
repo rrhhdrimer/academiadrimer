@@ -1370,19 +1370,23 @@
 
               msgElement.textContent = `${codigoCurso}: Generando ${i + j + 1} de ${aprobados.length}...`;
 
-              // Generar PDF
-              const pdfBlob = await generarPDFDesdeHTML(nombre, nombreCurso, fecha);
-              const pdfBase64 = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(pdfBlob);
+              // Generar certificado desde plantilla PDF (Backend)
+              const pdfRes = await llamarApi('generarCertificadoDesdeplantilla', {
+                nombre: nombre,
+                nombreCurso: nombreCurso,
+                fecha: fecha
               });
 
-              console.log(`[DASHBOARD] PDF generado para ${nombre}, tamaño: ${pdfBlob.size} bytes`);
+              if (!pdfRes.ok || !pdfRes.pdfBase64) {
+                console.error(`Error generando PDF: ${pdfRes.mensaje}`);
+                continue;
+              }
+
+              console.log(`[DASHBOARD] PDF generado desde plantilla para ${nombre}`);
 
               // Guardar en Storage via Edge Function
               const saveRes = await llamarApi('saveCertificadoToStorage', {
-                pdfBase64: pdfBase64,
+                pdfBase64: pdfRes.pdfBase64,
                 nombre: nombre,
                 codigoCurso: codigoCurso,
                 nombreCurso: nombreCurso
