@@ -1429,33 +1429,33 @@
 
       const { PDFDocument, rgb } = window.PDFLib;
 
-      // Descargar plantilla PDF desde Storage usando supabase
+      // URLs públicas directas a Storage (bucket debe estar configurado como PÚBLICO)
+      const baseUrl = 'https://bvhpteltogflpyriplpz.supabase.co/storage/v1/object/public/plantillas';
+      
+      // Descargar plantilla PDF desde Storage
       console.log('[GENERADOR] Descargando plantilla...');
-      const { data: plantillaData, error: errPlantilla } = await supabase.storage
-        .from('plantillas')
-        .download('Certificado_Academia_Drimer.pdf');
-
-      if (errPlantilla || !plantillaData) {
-        throw new Error(`Error descargando plantilla: ${errPlantilla?.message}`);
+      const plantillaRes = await fetch(`${baseUrl}/Certificado_Academia_Drimer.pdf`);
+      if (!plantillaRes.ok) {
+        throw new Error(`Error descargando plantilla: ${plantillaRes.status}`);
       }
-      const plantillaBytes = await plantillaData.arrayBuffer();
+      const plantillaBytes = await plantillaRes.arrayBuffer();
       console.log(`[GENERADOR] Plantilla descargada: ${plantillaBytes.byteLength} bytes`);
 
-      // Descargar fuentes usando supabase
+      // Descargar fuentes
       console.log('[GENERADOR] Descargando fuentes...');
       const [eyesomeRes, clearBoldRes, clearLightRes] = await Promise.all([
-        supabase.storage.from('plantillas').download('Eyesome-Script.otf'),
-        supabase.storage.from('plantillas').download('clear-sans_bold.ttf'),
-        supabase.storage.from('plantillas').download('clear-sans_light.ttf'),
+        fetch(`${baseUrl}/Eyesome-Script.otf`),
+        fetch(`${baseUrl}/clear-sans_bold.ttf`),
+        fetch(`${baseUrl}/clear-sans_light.ttf`),
       ]);
 
-      if (eyesomeRes.error || clearBoldRes.error || clearLightRes.error) {
-        throw new Error('Error descargando fuentes');
+      if (!eyesomeRes.ok || !clearBoldRes.ok || !clearLightRes.ok) {
+        throw new Error(`Error descargando fuentes: ${!eyesomeRes.ok ? 'Eyesome' : !clearBoldRes.ok ? 'Bold' : 'Light'}`);
       }
 
-      const eyesomeBytes = await eyesomeRes.data.arrayBuffer();
-      const clearBoldBytes = await clearBoldRes.data.arrayBuffer();
-      const clearLightBytes = await clearLightRes.data.arrayBuffer();
+      const eyesomeBytes = await eyesomeRes.arrayBuffer();
+      const clearBoldBytes = await clearBoldRes.arrayBuffer();
+      const clearLightBytes = await clearLightRes.arrayBuffer();
       console.log('[GENERADOR] Fuentes descargadas');
 
       // Cargar plantilla
