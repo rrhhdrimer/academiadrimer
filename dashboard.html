@@ -1341,8 +1341,12 @@
         msgElement.textContent = `Procesando curso ${codigoCurso}...`;
         
         // Obtener aprobados
+        console.log(`[DASHBOARD] Llamando getAprobadosCurso para ${codigoCurso}`);
         const aprobadosRes = await llamarApi('getAprobadosCurso', { codigoCurso: codigoCurso });
+        console.log(`[DASHBOARD] Respuesta:`, aprobadosRes);
+        
         if (!aprobadosRes || !aprobadosRes.data) {
+          console.log(`[DASHBOARD] Sin datos para ${codigoCurso}`);
           resultadosPorCurso[codigoCurso] = 0;
           continue;
         }
@@ -1350,6 +1354,7 @@
         const aprobados = aprobadosRes.data;
         const nombreCurso = aprobadosRes.nombreCurso || codigoCurso;
         resultadosPorCurso[codigoCurso] = 0;
+        console.log(`[DASHBOARD] ${codigoCurso}: ${aprobados.length} aprobados`);
 
         // Procesar en lotes de 25
         const LOTE_SIZE = 25;
