@@ -1467,11 +1467,23 @@
       const { width, height } = firstPage.getSize();
       console.log(`[GENERADOR] PDF tamaño: ${width}x${height}`);
 
-      // Registrar fontkit para poder usar fuentes custom
-      if (window.fontkit) {
-        PDFDocument.registerFontkit(window.fontkit);
-        console.log('[GENERADOR] Fontkit registrado');
+      // Esperar a que fontkit esté disponible
+      console.log('[GENERADOR] Esperando fontkit...');
+      let fontkit = window.fontkit;
+      let attempts = 0;
+      while (!fontkit && attempts < 50) {
+        await new Promise(r => setTimeout(r, 100));
+        fontkit = window.fontkit;
+        attempts++;
       }
+
+      if (!fontkit) {
+        throw new Error('Fontkit no cargó después de 5 segundos');
+      }
+
+      // Registrar fontkit
+      PDFDocument.registerFontkit(fontkit);
+      console.log('[GENERADOR] Fontkit registrado');
 
       // Registrar fuentes
       const fontEyesome = await pdfDoc.embedFont(new Uint8Array(eyesomeBytes));
