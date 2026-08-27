@@ -1445,8 +1445,8 @@
       console.log('[GENERADOR] Descargando fuentes...');
       const [eyesomeRes, clearBoldRes, clearLightRes] = await Promise.all([
         fetch(`${baseUrl}/Eyesome-Script.otf`),
-        fetch(`${baseUrl}/clear-sans_bold.ttf`),
-        fetch(`${baseUrl}/clear-sans_light.ttf`),
+        fetch(`${baseUrl}/clear-sans.bold.ttf`),
+        fetch(`${baseUrl}/clear-sans.light.ttf`),
       ]);
 
       if (!eyesomeRes.ok || !clearBoldRes.ok || !clearLightRes.ok) {
