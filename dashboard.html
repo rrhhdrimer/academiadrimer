@@ -1370,19 +1370,23 @@
 
               msgElement.textContent = `${codigoCurso}: Generando ${i + j + 1} de ${aprobados.length}...`;
 
-              // Generar PDF desde HTML con html2canvas + jsPDF
-              const pdfBlob = await generarPDFDesdeHTML(nombre, nombreCurso, fecha);
-              const pdfBase64 = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(pdfBlob);
+              // Generar PDF desde servidor (Edge Function)
+              const pdfRes = await llamarApi('generarCertificadoDesdeplantilla', {
+                nombre: nombre,
+                nombreCurso: nombreCurso,
+                fecha: fecha
               });
 
-              console.log(`[DASHBOARD] PDF generado para ${nombre}, tamaño: ${pdfBlob.size} bytes`);
+              if (!pdfRes.ok || !pdfRes.pdfBase64) {
+                console.error(`Error generando PDF: ${pdfRes.mensaje}`);
+                continue;
+              }
+
+              console.log(`[DASHBOARD] PDF generado desde servidor para ${nombre}`);
 
               // Guardar en Storage via Edge Function
               const saveRes = await llamarApi('saveCertificadoToStorage', {
-                pdfBase64: pdfBase64,
+                pdfBase64: pdfRes.pdfBase64,
                 nombre: nombre,
                 codigoCurso: codigoCurso,
                 nombreCurso: nombreCurso
