@@ -9,6 +9,8 @@
 <script src="assets/js/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js.map"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.min.js"></script>
 <script src="assets/js/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -1464,6 +1466,12 @@
       const firstPage = pages[0];
       const { width, height } = firstPage.getSize();
       console.log(`[GENERADOR] PDF tamaño: ${width}x${height}`);
+
+      // Registrar fontkit para poder usar fuentes custom
+      if (window.fontkit) {
+        PDFDocument.registerFontkit(window.fontkit);
+        console.log('[GENERADOR] Fontkit registrado');
+      }
 
       // Registrar fuentes
       const fontEyesome = await pdfDoc.embedFont(new Uint8Array(eyesomeBytes));
