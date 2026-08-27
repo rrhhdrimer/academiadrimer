@@ -1491,8 +1491,8 @@
         logging: false,
       });
 
-      const { jsPDF } = window;
-      const pdf = new jsPDF({
+      const jsPDFConstructor = window.jspdf.jsPDF;
+      const pdf = new jsPDFConstructor({
         orientation: 'landscape',
         unit: 'mm',
         format: [297, 210],
