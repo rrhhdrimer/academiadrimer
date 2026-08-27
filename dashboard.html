@@ -1332,11 +1332,11 @@
       msgElement.className = 'gestion-msg info';
 
       // Obtener cursos
-      const { data: cursos } = await supabase.from('cursos').select('codigo, nombre').eq('activo', 'Sí');
-      if (!cursos) throw new Error('No se pudieron obtener los cursos');
+      const cursosRes = await llamarApi('getCursosActivos', {});
+      if (!cursosRes || !cursosRes.cursos) throw new Error('No se pudieron obtener los cursos');
 
       const nombreCursoPorCodigo = {};
-      for (const c of cursos) {
+      for (const c of cursosRes.cursos) {
         nombreCursoPorCodigo[c.codigo] = c.nombre;
       }
 
@@ -1348,24 +1348,16 @@
       for (const codigoCurso of cursosData) {
         msgElement.textContent = `Procesando curso ${codigoCurso}...`;
         
-        const { data: aprobados } = await supabase
-          .from('resultados')
-          .select('dni, fecha_aprobacion')
-          .eq('codigo_curso', codigoCurso)
-          .eq('estado', 'Aprobado');
-
-        if (!aprobados || aprobados.length === 0) {
+        // Obtener aprobados
+        const aprobadosRes = await llamarApi('getAprobadosCurso', { codigoCurso: codigoCurso });
+        if (!aprobadosRes || !aprobadosRes.data) {
           resultadosPorCurso[codigoCurso] = 0;
           continue;
         }
 
-        const { data: usuarios } = await supabase
-          .from('usuarios')
-          .select('dni, nombres, apellido_paterno, apellido_materno');
-
+        const aprobados = aprobadosRes.data;
         resultadosPorCurso[codigoCurso] = 0;
         const nombreCurso = nombreCursoPorCodigo[codigoCurso] || codigoCurso;
-        const carpetaStorage = `${codigoCurso}_${nombreCurso.replace(/\s+/g, '_')}`;
 
         // Procesar en lotes de 25
         const LOTE_SIZE = 25;
@@ -1375,28 +1367,28 @@
           for (let j = 0; j < lote.length; j++) {
             try {
               const aprobado = lote[j];
-              const usuario = usuarios.find(u => u.dni === aprobado.dni);
-              if (!usuario) continue;
-
-              const nombre = [usuario.nombres, usuario.apellido_paterno, usuario.apellido_materno]
-                .filter(s => s)
-                .join(' ');
-
+              const nombre = aprobado.nombre;
               const fecha = aprobado.fecha_aprobacion || new Date().toISOString().slice(0, 10);
 
               msgElement.textContent = `${codigoCurso}: Generando ${i + j + 1} de ${aprobados.length}...`;
 
-              // Generar PDF y subir
+              // Generar PDF
               const pdfBlob = await generarPDFDesdeHTML(nombre, nombreCurso, fecha);
+              const pdfBase64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(pdfBlob);
+              });
 
-              const nombreArchivo = `${nombre.replace(/\s+/g, '_')}_${aprobado.dni}.pdf`;
-              const ruta = `certificados/${carpetaStorage}/${nombreArchivo}`;
+              // Guardar en Storage via Edge Function
+              const saveRes = await llamarApi('saveCertificadoToStorage', {
+                pdfBase64: pdfBase64,
+                nombre: nombre,
+                codigoCurso: codigoCurso,
+                nombreCurso: nombreCurso
+              });
 
-              const { error: errUpload } = await supabase.storage
-                .from('certificados')
-                .upload(ruta, pdfBlob, { upsert: true });
-
-              if (!errUpload) {
+              if (saveRes.ok) {
                 resultadosPorCurso[codigoCurso]++;
                 totalGenerados++;
               }
