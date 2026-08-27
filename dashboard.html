@@ -1446,11 +1446,11 @@
         .wave {position:absolute;bottom:0;width:100%;height:100px;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 100"><path d="M0,50 Q300,20 600,50 T1200,50 L1200,100 L0,100 Z" fill="%23e8f4f8"/></svg>');background-size:600px 100px;background-repeat:repeat-x;}
         
         /* Logo */
-        .logo {position:absolute;top:40px;left:20px;font-size:28px;font-weight:700;color:#002060;line-height:1.2;text-align:center;}
+        .logo {position:absolute;top:20px;left:20px;font-size:28px;font-weight:700;color:#002060;line-height:1.2;text-align:center;}
         .logo-small {font-size:11px;color:#666;margin-top:3px;}
         
         /* Contenido principal */
-        .content {position:relative;z-index:2;padding:70px 90px 30px;text-align:center;height:100%;display:flex;flex-direction:column;gap:10px;}
+        .content {position:relative;z-index:2;padding:90px 90px 30px;text-align:center;height:100%;display:flex;flex-direction:column;gap:10px;}
         
         .title {font-size:86px;font-weight:700;color:#002060;letter-spacing:12px;margin-bottom:2px;line-height:1;}
         .subtitle {font-size:32px;font-weight:600;color:#002060;letter-spacing:6px;margin-bottom:8px;}
@@ -1467,13 +1467,13 @@
         .description {font-size:18px;line-height:1.8;color:#333;margin-bottom:15px;max-width:900px;margin-left:auto;margin-right:auto;}
         .course-name {font-weight:700;color:#002060;}
         
-        .signatures {display:flex;justify-content:center;gap:150px;margin:20px 0;}
+        .signatures {display:flex;justify-content:center;gap:150px;margin:10px 0 0;}
         .signature {text-align:center;}
         .sig-line {width:180px;height:3px;background:#333;margin-bottom:10px;}
-        .sig-name {font-size:16px;font-weight:600;color:#333;margin-bottom:2px;}
-        .sig-title {font-size:14px;color:#666;}
+        .sig-name {font-size:16px;font-weight:600;color:#333;margin-bottom:0px;}
+        .sig-title {font-size:14px;color:#666;margin-bottom:5px;}
         
-        .fecha {font-size:18px;color:#333;font-weight:600;letter-spacing:3px;margin-top:5px;}
+        .fecha {font-size:14px;color:#333;font-weight:500;letter-spacing:2px;margin-top:5px;}
       </style></head><body>
       <div class="cert">
         <div class="stripe-left"></div>
@@ -1501,11 +1501,12 @@
           
           <div class="signatures">
             <div class="signature">
-              <img src="assets/Firma_Vico.png" alt="Firma Víctor Salardi" style="height:195px; width:auto; display:block; margin:0 auto;">
+              <div class="sig-name">Victor Salardi</div>
+              <div class="sig-title">Gerente General</div>
+              <img src="assets/Firma_Vico.png" alt="Firma Víctor Salardi" style="height:195px; width:auto; display:block; margin:8px auto 0;">
+              <div class="fecha">${dia} DE ${mes} DEL ${anio}</div>
             </div>
           </div>
-          
-          <div class="fecha" style="margin-top:0;">${dia} DE ${mes} DEL ${anio}</div>
         </div>
       </div>
       </body></html>
