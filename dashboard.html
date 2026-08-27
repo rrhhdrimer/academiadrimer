@@ -1429,33 +1429,33 @@
 
       const { PDFDocument, rgb } = window.PDFLib;
 
-      // Descargar plantilla PDF desde Storage
+      // Descargar plantilla PDF desde Storage usando supabase
       console.log('[GENERADOR] Descargando plantilla...');
-      const plantillaUrl = `https://bvhpteltogflpyriplpz.supabase.co/storage/v1/object/public/plantillas/Certificado_Academia_Drimer.pdf`;
-      const plantillaRes = await fetch(plantillaUrl);
-      if (!plantillaRes.ok) throw new Error(`No se pudo descargar plantilla: ${plantillaRes.status}`);
-      const plantillaBytes = await plantillaRes.arrayBuffer();
+      const { data: plantillaData, error: errPlantilla } = await supabase.storage
+        .from('plantillas')
+        .download('Certificado_Academia_Drimer.pdf');
+
+      if (errPlantilla || !plantillaData) {
+        throw new Error(`Error descargando plantilla: ${errPlantilla?.message}`);
+      }
+      const plantillaBytes = await plantillaData.arrayBuffer();
       console.log(`[GENERADOR] Plantilla descargada: ${plantillaBytes.byteLength} bytes`);
 
-      // Descargar fuentes
+      // Descargar fuentes usando supabase
       console.log('[GENERADOR] Descargando fuentes...');
-      const eyesomeUrl = `https://bvhpteltogflpyriplpz.supabase.co/storage/v1/object/public/plantillas/Eyesome-Script.otf`;
-      const clearBoldUrl = `https://bvhpteltogflpyriplpz.supabase.co/storage/v1/object/public/plantillas/clear-sans_bold.ttf`;
-      const clearLightUrl = `https://bvhpteltogflpyriplpz.supabase.co/storage/v1/object/public/plantillas/clear-sans_light.ttf`;
-
       const [eyesomeRes, clearBoldRes, clearLightRes] = await Promise.all([
-        fetch(eyesomeUrl),
-        fetch(clearBoldUrl),
-        fetch(clearLightUrl),
+        supabase.storage.from('plantillas').download('Eyesome-Script.otf'),
+        supabase.storage.from('plantillas').download('clear-sans_bold.ttf'),
+        supabase.storage.from('plantillas').download('clear-sans_light.ttf'),
       ]);
 
-      if (!eyesomeRes.ok || !clearBoldRes.ok || !clearLightRes.ok) {
+      if (eyesomeRes.error || clearBoldRes.error || clearLightRes.error) {
         throw new Error('Error descargando fuentes');
       }
 
-      const eyesomeBytes = await eyesomeRes.arrayBuffer();
-      const clearBoldBytes = await clearBoldRes.arrayBuffer();
-      const clearLightBytes = await clearLightRes.arrayBuffer();
+      const eyesomeBytes = await eyesomeRes.data.arrayBuffer();
+      const clearBoldBytes = await clearBoldRes.data.arrayBuffer();
+      const clearLightBytes = await clearLightRes.data.arrayBuffer();
       console.log('[GENERADOR] Fuentes descargadas');
 
       // Cargar plantilla
