@@ -1332,14 +1332,6 @@
       msgElement.className = 'gestion-msg info';
 
       // Obtener cursos
-      const cursosRes = await llamarApi('getCursosActivos', {});
-      if (!cursosRes || !cursosRes.cursos) throw new Error('No se pudieron obtener los cursos');
-
-      const nombreCursoPorCodigo = {};
-      for (const c of cursosRes.cursos) {
-        nombreCursoPorCodigo[c.codigo] = c.nombre;
-      }
-
       const cursosData = ['C01', 'C02', 'C03', 'C04'];
       let totalGenerados = 0;
       const resultadosPorCurso = {};
@@ -1356,8 +1348,8 @@
         }
 
         const aprobados = aprobadosRes.data;
+        const nombreCurso = aprobadosRes.nombreCurso || codigoCurso;
         resultadosPorCurso[codigoCurso] = 0;
-        const nombreCurso = nombreCursoPorCodigo[codigoCurso] || codigoCurso;
 
         // Procesar en lotes de 25
         const LOTE_SIZE = 25;
