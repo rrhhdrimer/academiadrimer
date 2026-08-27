@@ -1378,6 +1378,8 @@
                 reader.readAsDataURL(pdfBlob);
               });
 
+              console.log(`[DASHBOARD] PDF generado para ${nombre}, tamaño: ${pdfBlob.size} bytes`);
+
               // Guardar en Storage via Edge Function
               const saveRes = await llamarApi('saveCertificadoToStorage', {
                 pdfBase64: pdfBase64,
@@ -1385,6 +1387,8 @@
                 codigoCurso: codigoCurso,
                 nombreCurso: nombreCurso
               });
+
+              console.log(`[DASHBOARD] Respuesta save: ${saveRes.ok ? 'OK' : 'ERROR'} - ${saveRes.mensaje}`);
 
               if (saveRes.ok) {
                 resultadosPorCurso[codigoCurso]++;
