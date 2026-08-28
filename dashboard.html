@@ -540,6 +540,7 @@
             <h3>Generar Certificados Históricos</h3>
             <p class="gestion-desc">Genera y guarda en Storage los certificados de todos los alumnos aprobados (1340 total). Se ejecuta una sola vez para llenar las carpetas. Procesa lotes de 25 certificados.</p>
             <button id="btnGenerarCertificadosHistoricos" class="gestion-btn" onclick="generateCertificadosMasivoHistorico()">Iniciar generación (Primera vez)</button>
+            <button id="btnGenerarCertificadosFaltantes" class="gestion-btn" style="background-color:#f59e0b; margin-left:10px;" onclick="generateCertificadosMasivoFaltantes()">Generar solo faltantes (C02, C04)</button>
             <div id="msgGenerarCertificados" class="gestion-msg"></div>
           </div>
 
@@ -1326,6 +1327,102 @@
   });
 
   // ---------- Generar certificados históricos (NUEVA FUNCIÓN) ----------
+  async function generateCertificadosMasivoFaltantes() {
+    const msgElement = document.querySelector('#msgGenerarCertificados');
+    if (!msgElement) {
+      alert('No se encontró elemento de mensajes');
+      return;
+    }
+
+    try {
+      msgElement.textContent = 'Inicializando generación de certificados faltantes (C02, C04)...';
+      msgElement.className = 'gestion-msg info';
+
+      // Obtener SOLO cursos faltantes
+      const cursosData = ['C02', 'C04'];
+      let totalGenerados = 0;
+      const resultadosPorCurso = {};
+
+      // Por cada curso
+      for (const codigoCurso of cursosData) {
+        msgElement.textContent = `Procesando curso ${codigoCurso}...`;
+        
+        // Obtener aprobados
+        console.log(`[DASHBOARD] Llamando getAprobadosCurso para ${codigoCurso}`);
+        const aprobadosRes = await llamarApi('getAprobadosCurso', { codigoCurso: codigoCurso });
+        console.log(`[DASHBOARD] Respuesta:`, aprobadosRes);
+        
+        if (!aprobadosRes || !aprobadosRes.data) {
+          console.log(`[DASHBOARD] Sin datos para ${codigoCurso}`);
+          resultadosPorCurso[codigoCurso] = 0;
+          continue;
+        }
+
+        const aprobados = aprobadosRes.data;
+        const nombreCurso = aprobadosRes.nombreCurso || codigoCurso;
+        resultadosPorCurso[codigoCurso] = 0;
+        console.log(`[DASHBOARD] ${codigoCurso}: ${aprobados.length} aprobados`);
+
+        // Procesar en lotes de 25
+        const LOTE_SIZE = 25;
+        for (let i = 0; i < aprobados.length; i += LOTE_SIZE) {
+          const lote = aprobados.slice(i, i + LOTE_SIZE);
+          
+          for (let j = 0; j < lote.length; j++) {
+            try {
+              const aprobado = lote[j];
+              const nombre = aprobado.nombre;
+              const fecha = aprobado.fecha_aprobacion || new Date().toISOString().slice(0, 10);
+
+              msgElement.textContent = `${codigoCurso}: Generando ${i + j + 1} de ${aprobados.length}...`;
+
+              // Generar PDF con html2canvas + jsPDF
+              const pdfBlob = await generarPDFDesdeHTML(nombre, nombreCurso, fecha);
+              const pdfBase64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(pdfBlob);
+              });
+
+              console.log(`[DASHBOARD] PDF generado para ${nombre}, tamaño: ${pdfBlob.size} bytes`);
+
+              // Guardar en Storage via Edge Function
+              const saveRes = await llamarApi('saveCertificadoToStorage', {
+                pdfBase64: pdfBase64,
+                nombre: nombre,
+                codigoCurso: codigoCurso,
+                nombreCurso: nombreCurso
+              });
+
+              console.log(`[DASHBOARD] Respuesta save: ${saveRes.ok ? 'OK' : 'ERROR'} - ${saveRes.mensaje}`);
+
+              if (saveRes.ok) {
+                resultadosPorCurso[codigoCurso]++;
+                totalGenerados++;
+              }
+
+            } catch (err) {
+              console.error(`Error:`, err);
+            }
+          }
+
+          if (i + LOTE_SIZE < aprobados.length) {
+            msgElement.textContent = `${codigoCurso}: Pausa... ${i + LOTE_SIZE} de ${aprobados.length}`;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+          }
+        }
+      }
+
+      msgElement.className = 'gestion-msg ok';
+      msgElement.textContent = `✅ Listo — ${totalGenerados} certificados faltantes. C02: ${resultadosPorCurso.C02}, C04: ${resultadosPorCurso.C04}`;
+
+    } catch (err) {
+      msgElement.className = 'gestion-msg error';
+      msgElement.textContent = `❌ Error: ${err.message}`;
+      console.error(err);
+    }
+  }
+
   async function generateCertificadosMasivoHistorico() {
     const msgElement = document.querySelector('#msgGenerarCertificados');
     if (!msgElement) {
